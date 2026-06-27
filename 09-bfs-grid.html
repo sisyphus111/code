@@ -3,228 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BFS 与网格问题 - 算法竞赛速成</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <title>09 BFS与网格问题 - C++算法竞赛</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --bg-primary: #ffffff;
-            --bg-secondary: #f8f9fa;
-            --bg-code: #f6f8fa;
-            --text-primary: #24292f;
-            --text-secondary: #57606a;
-            --border-color: #d0d7de;
-            --accent-color: #0969da;
-            --accent-hover: #0550ae;
-            --sidebar-width: 280px;
-            --header-height: 60px;
-        }
-
-        body.dark-mode {
-            --bg-primary: #0d1117;
-            --bg-secondary: #161b22;
-            --bg-code: #161b22;
-            --text-primary: #c9d1d9;
-            --text-secondary: #8b949e;
-            --border-color: #30363d;
-            --accent-color: #58a6ff;
-            --accent-hover: #79c0ff;
-        }
-
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
-            line-height: 1.6;
-            color: var(--text-primary);
-            background-color: var(--bg-primary);
-            transition: background-color 0.3s, color 0.3s;
-        }
-
-        .progress-bar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--accent-color) 0%, var(--accent-color) var(--scroll-progress, 0%), transparent var(--scroll-progress, 0%));
-            z-index: 1001;
-        }
-
-        header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: var(--header-height);
-            background: var(--bg-secondary);
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 20px;
-            z-index: 1000;
-        }
-
-        .header-title {
-            font-size: 20px;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .header-controls {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-        }
-
-        .theme-toggle {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 24px;
-            padding: 5px;
-            transition: transform 0.2s;
-        }
-
-        .theme-toggle:hover {
-            transform: scale(1.1);
-        }
-
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: var(--header-height);
-            bottom: 0;
-            width: var(--sidebar-width);
-            background: var(--bg-secondary);
-            border-right: 1px solid var(--border-color);
-            overflow-y: auto;
-            padding: 20px;
-            transition: transform 0.3s;
-        }
-
-        .sidebar.collapsed {
-            transform: translateX(-100%);
-        }
-
-        .sidebar-toggle {
-            position: fixed;
-            left: var(--sidebar-width);
-            top: calc(var(--header-height) + 20px);
-            background: var(--accent-color);
-            color: white;
-            border: none;
-            border-radius: 0 4px 4px 0;
-            padding: 10px 8px;
-            cursor: pointer;
-            z-index: 999;
-            transition: left 0.3s;
-        }
-
-        .sidebar.collapsed + .sidebar-toggle {
-            left: 0;
-        }
-
-        .sidebar h3 {
-            font-size: 14px;
-            font-weight: 600;
-            text-transform: uppercase;
-            color: var(--text-secondary);
-            margin-bottom: 10px;
-        }
-
-        .toc {
-            list-style: none;
-        }
-
-        .toc li {
-            margin: 5px 0;
-        }
-
-        .toc a {
-            color: var(--text-primary);
-            text-decoration: none;
-            display: block;
-            padding: 6px 10px;
-            border-radius: 6px;
-            transition: background 0.2s;
-        }
-
-        .toc a:hover {
-            background: var(--bg-primary);
-        }
-
-        .toc a.active {
-            background: var(--accent-color);
-            color: white;
-        }
-
-        main {
-            margin-left: var(--sidebar-width);
-            margin-top: var(--header-height);
-            padding: 40px;
             max-width: 900px;
-            transition: margin-left 0.3s;
+            margin: 40px auto;
+            padding: 0 20px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            font-size: 16px;
+            line-height: 1.6;
+            color: #333;
         }
 
-        .sidebar.collapsed ~ main {
-            margin-left: 0;
-        }
+        h1 { font-size: 32px; margin: 40px 0 20px; border-bottom: 2px solid #333; padding-bottom: 10px; }
+        h2 { font-size: 24px; margin: 30px 0 15px; }
+        h3 { font-size: 20px; margin: 20px 0 10px; }
+        h4 { font-size: 18px; margin: 20px 0 10px; }
 
-        h1 {
-            font-size: 32px;
-            margin-bottom: 10px;
-            color: var(--text-primary);
-        }
+        p { margin: 10px 0; }
 
-        h2 {
-            font-size: 24px;
-            margin-top: 40px;
-            margin-bottom: 16px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid var(--border-color);
-            color: var(--text-primary);
-        }
-
-        h3 {
-            font-size: 20px;
-            margin-top: 24px;
-            margin-bottom: 12px;
-            color: var(--text-primary);
-        }
-
-        h4 {
-            font-size: 18px;
-            margin-top: 20px;
-            margin-bottom: 10px;
-            color: var(--text-primary);
-        }
-
-        p {
-            margin: 16px 0;
-            color: var(--text-primary);
+        pre {
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            padding: 15px;
+            overflow-x: auto;
+            font-size: 14px;
+            line-height: 1.4;
+            margin: 15px 0;
         }
 
         code {
-            background: var(--bg-code);
-            padding: 2px 6px;
+            background: #f5f5f5;
+            padding: 2px 5px;
             border-radius: 3px;
-            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
-            font-size: 0.9em;
-        }
-
-        pre {
-            background: var(--bg-code);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 16px;
-            overflow-x: auto;
-            margin: 16px 0;
+            font-family: "SF Mono", Monaco, Consolas, monospace;
+            font-size: 14px;
         }
 
         pre code {
@@ -232,129 +46,82 @@
             padding: 0;
         }
 
-        ul, ol {
-            margin: 16px 0;
-            padding-left: 32px;
-        }
-
-        li {
-            margin: 8px 0;
-        }
-
-        hr {
-            border: none;
-            border-top: 1px solid var(--border-color);
-            margin: 24px 0;
-        }
-
         table {
             width: 100%;
             border-collapse: collapse;
-            margin: 16px 0;
+            margin: 20px 0;
         }
 
         th, td {
-            border: 1px solid var(--border-color);
+            border: 1px solid #ddd;
             padding: 8px 12px;
             text-align: left;
         }
 
         th {
-            background: var(--bg-secondary);
+            background: #f5f5f5;
             font-weight: 600;
         }
 
-        .chapter-nav {
-            display: flex;
-            justify-content: space-between;
-            margin: 40px 0;
-            padding: 20px 0;
-            border-top: 1px solid var(--border-color);
+        ul, ol {
+            margin: 10px 0;
+            padding-left: 30px;
         }
 
-        .chapter-nav a {
-            color: var(--accent-color);
+        li {
+            margin: 5px 0;
+        }
+
+        a {
+            color: #0066cc;
             text-decoration: none;
-            padding: 10px 20px;
-            border: 1px solid var(--accent-color);
-            border-radius: 6px;
-            transition: all 0.2s;
         }
 
-        .chapter-nav a:hover {
-            background: var(--accent-color);
-            color: white;
+        a:hover {
+            text-decoration: underline;
+        }
+
+        strong {
+            font-weight: 600;
+        }
+
+        .nav {
+            margin: 40px 0;
+            padding: 15px 0;
+            border-top: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .nav a {
+            margin-right: 20px;
         }
 
         @media print {
-            .sidebar, .sidebar-toggle, .theme-toggle, .progress-bar {
-                display: none;
-            }
-            main {
-                margin-left: 0;
-                margin-top: 0;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-            .sidebar.show {
-                transform: translateX(0);
-            }
-            main {
-                margin-left: 0;
-                padding: 20px;
-            }
+            body { margin: 0; padding: 20px; }
+            .nav { display: none; }
         }
     </style>
 </head>
 <body>
-    <div class="progress-bar"></div>
+    <div class="nav">
+        <a href="index.html">← 返回主页</a>
+    </div>
 
-    <header>
-        <div class="header-title">BFS 与网格问题</div>
-        <div class="header-controls">
-            <button class="theme-toggle" onclick="toggleTheme()" title="切换主题">🌓</button>
-        </div>
-    </header>
-
-    <nav class="sidebar" id="sidebar">
-        <h3>目录</h3>
-        <ul class="toc">
-    <li><a href="#什么时候用">什么时候用</a></li>
-    <li><a href="#核心模板">核心模板</a></li>
-    <li><a href="#例题演示">例题演示</a></li>
-    <li><a href="#常见陷阱">常见陷阱</a></li>
-    <li><a href="#适用场景总结">适用场景总结</a></li>
-</ul>
-    </nav>
-
-    <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
-
-    <main>
-        <h1>BFS 与网格问题</h1>
-
-        <h2 id="什么时候用">什么时候用</h2>
+    <h1>BFS 与网格问题</h1>
+<h2>什么时候用</h2>
 <p>看到以下特征优先考虑 BFS：</p>
 <ul>
 <li><strong>最短路径</strong>：无权图、网格中的最短距离</li>
-<ul>
 <li><strong>层序遍历</strong>：树的层序、分层处理</li>
-<ul>
 <li><strong>最少步数</strong>：最少操作次数、最少转换次数</li>
-<ul>
 <li><strong>扩散问题</strong>：腐烂的橘子、病毒传播</li>
-<ul>
 <li><strong>拓扑排序</strong>：有向无环图的层次关系</li>
-<ul>
 <li>题目中出现"最短"、"最少"、"最近"、"层"等字眼</li>
+</ul>
 <p>核心思路：<strong>逐层扩展，先访问到的就是最短路径</strong>。</p>
-<h2 id="核心模板">核心模板</h2>
-<h3 id="bfs-基本框架">BFS 基本框架</h3>
-<pre><code class="language-cpp">
-queue&lt;Node&gt; q;
+<h2>核心模板</h2>
+<h3>BFS 基本框架</h3>
+<pre><code>queue&lt;Node&gt; q;
 set&lt;Node&gt; visited;
 
 q.push(start);
@@ -372,11 +139,9 @@ while (!q.empty()) {
             visited.insert(next);
         }
     }
-}
-</code></pre>
-<h3 id="网格-bfs-模板">网格 BFS 模板</h3>
-<pre><code class="language-cpp">
-int dx[] = {0, 0, 1, -1};
+}</code></pre>
+<h3>网格 BFS 模板</h3>
+<pre><code>int dx[] = {0, 0, 1, -1};
 int dy[] = {1, -1, 0, 0};
 
 queue&lt;pair&lt;int,int&gt;&gt; q;
@@ -410,11 +175,9 @@ while (!q.empty()) {
     steps++;
 }
 
-return -1;  // 无法到达
-</code></pre>
-<h3 id="双向-bfs">双向 BFS</h3>
-<pre><code class="language-cpp">
-set&lt;Node&gt; q1 = {start}, q2 = {end};
+return -1;  // 无法到达</code></pre>
+<h3>双向 BFS</h3>
+<pre><code>set&lt;Node&gt; q1 = {start}, q2 = {end};
 set&lt;Node&gt; visited;
 int steps = 0;
 
@@ -438,14 +201,12 @@ while (!q1.empty() &amp;&amp; !q2.empty()) {
     steps++;
 }
 
-return -1;
-</code></pre>
-<h2 id="例题演示">例题演示</h2>
-<h3 id="例题-1二叉树的层序遍历">例题 1：二叉树的层序遍历</h3>
+return -1;</code></pre>
+<h2>例题演示</h2>
+<h3>例题 1：二叉树的层序遍历</h3>
 <p><strong>题目</strong>：给定二叉树，返回其层序遍历结果。</p>
 <p><strong>思路</strong>：BFS，用队列逐层处理。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 struct TreeNode {
@@ -526,20 +287,18 @@ int main() {
     }
     
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：时间 <code>O(n)</code>，空间 <code>O(n)</code></p>
 <p><strong>易错点</strong>：</p>
 <ul>
 <li>每层处理前要记录当前队列大小</li>
-<ul>
 <li>空节点不入队</li>
-<hr>
-<h3 id="例题-2网格中的最短路径">例题 2：网格中的最短路径</h3>
+</ul>
+<p>---</p>
+<h3>例题 2：网格中的最短路径</h3>
 <p><strong>题目</strong>：给定二维网格，0 表示空地，1 表示障碍，求从左上角到右下角的最短路径长度。</p>
 <p><strong>思路</strong>：BFS，逐层扩展，第一次到达终点即为最短路径。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 int shortestPath(vector&lt;vector&lt;int&gt;&gt;&amp; grid) {
@@ -598,22 +357,19 @@ int main() {
     cout &lt;&lt; shortestPath(grid) &lt;&lt; &quot;\n&quot;;
     
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：时间 <code>O(m × n)</code>，空间 <code>O(m × n)</code></p>
 <p><strong>易错点</strong>：</p>
 <ul>
 <li>起点和终点也要检查是否是障碍</li>
-<ul>
 <li>步数是层数，不是节点数</li>
-<ul>
 <li>入队时就标记 visited，而不是出队时</li>
-<hr>
-<h3 id="例题-3腐烂的橘子">例题 3：腐烂的橘子</h3>
+</ul>
+<p>---</p>
+<h3>例题 3：腐烂的橘子</h3>
 <p><strong>题目</strong>：网格中 0 表示空，1 表示新鲜橘子，2 表示腐烂橘子。每分钟腐烂橘子会使相邻橘子腐烂，求所有橘子腐烂的最少时间。</p>
 <p><strong>思路</strong>：多源 BFS，将所有腐烂橘子作为起点同时扩散。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 int orangesRotting(vector&lt;vector&lt;int&gt;&gt;&amp; grid) {
@@ -677,22 +433,19 @@ int main() {
     cout &lt;&lt; orangesRotting(grid) &lt;&lt; &quot;\n&quot;;
     
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：时间 <code>O(m × n)</code>，空间 <code>O(m × n)</code></p>
 <p><strong>易错点</strong>：</p>
 <ul>
 <li>多源 BFS：所有起点同时入队</li>
-<ul>
 <li>只有本轮有橘子腐烂才增加时间</li>
-<ul>
 <li>最后要检查是否还有新鲜橘子</li>
-<hr>
-<h3 id="例题-4单词接龙">例题 4：单词接龙</h3>
+</ul>
+<p>---</p>
+<h3>例题 4：单词接龙</h3>
 <p><strong>题目</strong>：给定开始单词、结束单词和单词列表，每次只能改变一个字母，求最短转换序列长度。</p>
 <p><strong>思路</strong>：BFS，每个单词是节点，可以转换的单词是邻居。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 int ladderLength(string beginWord, string endWord, vector&lt;string&gt;&amp; wordList) {
@@ -751,22 +504,19 @@ int main() {
     cout &lt;&lt; ladderLength(beginWord, endWord, wordList) &lt;&lt; &quot;\n&quot;;
     
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：时间 <code>O(n × L^2)</code>，n 是单词数，L 是单词长度</p>
 <p><strong>易错点</strong>：</p>
 <ul>
 <li>从 wordSet 中删除已访问单词，避免重复</li>
-<ul>
 <li>修改单词后要恢复原字符</li>
-<ul>
 <li>步数从 1 开始（包含起点）</li>
-<hr>
-<h3 id="例题-501-矩阵到最近-0-的距离">例题 5：01 矩阵（到最近 0 的距离）</h3>
+</ul>
+<p>---</p>
+<h3>例题 5：01 矩阵（到最近 0 的距离）</h3>
 <p><strong>题目</strong>：给定只包含 0 和 1 的矩阵，求每个位置到最近 0 的距离。</p>
 <p><strong>思路</strong>：多源 BFS，将所有 0 作为起点同时扩散。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 vector&lt;vector&lt;int&gt;&gt; updateMatrix(vector&lt;vector&lt;int&gt;&gt;&amp; mat) {
@@ -825,22 +575,19 @@ int main() {
     }
     
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：时间 <code>O(m × n)</code>，空间 <code>O(m × n)</code></p>
 <p><strong>易错点</strong>：</p>
 <ul>
 <li>多源 BFS：所有 0 同时作为起点</li>
-<ul>
 <li>距离数组用 -1 表示未访问</li>
-<ul>
 <li>不需要单独的 visited 数组</li>
-<hr>
-<h3 id="例题-6打开转盘锁">例题 6：打开转盘锁</h3>
+</ul>
+<p>---</p>
+<h3>例题 6：打开转盘锁</h3>
 <p><strong>题目</strong>：4 位数字转盘，初始 "0000"，每次可以转动一位（向上或向下），给定死亡数字列表，求到达目标的最少步数。</p>
 <p><strong>思路</strong>：BFS，每个状态最多有 8 个邻居（4 位 × 2 方向）。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 int openLock(vector&lt;string&gt;&amp; deadends, string target) {
@@ -904,22 +651,19 @@ int main() {
     cout &lt;&lt; openLock(deadends, target) &lt;&lt; &quot;\n&quot;;
     
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：时间 <code>O(10^4)</code>，最多 10000 个状态</p>
 <p><strong>易错点</strong>：</p>
 <ul>
 <li>向下转：<code>(x + 9) % 10</code> 而不是 <code>(x - 1) % 10</code>（负数取模问题）</li>
-<ul>
 <li>起点可能就是死亡数字</li>
-<ul>
 <li>visited 和 dead 都要检查</li>
-<hr>
-<h3 id="例题-7完全平方数最少数量">例题 7：完全平方数（最少数量）</h3>
+</ul>
+<p>---</p>
+<h3>例题 7：完全平方数（最少数量）</h3>
 <p><strong>题目</strong>：给定正整数 n，求最少需要多少个完全平方数相加等于 n。</p>
 <p><strong>思路</strong>：BFS，每次减去一个完全平方数，求到达 0 的最短路径。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 int numSquares(int n) {
@@ -962,22 +706,19 @@ int main() {
     cin &gt;&gt; n;
     cout &lt;&lt; numSquares(n) &lt;&lt; &quot;\n&quot;;
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：时间 <code>O(n × √n)</code>，空间 <code>O(n)</code></p>
 <p><strong>易错点</strong>：</p>
 <ul>
 <li>从 n 出发，目标是 0</li>
-<ul>
 <li>步数在每层开始时增加</li>
-<ul>
 <li>减到 0 时立即返回</li>
-<hr>
-<h3 id="例题-8被围绕的区域">例题 8：被围绕的区域</h3>
+</ul>
+<p>---</p>
+<h3>例题 8：被围绕的区域</h3>
 <p><strong>题目</strong>：给定二维矩阵，X 和 O 组成，将被 X 围绕的 O 变为 X（边界上的 O 及其连通的 O 不算被围绕）。</p>
 <p><strong>思路</strong>：从边界的 O 开始 BFS/DFS，标记所有连通的 O，其余 O 全部变为 X。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 void solve(vector&lt;vector&lt;char&gt;&gt;&amp; board) {
@@ -1057,194 +798,96 @@ int main() {
     }
     
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：时间 <code>O(m × n)</code>，空间 <code>O(m × n)</code></p>
 <p><strong>易错点</strong>：</p>
 <ul>
 <li>从边界出发，而不是从内部出发</li>
-<ul>
 <li>要用临时标记避免混淆</li>
-<ul>
 <li>边界 O 的四条边都要检查</li>
-<hr>
-<h2 id="常见陷阱">常见陷阱</h2>
+</ul>
+<p>---</p>
+<h2>常见陷阱</h2>
 <ol>
 <li><strong>步数计数</strong>：</li>
-<ul>
-<li>在每层开始或结束时增加步数</li>
-<ul>
-<li>区分"包含起点"还是"不包含起点"</li>
+</ol>
+<p>   - 在每层开始或结束时增加步数</p>
+<p>   - 区分"包含起点"还是"不包含起点"</p>
 <ol>
 <li><strong>visited 标记时机</strong>：</li>
-<ul>
-<li>入队时标记，而不是出队时（避免重复入队）</li>
+</ol>
+<p>   - 入队时标记，而不是出队时（避免重复入队）</p>
 <ol>
 <li><strong>多源 BFS</strong>：</li>
-<ul>
-<li>所有起点同时入队</li>
-<ul>
-<li>第一次到达的就是最短距离</li>
+</ol>
+<p>   - 所有起点同时入队</p>
+<p>   - 第一次到达的就是最短距离</p>
 <ol>
 <li><strong>网格越界</strong>：</li>
-<ul>
-<li>四个边界条件都要检查</li>
-<ul>
-<li>使用方向数组简化代码</li>
+</ol>
+<p>   - 四个边界条件都要检查</p>
+<p>   - 使用方向数组简化代码</p>
 <ol>
 <li><strong>状态去重</strong>：</li>
-<ul>
-<li>用 set 或 visited 数组</li>
-<ul>
-<li>或者原地修改（如果允许）</li>
-<h2 id="适用场景总结">适用场景总结</h2>
+</ol>
+<p>   - 用 set 或 visited 数组</p>
+<p>   - 或者原地修改（如果允许）</p>
+<h2>适用场景总结</h2>
 <table>
-<thead>
-<tr>
+<thead><tr>
 <th>问题类型</th>
 <th>关键技巧</th>
 <th>时间复杂度</th>
-</tr>
-</thead>
+</tr></thead>
 <tbody>
-<table>
-<thead>
 <tr>
-<th>---------</th>
-<th>---------</th>
-<th>-----------</th>
+<td>层序遍历</td>
+<td>记录每层大小</td>
+<td>O(n)</td>
 </tr>
-</thead>
-<tbody>
-<table>
-<thead>
 <tr>
-<th>层序遍历</th>
-<th>记录每层大小</th>
-<th>O(n)</th>
+<td>最短路径（无权图）</td>
+<td>第一次到达即最短</td>
+<td>O(V + E)</td>
 </tr>
-</thead>
-<tbody>
-<table>
-<thead>
 <tr>
-<th>最短路径（无权图）</th>
-<th>第一次到达即最短</th>
-<th>O(V + E)</th>
+<td>网格最短路径</td>
+<td>四方向扩展</td>
+<td>O(m × n)</td>
 </tr>
-</thead>
-<tbody>
-<table>
-<thead>
 <tr>
-<th>网格最短路径</th>
-<th>四方向扩展</th>
-<th>O(m × n)</th>
+<td>多源扩散</td>
+<td>所有起点同时入队</td>
+<td>O(m × n)</td>
 </tr>
-</thead>
-<tbody>
-<table>
-<thead>
 <tr>
-<th>多源扩散</th>
-<th>所有起点同时入队</th>
-<th>O(m × n)</th>
+<td>单词转换</td>
+<td>每个字符尝试 26 个字母</td>
+<td>O(n × L^2)</td>
 </tr>
-</thead>
-<tbody>
-<table>
-<thead>
 <tr>
-<th>单词转换</th>
-<th>每个字符尝试 26 个字母</th>
-<th>O(n × L^2)</th>
+<td>状态转换</td>
+<td>每个状态尝试所有操作</td>
+<td>看状态空间</td>
 </tr>
-</thead>
-<tbody>
-<table>
-<thead>
 <tr>
-<th>状态转换</th>
-<th>每个状态尝试所有操作</th>
-<th>看状态空间</th>
+<td>边界连通性</td>
+<td>从边界开始 BFS/DFS</td>
+<td>O(m × n)</td>
 </tr>
-</thead>
-<tbody>
-<table>
-<thead>
-<tr>
-<th>边界连通性</th>
-<th>从边界开始 BFS/DFS</th>
-<th>O(m × n)</th>
-</tr>
-</thead>
-<tbody>
+</tbody>
+</table>
 <p><strong>核心技巧</strong>：</p>
 <ul>
 <li>BFS 保证第一次到达就是最短路径（无权图）</li>
-<ul>
 <li>队列 + visited 避免重复访问</li>
-<ul>
 <li>多源 BFS：多个起点同时扩展</li>
-<ul>
 <li>层次遍历：记录每层大小，逐层处理</li>
-<ul>
 <li>双向 BFS：从两端同时搜索，相遇时结束（优化大状态空间）</li>
+</ul>
 
-        <div class="chapter-nav">
-    <a href="08-dfs-backtrack.html" class="prev-chapter">← DFS与回溯</a>
-    <a href="10-union-find.html" class="next-chapter">并查集 →</a>
-</div>
-    </main>
-
-    <script>
-        // 主题切换
-        function toggleTheme() {
-            document.body.classList.toggle('dark-mode');
-            localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
-        }
-
-        // 加载保存的主题
-        if (localStorage.getItem('theme') === 'dark') {
-            document.body.classList.add('dark-mode');
-        }
-
-        // 侧边栏切换
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('collapsed');
-        }
-
-        // 进度条
-        window.addEventListener('scroll', () => {
-            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            const scrolled = (winScroll / height) * 100;
-            document.documentElement.style.setProperty('--scroll-progress', scrolled + '%');
-        });
-
-        // 目录高亮
-        const sections = document.querySelectorAll('h2[id]');
-        const tocLinks = document.querySelectorAll('.toc a');
-
-        window.addEventListener('scroll', () => {
-            let current = '';
-            sections.forEach(section => {
-                const sectionTop = section.offsetTop;
-                if (scrollY >= sectionTop - 100) {
-                    current = section.getAttribute('id');
-                }
-            });
-
-            tocLinks.forEach(link => {
-                link.classList.remove('active');
-                if (link.getAttribute('href') === '#' + current) {
-                    link.classList.add('active');
-                }
-            });
-        });
-
-        // 代码高亮
-        hljs.highlightAll();
-    </script>
+    <div class="nav">
+        <a href="08-dfs-backtrack.html">← 08 DFS与回溯</a> | <a href="10-union-find.html">10 并查集 →</a>
+    </div>
 </body>
 </html>

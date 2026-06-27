@@ -3,228 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>并查集 - 算法竞赛速成</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <title>10 并查集 - C++算法竞赛</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --bg-primary: #ffffff;
-            --bg-secondary: #f8f9fa;
-            --bg-code: #f6f8fa;
-            --text-primary: #24292f;
-            --text-secondary: #57606a;
-            --border-color: #d0d7de;
-            --accent-color: #0969da;
-            --accent-hover: #0550ae;
-            --sidebar-width: 280px;
-            --header-height: 60px;
-        }
-
-        body.dark-mode {
-            --bg-primary: #0d1117;
-            --bg-secondary: #161b22;
-            --bg-code: #161b22;
-            --text-primary: #c9d1d9;
-            --text-secondary: #8b949e;
-            --border-color: #30363d;
-            --accent-color: #58a6ff;
-            --accent-hover: #79c0ff;
-        }
-
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
-            line-height: 1.6;
-            color: var(--text-primary);
-            background-color: var(--bg-primary);
-            transition: background-color 0.3s, color 0.3s;
-        }
-
-        .progress-bar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--accent-color) 0%, var(--accent-color) var(--scroll-progress, 0%), transparent var(--scroll-progress, 0%));
-            z-index: 1001;
-        }
-
-        header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: var(--header-height);
-            background: var(--bg-secondary);
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 20px;
-            z-index: 1000;
-        }
-
-        .header-title {
-            font-size: 20px;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .header-controls {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-        }
-
-        .theme-toggle {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 24px;
-            padding: 5px;
-            transition: transform 0.2s;
-        }
-
-        .theme-toggle:hover {
-            transform: scale(1.1);
-        }
-
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: var(--header-height);
-            bottom: 0;
-            width: var(--sidebar-width);
-            background: var(--bg-secondary);
-            border-right: 1px solid var(--border-color);
-            overflow-y: auto;
-            padding: 20px;
-            transition: transform 0.3s;
-        }
-
-        .sidebar.collapsed {
-            transform: translateX(-100%);
-        }
-
-        .sidebar-toggle {
-            position: fixed;
-            left: var(--sidebar-width);
-            top: calc(var(--header-height) + 20px);
-            background: var(--accent-color);
-            color: white;
-            border: none;
-            border-radius: 0 4px 4px 0;
-            padding: 10px 8px;
-            cursor: pointer;
-            z-index: 999;
-            transition: left 0.3s;
-        }
-
-        .sidebar.collapsed + .sidebar-toggle {
-            left: 0;
-        }
-
-        .sidebar h3 {
-            font-size: 14px;
-            font-weight: 600;
-            text-transform: uppercase;
-            color: var(--text-secondary);
-            margin-bottom: 10px;
-        }
-
-        .toc {
-            list-style: none;
-        }
-
-        .toc li {
-            margin: 5px 0;
-        }
-
-        .toc a {
-            color: var(--text-primary);
-            text-decoration: none;
-            display: block;
-            padding: 6px 10px;
-            border-radius: 6px;
-            transition: background 0.2s;
-        }
-
-        .toc a:hover {
-            background: var(--bg-primary);
-        }
-
-        .toc a.active {
-            background: var(--accent-color);
-            color: white;
-        }
-
-        main {
-            margin-left: var(--sidebar-width);
-            margin-top: var(--header-height);
-            padding: 40px;
             max-width: 900px;
-            transition: margin-left 0.3s;
+            margin: 40px auto;
+            padding: 0 20px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            font-size: 16px;
+            line-height: 1.6;
+            color: #333;
         }
 
-        .sidebar.collapsed ~ main {
-            margin-left: 0;
-        }
+        h1 { font-size: 32px; margin: 40px 0 20px; border-bottom: 2px solid #333; padding-bottom: 10px; }
+        h2 { font-size: 24px; margin: 30px 0 15px; }
+        h3 { font-size: 20px; margin: 20px 0 10px; }
+        h4 { font-size: 18px; margin: 20px 0 10px; }
 
-        h1 {
-            font-size: 32px;
-            margin-bottom: 10px;
-            color: var(--text-primary);
-        }
+        p { margin: 10px 0; }
 
-        h2 {
-            font-size: 24px;
-            margin-top: 40px;
-            margin-bottom: 16px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid var(--border-color);
-            color: var(--text-primary);
-        }
-
-        h3 {
-            font-size: 20px;
-            margin-top: 24px;
-            margin-bottom: 12px;
-            color: var(--text-primary);
-        }
-
-        h4 {
-            font-size: 18px;
-            margin-top: 20px;
-            margin-bottom: 10px;
-            color: var(--text-primary);
-        }
-
-        p {
-            margin: 16px 0;
-            color: var(--text-primary);
+        pre {
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            padding: 15px;
+            overflow-x: auto;
+            font-size: 14px;
+            line-height: 1.4;
+            margin: 15px 0;
         }
 
         code {
-            background: var(--bg-code);
-            padding: 2px 6px;
+            background: #f5f5f5;
+            padding: 2px 5px;
             border-radius: 3px;
-            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
-            font-size: 0.9em;
-        }
-
-        pre {
-            background: var(--bg-code);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 16px;
-            overflow-x: auto;
-            margin: 16px 0;
+            font-family: "SF Mono", Monaco, Consolas, monospace;
+            font-size: 14px;
         }
 
         pre code {
@@ -232,129 +46,82 @@
             padding: 0;
         }
 
-        ul, ol {
-            margin: 16px 0;
-            padding-left: 32px;
-        }
-
-        li {
-            margin: 8px 0;
-        }
-
-        hr {
-            border: none;
-            border-top: 1px solid var(--border-color);
-            margin: 24px 0;
-        }
-
         table {
             width: 100%;
             border-collapse: collapse;
-            margin: 16px 0;
+            margin: 20px 0;
         }
 
         th, td {
-            border: 1px solid var(--border-color);
+            border: 1px solid #ddd;
             padding: 8px 12px;
             text-align: left;
         }
 
         th {
-            background: var(--bg-secondary);
+            background: #f5f5f5;
             font-weight: 600;
         }
 
-        .chapter-nav {
-            display: flex;
-            justify-content: space-between;
-            margin: 40px 0;
-            padding: 20px 0;
-            border-top: 1px solid var(--border-color);
+        ul, ol {
+            margin: 10px 0;
+            padding-left: 30px;
         }
 
-        .chapter-nav a {
-            color: var(--accent-color);
+        li {
+            margin: 5px 0;
+        }
+
+        a {
+            color: #0066cc;
             text-decoration: none;
-            padding: 10px 20px;
-            border: 1px solid var(--accent-color);
-            border-radius: 6px;
-            transition: all 0.2s;
         }
 
-        .chapter-nav a:hover {
-            background: var(--accent-color);
-            color: white;
+        a:hover {
+            text-decoration: underline;
+        }
+
+        strong {
+            font-weight: 600;
+        }
+
+        .nav {
+            margin: 40px 0;
+            padding: 15px 0;
+            border-top: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .nav a {
+            margin-right: 20px;
         }
 
         @media print {
-            .sidebar, .sidebar-toggle, .theme-toggle, .progress-bar {
-                display: none;
-            }
-            main {
-                margin-left: 0;
-                margin-top: 0;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-            .sidebar.show {
-                transform: translateX(0);
-            }
-            main {
-                margin-left: 0;
-                padding: 20px;
-            }
+            body { margin: 0; padding: 20px; }
+            .nav { display: none; }
         }
     </style>
 </head>
 <body>
-    <div class="progress-bar"></div>
+    <div class="nav">
+        <a href="index.html">← 返回主页</a>
+    </div>
 
-    <header>
-        <div class="header-title">并查集</div>
-        <div class="header-controls">
-            <button class="theme-toggle" onclick="toggleTheme()" title="切换主题">🌓</button>
-        </div>
-    </header>
-
-    <nav class="sidebar" id="sidebar">
-        <h3>目录</h3>
-        <ul class="toc">
-    <li><a href="#什么时候用">什么时候用</a></li>
-    <li><a href="#核心模板">核心模板</a></li>
-    <li><a href="#例题演示">例题演示</a></li>
-    <li><a href="#常见陷阱">常见陷阱</a></li>
-    <li><a href="#适用场景总结">适用场景总结</a></li>
-</ul>
-    </nav>
-
-    <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
-
-    <main>
-        <h1>并查集</h1>
-
-        <h2 id="什么时候用">什么时候用</h2>
+    <h1>并查集</h1>
+<h2>什么时候用</h2>
 <p>看到以下特征优先考虑并查集：</p>
 <ul>
 <li><strong>动态连通性</strong>：判断两个元素是否连通</li>
-<ul>
 <li><strong>集合合并</strong>：合并两个集合</li>
-<ul>
 <li><strong>连通分量计数</strong>：统计有多少个独立的连通区域</li>
-<ul>
 <li><strong>最小生成树</strong>：Kruskal 算法</li>
-<ul>
 <li><strong>朋友圈、社交网络</strong>：判断关系传递</li>
-<ul>
 <li>题目中出现"连通"、"合并"、"分组"、"等价关系"等字眼</li>
+</ul>
 <p>核心思路：<strong>用树形结构表示集合，支持快速查找根节点和合并操作</strong>。</p>
-<h2 id="核心模板">核心模板</h2>
-<h3 id="基础并查集">基础并查集</h3>
-<pre><code class="language-cpp">
-class UnionFind {
+<h2>核心模板</h2>
+<h3>基础并查集</h3>
+<pre><code>class UnionFind {
 private:
     vector&lt;int&gt; parent;
     vector&lt;int&gt; rank;  // 树的高度
@@ -409,11 +176,9 @@ public:
     int getCount() {
         return count;
     }
-};
-</code></pre>
-<h3 id="带权并查集">带权并查集</h3>
-<pre><code class="language-cpp">
-class WeightedUnionFind {
+};</code></pre>
+<h3>带权并查集</h3>
+<pre><code>class WeightedUnionFind {
 private:
     vector&lt;int&gt; parent;
     vector&lt;int&gt; weight;  // 到父节点的权值
@@ -446,14 +211,12 @@ public:
             weight[rootX] = weight[y] - weight[x] + w;
         }
     }
-};
-</code></pre>
-<h2 id="例题演示">例题演示</h2>
-<h3 id="例题-1省份数量朋友圈">例题 1：省份数量（朋友圈）</h3>
+};</code></pre>
+<h2>例题演示</h2>
+<h3>例题 1：省份数量（朋友圈）</h3>
 <p><strong>题目</strong>：给定 n×n 矩阵，<code>isConnected[i][j] = 1</code> 表示城市 i 和 j 直接相连，求省份数量（连通分量数量）。</p>
 <p><strong>思路</strong>：并查集，合并所有直接相连的城市，最后统计根节点数量。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 class UnionFind {
@@ -520,20 +283,18 @@ int main() {
     cout &lt;&lt; findCircleNum(isConnected) &lt;&lt; &quot;\n&quot;;
     
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：时间 <code>O(n^2 × α(n))</code>，α 是反阿克曼函数，几乎为常数</p>
 <p><strong>易错点</strong>：</p>
 <ul>
 <li>矩阵是对称的，只需要遍历上三角</li>
-<ul>
 <li>初始时有 n 个连通分量</li>
-<hr>
-<h3 id="例题-2冗余连接检测环">例题 2：冗余连接（检测环）</h3>
+</ul>
+<p>---</p>
+<h3>例题 2：冗余连接（检测环）</h3>
 <p><strong>题目</strong>：给定无向图的边列表，找出最后一条导致成环的边。</p>
 <p><strong>思路</strong>：并查集，逐条加边，如果两个节点已经连通则该边会导致环。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 class UnionFind {
@@ -592,20 +353,18 @@ int main() {
     cout &lt;&lt; result[0] &lt;&lt; &quot; &quot; &lt;&lt; result[1] &lt;&lt; &quot;\n&quot;;
     
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：时间 <code>O(n × α(n))</code>，空间 <code>O(n)</code></p>
 <p><strong>易错点</strong>：</p>
 <ul>
 <li>节点编号从 1 开始，数组要开 n+1</li>
-<ul>
 <li>第一条导致环的边就是答案</li>
-<hr>
-<h3 id="例题-3账户合并">例题 3：账户合并</h3>
+</ul>
+<p>---</p>
+<h3>例题 3：账户合并</h3>
 <p><strong>题目</strong>：给定账户列表，每个账户有名字和若干邮箱，如果两个账户有相同邮箱则属于同一人，合并账户。</p>
 <p><strong>思路</strong>：并查集，将邮箱作为节点，相同账户的邮箱合并。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 class UnionFind {
@@ -698,22 +457,19 @@ int main() {
     }
     
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：时间 <code>O(n × k × α(n))</code>，n 是账户数，k 是平均邮箱数</p>
 <p><strong>易错点</strong>：</p>
 <ul>
 <li>并查集的节点是邮箱（字符串），不是账户</li>
-<ul>
 <li>同一账户的所有邮箱要合并到第一个邮箱</li>
-<ul>
 <li>结果要按邮箱字典序排序（用 set）</li>
-<hr>
-<h3 id="例题-4等式方程的可满足性">例题 4：等式方程的可满足性</h3>
+</ul>
+<p>---</p>
+<h3>例题 4：等式方程的可满足性</h3>
 <p><strong>题目</strong>：给定形如 "a==b" 或 "a!=b" 的方程，判断是否矛盾。</p>
 <p><strong>思路</strong>：先处理 ==，用并查集合并，再检查 != 是否矛盾。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 class UnionFind {
@@ -788,20 +544,18 @@ int main() {
     cout &lt;&lt; (equationsPossible(equations) ? &quot;YES&quot; : &quot;NO&quot;) &lt;&lt; &quot;\n&quot;;
     
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：时间 <code>O(n × α(26))</code> ≈ <code>O(n)</code>，空间 <code>O(26)</code> = <code>O(1)</code></p>
 <p><strong>易错点</strong>：</p>
 <ul>
 <li>要先处理 ==，再检查 !=</li>
-<ul>
 <li>字符映射到数字：<code>c - 'a'</code></li>
-<hr>
-<h3 id="例题-5最小生成树kruskal-算法">例题 5：最小生成树（Kruskal 算法）</h3>
+</ul>
+<p>---</p>
+<h3>例题 5：最小生成树（Kruskal 算法）</h3>
 <p><strong>题目</strong>：给定带权无向图，求最小生成树的权值和。</p>
 <p><strong>思路</strong>：边按权值排序，用并查集判断是否成环，贪心选边。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 class UnionFind {
@@ -870,22 +624,19 @@ int main() {
     cout &lt;&lt; kruskal(n, edges) &lt;&lt; &quot;\n&quot;;
     
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：时间 <code>O(m log m)</code>，空间 <code>O(n)</code></p>
 <p><strong>易错点</strong>：</p>
 <ul>
 <li>边要按权值排序</li>
-<ul>
 <li>生成树有 n-1 条边，选够就可以停止</li>
-<ul>
 <li>如果选不够 n-1 条边说明图不连通</li>
-<hr>
-<h3 id="例题-6岛屿数量-ii动态加陆地">例题 6：岛屿数量 II（动态加陆地）</h3>
+</ul>
+<p>---</p>
+<h3>例题 6：岛屿数量 II（动态加陆地）</h3>
 <p><strong>题目</strong>：初始全是水，每次操作在某位置加一块陆地，返回每次操作后的岛屿数量。</p>
 <p><strong>思路</strong>：并查集，每次加陆地时检查四周，合并相邻陆地。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 class UnionFind {
@@ -975,22 +726,19 @@ int main() {
     }
     
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：时间 <code>O(k × α(mn))</code>，k 是操作数</p>
 <p><strong>易错点</strong>：</p>
 <ul>
 <li>二维坐标转一维：<code>x * n + y</code></li>
-<ul>
 <li>用 -1 标记水，防止和陆地索引混淆</li>
-<ul>
 <li>合并前要检查邻居是否是陆地</li>
-<hr>
-<h3 id="例题-7除法求值带权并查集">例题 7：除法求值（带权并查集）</h3>
+</ul>
+<p>---</p>
+<h3>例题 7：除法求值（带权并查集）</h3>
 <p><strong>题目</strong>：给定除法方程 <code>a / b = k</code>，和查询，求查询结果或返回 -1。</p>
 <p><strong>思路</strong>：带权并查集，权值表示到根节点的倍数关系。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 class UnionFind {
@@ -1080,22 +828,19 @@ int main() {
     }
     
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：时间 <code>O((n + q) × α(n))</code></p>
 <p><strong>易错点</strong>：</p>
 <ul>
 <li>weight[x] 表示 x 到 parent[x] 的倍数，即 x / parent[x]</li>
-<ul>
 <li>路径压缩时要累乘权值：<code>weight[x] *= weight[parent[x]]</code></li>
-<ul>
 <li>查询时：<code>x / y = weight[x] / weight[y]</code>（都是到同一根的倍数）</li>
-<hr>
-<h3 id="例题-8情侣牵手置换环">例题 8：情侣牵手（置换环）</h3>
+</ul>
+<p>---</p>
+<h3>例题 8：情侣牵手（置换环）</h3>
 <p><strong>题目</strong>：n 对情侣坐成一排，交换最少次数使得每对情侣相邻。</p>
 <p><strong>思路</strong>：并查集，将同一组的情侣合并，每个连通分量大小为 k 需要 k-1 次交换。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 class UnionFind {
@@ -1167,205 +912,102 @@ int main() {
     cout &lt;&lt; minSwapsCouples(row) &lt;&lt; &quot;\n&quot;;
     
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：时间 <code>O(n × α(n))</code>，空间 <code>O(n)</code></p>
 <p><strong>易错点</strong>：</p>
 <ul>
 <li>情侣对编号：<code>person / 2</code>（0 和 1 是一对，2 和 3 是一对...）</li>
-<ul>
 <li>每个连通分量大小为 k，需要 k-1 次交换</li>
-<ul>
 <li>这是置换环问题的经典模型</li>
-<hr>
-<h2 id="常见陷阱">常见陷阱</h2>
+</ul>
+<p>---</p>
+<h2>常见陷阱</h2>
 <ol>
 <li><strong>路径压缩</strong>：</li>
-<ul>
-<li>必须在 find 中实现：<code>parent[x] = find(parent[x])</code></li>
-<ul>
-<li>否则复杂度退化到 O(n)</li>
+</ol>
+<p>   - 必须在 find 中实现：<code>parent[x] = find(parent[x])</code></p>
+<p>   - 否则复杂度退化到 O(n)</p>
 <ol>
 <li><strong>按秩合并</strong>：</li>
-<ul>
-<li>将深度小的树合并到深度大的树</li>
-<ul>
-<li>防止树退化成链</li>
+</ol>
+<p>   - 将深度小的树合并到深度大的树</p>
+<p>   - 防止树退化成链</p>
 <ol>
 <li><strong>初始化</strong>：</li>
-<ul>
-<li>parent[i] = i（每个节点是自己的根）</li>
-<ul>
-<li>count = n（初始有 n 个连通分量）</li>
+</ol>
+<p>   - parent[i] = i（每个节点是自己的根）</p>
+<p>   - count = n（初始有 n 个连通分量）</p>
 <ol>
 <li><strong>带权并查集</strong>：</li>
-<ul>
-<li>路径压缩时要更新权值</li>
-<ul>
-<li>权值的含义要清晰（到父节点还是到根节点）</li>
+</ol>
+<p>   - 路径压缩时要更新权值</p>
+<p>   - 权值的含义要清晰（到父节点还是到根节点）</p>
 <ol>
 <li><strong>字符串节点</strong>：</li>
-<ul>
-<li>可以用 <code>unordered_map<string, string></code> 作为 parent</li>
-<ul>
-<li>或者先映射到整数</li>
-<h2 id="适用场景总结">适用场景总结</h2>
+</ol>
+<p>   - 可以用 <code>unordered_map<string, string></code> 作为 parent</p>
+<p>   - 或者先映射到整数</p>
+<h2>适用场景总结</h2>
 <table>
-<thead>
-<tr>
+<thead><tr>
 <th>问题类型</th>
 <th>关键操作</th>
 <th>时间复杂度</th>
-</tr>
-</thead>
+</tr></thead>
 <tbody>
-<table>
-<thead>
 <tr>
-<th>---------</th>
-<th>---------</th>
-<th>-----------</th>
+<td>连通性判断</td>
+<td>find</td>
+<td>O(α(n))</td>
 </tr>
-</thead>
-<tbody>
-<table>
-<thead>
 <tr>
-<th>连通性判断</th>
-<th>find</th>
-<th>O(α(n))</th>
+<td>集合合并</td>
+<td>unite</td>
+<td>O(α(n))</td>
 </tr>
-</thead>
-<tbody>
-<table>
-<thead>
 <tr>
-<th>集合合并</th>
-<th>unite</th>
-<th>O(α(n))</th>
+<td>连通分量计数</td>
+<td>getCount</td>
+<td>O(1)</td>
 </tr>
-</thead>
-<tbody>
-<table>
-<thead>
 <tr>
-<th>连通分量计数</th>
-<th>getCount</th>
-<th>O(1)</th>
+<td>检测环</td>
+<td>unite 返回 false</td>
+<td>O(α(n))</td>
 </tr>
-</thead>
-<tbody>
-<table>
-<thead>
 <tr>
-<th>检测环</th>
-<th>unite 返回 false</th>
-<th>O(α(n))</th>
+<td>最小生成树</td>
+<td>排序 + unite</td>
+<td>O(m log m)</td>
 </tr>
-</thead>
-<tbody>
-<table>
-<thead>
 <tr>
-<th>最小生成树</th>
-<th>排序 + unite</th>
-<th>O(m log m)</th>
+<td>动态连通性</td>
+<td>逐步 unite</td>
+<td>O(k × α(n))</td>
 </tr>
-</thead>
-<tbody>
-<table>
-<thead>
 <tr>
-<th>动态连通性</th>
-<th>逐步 unite</th>
-<th>O(k × α(n))</th>
+<td>等价关系</td>
+<td>unite + connected</td>
+<td>O(α(n))</td>
 </tr>
-</thead>
-<tbody>
-<table>
-<thead>
 <tr>
-<th>等价关系</th>
-<th>unite + connected</th>
-<th>O(α(n))</th>
+<td>带权关系</td>
+<td>带权并查集</td>
+<td>O(α(n))</td>
 </tr>
-</thead>
-<tbody>
-<table>
-<thead>
-<tr>
-<th>带权关系</th>
-<th>带权并查集</th>
-<th>O(α(n))</th>
-</tr>
-</thead>
-<tbody>
+</tbody>
+</table>
 <p><strong>核心技巧</strong>：</p>
 <ul>
 <li>路径压缩：<code>parent[x] = find(parent[x])</code></li>
-<ul>
 <li>按秩合并：将小树合并到大树</li>
-<ul>
 <li>两个优化使得单次操作接近 O(1)</li>
-<ul>
 <li>并查集只能合并，不能拆分</li>
-<ul>
 <li>适合处理动态连通性和等价关系</li>
+</ul>
 
-        <div class="chapter-nav">
-    <a href="09-bfs-grid.html" class="prev-chapter">← BFS与网格</a>
-    <a href="11-graph-traversal.html" class="next-chapter">图遍历 →</a>
-</div>
-    </main>
-
-    <script>
-        // 主题切换
-        function toggleTheme() {
-            document.body.classList.toggle('dark-mode');
-            localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
-        }
-
-        // 加载保存的主题
-        if (localStorage.getItem('theme') === 'dark') {
-            document.body.classList.add('dark-mode');
-        }
-
-        // 侧边栏切换
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('collapsed');
-        }
-
-        // 进度条
-        window.addEventListener('scroll', () => {
-            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            const scrolled = (winScroll / height) * 100;
-            document.documentElement.style.setProperty('--scroll-progress', scrolled + '%');
-        });
-
-        // 目录高亮
-        const sections = document.querySelectorAll('h2[id]');
-        const tocLinks = document.querySelectorAll('.toc a');
-
-        window.addEventListener('scroll', () => {
-            let current = '';
-            sections.forEach(section => {
-                const sectionTop = section.offsetTop;
-                if (scrollY >= sectionTop - 100) {
-                    current = section.getAttribute('id');
-                }
-            });
-
-            tocLinks.forEach(link => {
-                link.classList.remove('active');
-                if (link.getAttribute('href') === '#' + current) {
-                    link.classList.add('active');
-                }
-            });
-        });
-
-        // 代码高亮
-        hljs.highlightAll();
-    </script>
+    <div class="nav">
+        <a href="09-bfs-grid.html">← 09 BFS与网格问题</a> | <a href="11-graph-traversal.html">11 图的遍历与连通性 →</a>
+    </div>
 </body>
 </html>

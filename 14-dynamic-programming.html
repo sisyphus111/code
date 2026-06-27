@@ -3,228 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>动态规划 - 算法竞赛速成</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <title>14 动态规划 - C++算法竞赛</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --bg-primary: #ffffff;
-            --bg-secondary: #f8f9fa;
-            --bg-code: #f6f8fa;
-            --text-primary: #24292f;
-            --text-secondary: #57606a;
-            --border-color: #d0d7de;
-            --accent-color: #0969da;
-            --accent-hover: #0550ae;
-            --sidebar-width: 280px;
-            --header-height: 60px;
-        }
-
-        body.dark-mode {
-            --bg-primary: #0d1117;
-            --bg-secondary: #161b22;
-            --bg-code: #161b22;
-            --text-primary: #c9d1d9;
-            --text-secondary: #8b949e;
-            --border-color: #30363d;
-            --accent-color: #58a6ff;
-            --accent-hover: #79c0ff;
-        }
-
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
-            line-height: 1.6;
-            color: var(--text-primary);
-            background-color: var(--bg-primary);
-            transition: background-color 0.3s, color 0.3s;
-        }
-
-        .progress-bar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--accent-color) 0%, var(--accent-color) var(--scroll-progress, 0%), transparent var(--scroll-progress, 0%));
-            z-index: 1001;
-        }
-
-        header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: var(--header-height);
-            background: var(--bg-secondary);
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 20px;
-            z-index: 1000;
-        }
-
-        .header-title {
-            font-size: 20px;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .header-controls {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-        }
-
-        .theme-toggle {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 24px;
-            padding: 5px;
-            transition: transform 0.2s;
-        }
-
-        .theme-toggle:hover {
-            transform: scale(1.1);
-        }
-
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: var(--header-height);
-            bottom: 0;
-            width: var(--sidebar-width);
-            background: var(--bg-secondary);
-            border-right: 1px solid var(--border-color);
-            overflow-y: auto;
-            padding: 20px;
-            transition: transform 0.3s;
-        }
-
-        .sidebar.collapsed {
-            transform: translateX(-100%);
-        }
-
-        .sidebar-toggle {
-            position: fixed;
-            left: var(--sidebar-width);
-            top: calc(var(--header-height) + 20px);
-            background: var(--accent-color);
-            color: white;
-            border: none;
-            border-radius: 0 4px 4px 0;
-            padding: 10px 8px;
-            cursor: pointer;
-            z-index: 999;
-            transition: left 0.3s;
-        }
-
-        .sidebar.collapsed + .sidebar-toggle {
-            left: 0;
-        }
-
-        .sidebar h3 {
-            font-size: 14px;
-            font-weight: 600;
-            text-transform: uppercase;
-            color: var(--text-secondary);
-            margin-bottom: 10px;
-        }
-
-        .toc {
-            list-style: none;
-        }
-
-        .toc li {
-            margin: 5px 0;
-        }
-
-        .toc a {
-            color: var(--text-primary);
-            text-decoration: none;
-            display: block;
-            padding: 6px 10px;
-            border-radius: 6px;
-            transition: background 0.2s;
-        }
-
-        .toc a:hover {
-            background: var(--bg-primary);
-        }
-
-        .toc a.active {
-            background: var(--accent-color);
-            color: white;
-        }
-
-        main {
-            margin-left: var(--sidebar-width);
-            margin-top: var(--header-height);
-            padding: 40px;
             max-width: 900px;
-            transition: margin-left 0.3s;
+            margin: 40px auto;
+            padding: 0 20px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            font-size: 16px;
+            line-height: 1.6;
+            color: #333;
         }
 
-        .sidebar.collapsed ~ main {
-            margin-left: 0;
-        }
+        h1 { font-size: 32px; margin: 40px 0 20px; border-bottom: 2px solid #333; padding-bottom: 10px; }
+        h2 { font-size: 24px; margin: 30px 0 15px; }
+        h3 { font-size: 20px; margin: 20px 0 10px; }
+        h4 { font-size: 18px; margin: 20px 0 10px; }
 
-        h1 {
-            font-size: 32px;
-            margin-bottom: 10px;
-            color: var(--text-primary);
-        }
+        p { margin: 10px 0; }
 
-        h2 {
-            font-size: 24px;
-            margin-top: 40px;
-            margin-bottom: 16px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid var(--border-color);
-            color: var(--text-primary);
-        }
-
-        h3 {
-            font-size: 20px;
-            margin-top: 24px;
-            margin-bottom: 12px;
-            color: var(--text-primary);
-        }
-
-        h4 {
-            font-size: 18px;
-            margin-top: 20px;
-            margin-bottom: 10px;
-            color: var(--text-primary);
-        }
-
-        p {
-            margin: 16px 0;
-            color: var(--text-primary);
+        pre {
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            padding: 15px;
+            overflow-x: auto;
+            font-size: 14px;
+            line-height: 1.4;
+            margin: 15px 0;
         }
 
         code {
-            background: var(--bg-code);
-            padding: 2px 6px;
+            background: #f5f5f5;
+            padding: 2px 5px;
             border-radius: 3px;
-            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
-            font-size: 0.9em;
-        }
-
-        pre {
-            background: var(--bg-code);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 16px;
-            overflow-x: auto;
-            margin: 16px 0;
+            font-family: "SF Mono", Monaco, Consolas, monospace;
+            font-size: 14px;
         }
 
         pre code {
@@ -232,165 +46,115 @@
             padding: 0;
         }
 
-        ul, ol {
-            margin: 16px 0;
-            padding-left: 32px;
-        }
-
-        li {
-            margin: 8px 0;
-        }
-
-        hr {
-            border: none;
-            border-top: 1px solid var(--border-color);
-            margin: 24px 0;
-        }
-
         table {
             width: 100%;
             border-collapse: collapse;
-            margin: 16px 0;
+            margin: 20px 0;
         }
 
         th, td {
-            border: 1px solid var(--border-color);
+            border: 1px solid #ddd;
             padding: 8px 12px;
             text-align: left;
         }
 
         th {
-            background: var(--bg-secondary);
+            background: #f5f5f5;
             font-weight: 600;
         }
 
-        .chapter-nav {
-            display: flex;
-            justify-content: space-between;
-            margin: 40px 0;
-            padding: 20px 0;
-            border-top: 1px solid var(--border-color);
+        ul, ol {
+            margin: 10px 0;
+            padding-left: 30px;
         }
 
-        .chapter-nav a {
-            color: var(--accent-color);
+        li {
+            margin: 5px 0;
+        }
+
+        a {
+            color: #0066cc;
             text-decoration: none;
-            padding: 10px 20px;
-            border: 1px solid var(--accent-color);
-            border-radius: 6px;
-            transition: all 0.2s;
         }
 
-        .chapter-nav a:hover {
-            background: var(--accent-color);
-            color: white;
+        a:hover {
+            text-decoration: underline;
+        }
+
+        strong {
+            font-weight: 600;
+        }
+
+        .nav {
+            margin: 40px 0;
+            padding: 15px 0;
+            border-top: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .nav a {
+            margin-right: 20px;
         }
 
         @media print {
-            .sidebar, .sidebar-toggle, .theme-toggle, .progress-bar {
-                display: none;
-            }
-            main {
-                margin-left: 0;
-                margin-top: 0;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-            .sidebar.show {
-                transform: translateX(0);
-            }
-            main {
-                margin-left: 0;
-                padding: 20px;
-            }
+            body { margin: 0; padding: 20px; }
+            .nav { display: none; }
         }
     </style>
 </head>
 <body>
-    <div class="progress-bar"></div>
+    <div class="nav">
+        <a href="index.html">← 返回主页</a>
+    </div>
 
-    <header>
-        <div class="header-title">动态规划</div>
-        <div class="header-controls">
-            <button class="theme-toggle" onclick="toggleTheme()" title="切换主题">🌓</button>
-        </div>
-    </header>
-
-    <nav class="sidebar" id="sidebar">
-        <h3>目录</h3>
-        <ul class="toc">
-    <li><a href="#什么时候用">什么时候用</a></li>
-    <li><a href="#核心要点">核心要点</a></li>
-    <li><a href="#dp-分类">DP 分类</a></li>
-    <li><a href="#例题演示">例题演示</a></li>
-    <li><a href="#常见陷阱">常见陷阱</a></li>
-    <li><a href="#dp-解题步骤">DP 解题步骤</a></li>
-    <li><a href="#优化技巧">优化技巧</a></li>
-    <li><a href="#适用场景总结">适用场景总结</a></li>
-</ul>
-    </nav>
-
-    <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
-
-    <main>
-        <h1>动态规划</h1>
-
-        <h2 id="什么时候用">什么时候用</h2>
+    <h1>动态规划</h1>
+<h2>什么时候用</h2>
 <p>看到以下特征优先考虑动态规划：</p>
 <ul>
 <li>求最优解（最大值、最小值、最长、最短）</li>
-<ul>
 <li>求方案数、可行性判断</li>
-<ul>
 <li>问题可以分解为重叠子问题</li>
-<ul>
 <li>当前状态只依赖之前的状态（最优子结构）</li>
-<ul>
 <li>暴力递归会超时，但子问题会重复计算</li>
+</ul>
 <p>核心思路：<strong>定义状态 → 找转移方程 → 确定边界 → 确定计算顺序</strong>。</p>
-<h2 id="核心要点">核心要点</h2>
+<h2>核心要点</h2>
 <ol>
 <li><strong>状态定义</strong>：<code>dp[i]</code> 或 <code>dp[i][j]</code> 代表什么含义</li>
-<ol>
 <li><strong>转移方程</strong>：当前状态如何从之前的状态得到</li>
-<ol>
 <li><strong>初始状态</strong>：边界条件是什么</li>
-<ol>
 <li><strong>计算顺序</strong>：从小到大还是从大到小</li>
-<ol>
 <li><strong>优化空间</strong>：能否滚动数组、能否降维</li>
-<h2 id="dp-分类">DP 分类</h2>
-<h3 id="1-线性-dp">1. 线性 DP</h3>
+</ol>
+<h2>DP 分类</h2>
+<h3>1. 线性 DP</h3>
 <ul>
 <li>单序列：爬楼梯、打家劫舍</li>
-<ul>
 <li>双序列：最长公共子序列、编辑距离</li>
-<h3 id="2-背包问题">2. 背包问题</h3>
+</ul>
+<h3>2. 背包问题</h3>
 <ul>
 <li>0/1 背包：每个物品选或不选</li>
-<ul>
 <li>完全背包：每个物品可以选无限次</li>
-<ul>
 <li>多重背包：每个物品有数量限制</li>
-<h3 id="3-区间-dp">3. 区间 DP</h3>
+</ul>
+<h3>3. 区间 DP</h3>
 <ul>
 <li>石子合并、括号匹配</li>
-<h3 id="4-树形-dp">4. 树形 DP</h3>
+</ul>
+<h3>4. 树形 DP</h3>
 <ul>
 <li>树的直径、树上背包</li>
-<h3 id="5-状态压缩-dp">5. 状态压缩 DP</h3>
+</ul>
+<h3>5. 状态压缩 DP</h3>
 <ul>
 <li>旅行商问题、集合覆盖</li>
-<h2 id="例题演示">例题演示</h2>
-<h3 id="例题-1爬楼梯基础线性-dp">例题 1：爬楼梯（基础线性 DP）</h3>
+</ul>
+<h2>例题演示</h2>
+<h3>例题 1：爬楼梯（基础线性 DP）</h3>
 <p><strong>题目</strong>：爬 n 阶楼梯，每次可以爬 1 或 2 阶，有多少种方法？</p>
 <p><strong>思路</strong>：<code>dp[i]</code> 表示爬到第 i 阶的方法数，可以从第 i-1 阶爬 1 步，或从第 i-2 阶爬 2 步。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 int main() {
@@ -412,11 +176,9 @@ int main() {
     
     cout &lt;&lt; dp[n] &lt;&lt; &quot;\n&quot;;
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>空间优化</strong>：只需要记录前两个状态。</p>
-<pre><code class="language-cpp">
-long long climb_stairs(int n) {
+<pre><code>long long climb_stairs(int n) {
     if (n &lt;= 2) return n;
     
     long long prev2 = 1, prev1 = 2;
@@ -426,19 +188,17 @@ long long climb_stairs(int n) {
         prev1 = cur;
     }
     return prev1;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：时间 <code>O(n)</code>，空间 <code>O(1)</code></p>
-<hr>
-<h3 id="例题-2打家劫舍线性-dp---状态依赖">例题 2：打家劫舍（线性 DP - 状态依赖）</h3>
+<p>---</p>
+<h3>例题 2：打家劫舍（线性 DP - 状态依赖）</h3>
 <p><strong>题目</strong>：一排房子，每个房子有金额，不能偷相邻的房子，求最大金额。</p>
 <p><strong>思路</strong>：<code>dp[i]</code> 表示前 i 个房子能偷的最大金额。</p>
 <ul>
 <li>不偷第 i 个：<code>dp[i-1]</code></li>
-<ul>
 <li>偷第 i 个：<code>dp[i-2] + nums[i]</code></li>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+</ul>
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 int main() {
@@ -468,11 +228,9 @@ int main() {
     
     cout &lt;&lt; dp[n - 1] &lt;&lt; &quot;\n&quot;;
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>空间优化版本</strong>：</p>
-<pre><code class="language-cpp">
-int rob(vector&lt;int&gt;&amp; nums) {
+<pre><code>int rob(vector&lt;int&gt;&amp; nums) {
     int n = nums.size();
     if (n == 0) return 0;
     if (n == 1) return nums[0];
@@ -487,17 +245,15 @@ int rob(vector&lt;int&gt;&amp; nums) {
     }
     
     return prev1;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：时间 <code>O(n)</code>，空间 <code>O(1)</code></p>
 <p><strong>易错点</strong>：初始状态 <code>dp[1] = max(nums[0], nums[1])</code>，不是 <code>nums[1]</code></p>
-<hr>
-<h3 id="例题-3最长上升子序列-lis经典序列-dp">例题 3：最长上升子序列 LIS（经典序列 DP）</h3>
+<p>---</p>
+<h3>例题 3：最长上升子序列 LIS（经典序列 DP）</h3>
 <p><strong>题目</strong>：给定数组，求最长严格上升子序列长度。</p>
 <p><strong>思路 1：O(n²) DP</strong></p>
 <p><code>dp[i]</code> 表示以 <code>nums[i]</code> 结尾的最长上升子序列长度。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 int main() {
@@ -522,12 +278,10 @@ int main() {
     
     cout &lt;&lt; ans &lt;&lt; &quot;\n&quot;;
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>思路 2：O(n log n) 贪心 + 二分</strong></p>
 <p>维护一个数组 <code>tails</code>，<code>tails[i]</code> 表示长度为 <code>i+1</code> 的上升子序列的最小末尾元素。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 int length_of_LIS(vector&lt;int&gt;&amp; nums) {
@@ -555,24 +309,22 @@ int main() {
     
     cout &lt;&lt; length_of_LIS(nums) &lt;&lt; &quot;\n&quot;;
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：</p>
 <ul>
 <li>DP 方法：时间 <code>O(n²)</code>，空间 <code>O(n)</code></li>
-<ul>
 <li>贪心方法：时间 <code>O(n log n)</code>，空间 <code>O(n)</code></li>
+</ul>
 <p><strong>易错点</strong>：</p>
 <ul>
 <li><code>lower_bound</code> 找第一个 <code>>=</code> 的位置（严格上升）</li>
-<ul>
 <li>如果是非严格上升，用 <code>upper_bound</code></li>
-<hr>
-<h3 id="例题-4最长公共子序列-lcs双序列-dp">例题 4：最长公共子序列 LCS（双序列 DP）</h3>
+</ul>
+<p>---</p>
+<h3>例题 4：最长公共子序列 LCS（双序列 DP）</h3>
 <p><strong>题目</strong>：给定两个字符串，求最长公共子序列长度。</p>
 <p><strong>思路</strong>：<code>dp[i][j]</code> 表示 <code>s1[0..i-1]</code> 和 <code>s2[0..j-1]</code> 的 LCS 长度。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 int main() {
@@ -594,11 +346,9 @@ int main() {
     
     cout &lt;&lt; dp[m][n] &lt;&lt; &quot;\n&quot;;
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>空间优化</strong>：只需要两行。</p>
-<pre><code class="language-cpp">
-int lcs(string s1, string s2) {
+<pre><code>int lcs(string s1, string s2) {
     int m = s1.size(), n = s2.size();
     vector&lt;int&gt; prev(n + 1, 0), cur(n + 1, 0);
     
@@ -614,15 +364,13 @@ int lcs(string s1, string s2) {
     }
     
     return prev[n];
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：时间 <code>O(mn)</code>，空间 <code>O(n)</code></p>
-<hr>
-<h3 id="例题-5编辑距离双序列-dp">例题 5：编辑距离（双序列 DP）</h3>
+<p>---</p>
+<h3>例题 5：编辑距离（双序列 DP）</h3>
 <p><strong>题目</strong>：将字符串 s1 转换为 s2，可以插入、删除、替换字符，求最少操作数。</p>
 <p><strong>思路</strong>：<code>dp[i][j]</code> 表示 <code>s1[0..i-1]</code> 转换为 <code>s2[0..j-1]</code> 的最少操作数。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 int main() {
@@ -652,16 +400,14 @@ int main() {
     
     cout &lt;&lt; dp[m][n] &lt;&lt; &quot;\n&quot;;
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：时间 <code>O(mn)</code>，空间 <code>O(mn)</code></p>
 <p><strong>易错点</strong>：初始状态要设置为从空串转换的代价</p>
-<hr>
-<h3 id="例题-601-背包经典背包-dp">例题 6：0/1 背包（经典背包 DP）</h3>
+<p>---</p>
+<h3>例题 6：0/1 背包（经典背包 DP）</h3>
 <p><strong>题目</strong>：n 个物品，每个有重量 w[i] 和价值 v[i]，背包容量 W，求最大价值。</p>
 <p><strong>思路</strong>：<code>dp[i][j]</code> 表示前 i 个物品，容量 j 的最大价值。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 int main() {
@@ -688,11 +434,9 @@ int main() {
     
     cout &lt;&lt; dp[n][W] &lt;&lt; &quot;\n&quot;;
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>空间优化</strong>：逆序遍历容量。</p>
-<pre><code class="language-cpp">
-int knapsack_01(int n, int W, vector&lt;int&gt;&amp; w, vector&lt;int&gt;&amp; v) {
+<pre><code>int knapsack_01(int n, int W, vector&lt;int&gt;&amp; w, vector&lt;int&gt;&amp; v) {
     vector&lt;int&gt; dp(W + 1, 0);
     
     for (int i = 1; i &lt;= n; ++i) {
@@ -702,16 +446,14 @@ int knapsack_01(int n, int W, vector&lt;int&gt;&amp; w, vector&lt;int&gt;&amp; v
     }
     
     return dp[W];
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：时间 <code>O(nW)</code>，空间 <code>O(W)</code></p>
 <p><strong>易错点</strong>：一维优化时必须逆序遍历，否则会重复选择同一物品</p>
-<hr>
-<h3 id="例题-7完全背包">例题 7：完全背包</h3>
+<p>---</p>
+<h3>例题 7：完全背包</h3>
 <p><strong>题目</strong>：n 个物品，每个可以选无限次，背包容量 W，求最大价值。</p>
 <p><strong>思路</strong>：与 0/1 背包类似，但容量正序遍历。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 int main() {
@@ -733,16 +475,14 @@ int main() {
     
     cout &lt;&lt; dp[W] &lt;&lt; &quot;\n&quot;;
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：时间 <code>O(nW)</code>，空间 <code>O(W)</code></p>
 <p><strong>易错点</strong>：完全背包正序遍历，0/1 背包逆序遍历</p>
-<hr>
-<h3 id="例题-8零钱兑换完全背包---求最少数量">例题 8：零钱兑换（完全背包 - 求最少数量）</h3>
+<p>---</p>
+<h3>例题 8：零钱兑换（完全背包 - 求最少数量）</h3>
 <p><strong>题目</strong>：给定面额数组 coins，凑成金额 amount，求最少硬币数。</p>
 <p><strong>思路</strong>：<code>dp[i]</code> 表示凑成金额 i 的最少硬币数。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 int main() {
@@ -767,16 +507,14 @@ int main() {
     
     cout &lt;&lt; (dp[amount] == INT_MAX ? -1 : dp[amount]) &lt;&lt; &quot;\n&quot;;
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：时间 <code>O(n × amount)</code>，空间 <code>O(amount)</code></p>
 <p><strong>易错点</strong>：初始值设为 <code>INT_MAX</code>，更新时检查是否为 <code>INT_MAX</code></p>
-<hr>
-<h3 id="例题-9零钱兑换-ii完全背包---求方案数">例题 9：零钱兑换 II（完全背包 - 求方案数）</h3>
+<p>---</p>
+<h3>例题 9：零钱兑换 II（完全背包 - 求方案数）</h3>
 <p><strong>题目</strong>：给定面额数组 coins，凑成金额 amount，求方案数。</p>
 <p><strong>思路</strong>：<code>dp[i]</code> 表示凑成金额 i 的方案数。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 int main() {
@@ -799,16 +537,14 @@ int main() {
     
     cout &lt;&lt; dp[amount] &lt;&lt; &quot;\n&quot;;
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：时间 <code>O(n × amount)</code>，空间 <code>O(amount)</code></p>
 <p><strong>易错点</strong>：枚举顺序影响结果，先枚举物品再枚举容量（组合），先枚举容量再枚举物品（排列）</p>
-<hr>
-<h3 id="例题-10石子合并区间-dp">例题 10：石子合并（区间 DP）</h3>
+<p>---</p>
+<h3>例题 10：石子合并（区间 DP）</h3>
 <p><strong>题目</strong>：n 堆石子排成一排，每次合并相邻两堆，代价是两堆石子数之和，求最小总代价。</p>
 <p><strong>思路</strong>：<code>dp[i][j]</code> 表示合并第 i 到 j 堆的最小代价。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 int main() {
@@ -839,20 +575,18 @@ int main() {
     
     cout &lt;&lt; dp[1][n] &lt;&lt; &quot;\n&quot;;
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：时间 <code>O(n³)</code>，空间 <code>O(n²)</code></p>
 <p><strong>易错点</strong>：</p>
 <ul>
 <li>区间 DP 要按区间长度递增枚举</li>
-<ul>
 <li>合并代价是 <code>sum[j] - sum[i-1]</code>（前缀和）</li>
-<hr>
-<h3 id="例题-11最大正方形二维-dp">例题 11：最大正方形（二维 DP）</h3>
+</ul>
+<p>---</p>
+<h3>例题 11：最大正方形（二维 DP）</h3>
 <p><strong>题目</strong>：给定 0/1 矩阵，找到最大的全 1 正方形，返回面积。</p>
 <p><strong>思路</strong>：<code>dp[i][j]</code> 表示以 <code>(i, j)</code> 为右下角的最大正方形边长。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 int main() {
@@ -884,16 +618,14 @@ int main() {
     
     cout &lt;&lt; max_side * max_side &lt;&lt; &quot;\n&quot;;
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：时间 <code>O(mn)</code>，空间 <code>O(mn)</code></p>
 <p><strong>易错点</strong>：转移方程是三个方向的最小值加 1</p>
-<hr>
-<h3 id="例题-12分割等和子集01-背包变形">例题 12：分割等和子集（0/1 背包变形）</h3>
+<p>---</p>
+<h3>例题 12：分割等和子集（0/1 背包变形）</h3>
 <p><strong>题目</strong>：给定数组，判断能否分成两个子集，使得两个子集元素和相等。</p>
 <p><strong>思路</strong>：转化为背包问题，目标是凑成 <code>sum/2</code>。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 int main() {
@@ -924,118 +656,51 @@ int main() {
     
     cout &lt;&lt; (dp[target] ? &quot;YES&quot; : &quot;NO&quot;) &lt;&lt; &quot;\n&quot;;
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：时间 <code>O(n × sum)</code>，空间 <code>O(sum)</code></p>
 <p><strong>易错点</strong>：必须逆序遍历，避免重复使用元素</p>
-<hr>
-<h2 id="常见陷阱">常见陷阱</h2>
+<p>---</p>
+<h2>常见陷阱</h2>
 <ol>
 <li><strong>状态定义不清</strong>：<code>dp[i]</code> 到底是以 i 结尾还是前 i 个？明确定义</li>
-<ol>
 <li><strong>初始状态错误</strong>：边界条件要仔细检查</li>
-<ol>
 <li><strong>转移方程遗漏情况</strong>：所有可能的转移都考虑到了吗？</li>
-<ol>
 <li><strong>循环顺序错误</strong>：</li>
-<ul>
-<li>0/1 背包：逆序</li>
-<ul>
-<li>完全背包：正序</li>
-<ul>
-<li>区间 DP：按长度递增</li>
+</ol>
+<p>   - 0/1 背包：逆序</p>
+<p>   - 完全背包：正序</p>
+<p>   - 区间 DP：按长度递增</p>
 <ol>
 <li><strong>空间优化后出错</strong>：滚动数组要注意依赖关系</li>
-<ol>
 <li><strong>整数溢出</strong>：累加、乘法用 <code>long long</code></li>
-<ol>
 <li><strong>返回值错误</strong>：注意是返回 <code>dp[n]</code> 还是 <code>max(dp)</code></li>
-<h2 id="dp-解题步骤">DP 解题步骤</h2>
+</ol>
+<h2>DP 解题步骤</h2>
 <ol>
 <li><strong>确定状态</strong>：变量是什么，维度是多少</li>
-<ol>
 <li><strong>写出状态转移方程</strong>：当前状态如何从之前状态得到</li>
-<ol>
 <li><strong>确定初始状态</strong>：边界条件</li>
-<ol>
 <li><strong>确定遍历顺序</strong>：从小到大还是从大到小</li>
-<ol>
 <li><strong>返回结果</strong>：最终答案在哪个状态</li>
-<h2 id="优化技巧">优化技巧</h2>
+</ol>
+<h2>优化技巧</h2>
 <ol>
 <li><strong>滚动数组</strong>：<code>dp[i]</code> 只依赖 <code>dp[i-1]</code>，用两个数组交替</li>
-<ol>
 <li><strong>降维</strong>：0/1 背包从二维降到一维</li>
-<ol>
 <li><strong>剪枝</strong>：提前结束不可能的状态</li>
-<ol>
 <li><strong>记忆化搜索</strong>：自顶向下的 DP，用递归 + 缓存</li>
-<h2 id="适用场景总结">适用场景总结</h2>
+</ol>
+<h2>适用场景总结</h2>
 <ul>
 <li><strong>线性 DP</strong>：单序列或双序列最优化问题</li>
-<ul>
 <li><strong>背包 DP</strong>：选择物品凑成目标的问题</li>
-<ul>
 <li><strong>区间 DP</strong>：合并、分割区间的问题</li>
-<ul>
 <li><strong>树形 DP</strong>：树上路径、子树统计的问题</li>
-<ul>
 <li><strong>状态压缩 DP</strong>：集合选择、排列组合的问题</li>
+</ul>
 
-        <div class="chapter-nav">
-    <a href="13-topological-sort.html" class="prev-chapter">← 拓扑排序</a>
-    <a href="15-tree.html" class="next-chapter">树 →</a>
-</div>
-    </main>
-
-    <script>
-        // 主题切换
-        function toggleTheme() {
-            document.body.classList.toggle('dark-mode');
-            localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
-        }
-
-        // 加载保存的主题
-        if (localStorage.getItem('theme') === 'dark') {
-            document.body.classList.add('dark-mode');
-        }
-
-        // 侧边栏切换
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('collapsed');
-        }
-
-        // 进度条
-        window.addEventListener('scroll', () => {
-            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            const scrolled = (winScroll / height) * 100;
-            document.documentElement.style.setProperty('--scroll-progress', scrolled + '%');
-        });
-
-        // 目录高亮
-        const sections = document.querySelectorAll('h2[id]');
-        const tocLinks = document.querySelectorAll('.toc a');
-
-        window.addEventListener('scroll', () => {
-            let current = '';
-            sections.forEach(section => {
-                const sectionTop = section.offsetTop;
-                if (scrollY >= sectionTop - 100) {
-                    current = section.getAttribute('id');
-                }
-            });
-
-            tocLinks.forEach(link => {
-                link.classList.remove('active');
-                if (link.getAttribute('href') === '#' + current) {
-                    link.classList.add('active');
-                }
-            });
-        });
-
-        // 代码高亮
-        hljs.highlightAll();
-    </script>
+    <div class="nav">
+        <a href="13-topological-sort.html">← 13 拓扑排序与DAG</a> | <a href="15-tree.html">15 树 →</a>
+    </div>
 </body>
 </html>

@@ -3,228 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>位运算 - 算法竞赛速成</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <title>18 位运算 - C++算法竞赛</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --bg-primary: #ffffff;
-            --bg-secondary: #f8f9fa;
-            --bg-code: #f6f8fa;
-            --text-primary: #24292f;
-            --text-secondary: #57606a;
-            --border-color: #d0d7de;
-            --accent-color: #0969da;
-            --accent-hover: #0550ae;
-            --sidebar-width: 280px;
-            --header-height: 60px;
-        }
-
-        body.dark-mode {
-            --bg-primary: #0d1117;
-            --bg-secondary: #161b22;
-            --bg-code: #161b22;
-            --text-primary: #c9d1d9;
-            --text-secondary: #8b949e;
-            --border-color: #30363d;
-            --accent-color: #58a6ff;
-            --accent-hover: #79c0ff;
-        }
-
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
-            line-height: 1.6;
-            color: var(--text-primary);
-            background-color: var(--bg-primary);
-            transition: background-color 0.3s, color 0.3s;
-        }
-
-        .progress-bar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--accent-color) 0%, var(--accent-color) var(--scroll-progress, 0%), transparent var(--scroll-progress, 0%));
-            z-index: 1001;
-        }
-
-        header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: var(--header-height);
-            background: var(--bg-secondary);
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 20px;
-            z-index: 1000;
-        }
-
-        .header-title {
-            font-size: 20px;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .header-controls {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-        }
-
-        .theme-toggle {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 24px;
-            padding: 5px;
-            transition: transform 0.2s;
-        }
-
-        .theme-toggle:hover {
-            transform: scale(1.1);
-        }
-
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: var(--header-height);
-            bottom: 0;
-            width: var(--sidebar-width);
-            background: var(--bg-secondary);
-            border-right: 1px solid var(--border-color);
-            overflow-y: auto;
-            padding: 20px;
-            transition: transform 0.3s;
-        }
-
-        .sidebar.collapsed {
-            transform: translateX(-100%);
-        }
-
-        .sidebar-toggle {
-            position: fixed;
-            left: var(--sidebar-width);
-            top: calc(var(--header-height) + 20px);
-            background: var(--accent-color);
-            color: white;
-            border: none;
-            border-radius: 0 4px 4px 0;
-            padding: 10px 8px;
-            cursor: pointer;
-            z-index: 999;
-            transition: left 0.3s;
-        }
-
-        .sidebar.collapsed + .sidebar-toggle {
-            left: 0;
-        }
-
-        .sidebar h3 {
-            font-size: 14px;
-            font-weight: 600;
-            text-transform: uppercase;
-            color: var(--text-secondary);
-            margin-bottom: 10px;
-        }
-
-        .toc {
-            list-style: none;
-        }
-
-        .toc li {
-            margin: 5px 0;
-        }
-
-        .toc a {
-            color: var(--text-primary);
-            text-decoration: none;
-            display: block;
-            padding: 6px 10px;
-            border-radius: 6px;
-            transition: background 0.2s;
-        }
-
-        .toc a:hover {
-            background: var(--bg-primary);
-        }
-
-        .toc a.active {
-            background: var(--accent-color);
-            color: white;
-        }
-
-        main {
-            margin-left: var(--sidebar-width);
-            margin-top: var(--header-height);
-            padding: 40px;
             max-width: 900px;
-            transition: margin-left 0.3s;
+            margin: 40px auto;
+            padding: 0 20px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            font-size: 16px;
+            line-height: 1.6;
+            color: #333;
         }
 
-        .sidebar.collapsed ~ main {
-            margin-left: 0;
-        }
+        h1 { font-size: 32px; margin: 40px 0 20px; border-bottom: 2px solid #333; padding-bottom: 10px; }
+        h2 { font-size: 24px; margin: 30px 0 15px; }
+        h3 { font-size: 20px; margin: 20px 0 10px; }
+        h4 { font-size: 18px; margin: 20px 0 10px; }
 
-        h1 {
-            font-size: 32px;
-            margin-bottom: 10px;
-            color: var(--text-primary);
-        }
+        p { margin: 10px 0; }
 
-        h2 {
-            font-size: 24px;
-            margin-top: 40px;
-            margin-bottom: 16px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid var(--border-color);
-            color: var(--text-primary);
-        }
-
-        h3 {
-            font-size: 20px;
-            margin-top: 24px;
-            margin-bottom: 12px;
-            color: var(--text-primary);
-        }
-
-        h4 {
-            font-size: 18px;
-            margin-top: 20px;
-            margin-bottom: 10px;
-            color: var(--text-primary);
-        }
-
-        p {
-            margin: 16px 0;
-            color: var(--text-primary);
+        pre {
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            padding: 15px;
+            overflow-x: auto;
+            font-size: 14px;
+            line-height: 1.4;
+            margin: 15px 0;
         }
 
         code {
-            background: var(--bg-code);
-            padding: 2px 6px;
+            background: #f5f5f5;
+            padding: 2px 5px;
             border-radius: 3px;
-            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
-            font-size: 0.9em;
-        }
-
-        pre {
-            background: var(--bg-code);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 16px;
-            overflow-x: auto;
-            margin: 16px 0;
+            font-family: "SF Mono", Monaco, Consolas, monospace;
+            font-size: 14px;
         }
 
         pre code {
@@ -232,171 +46,109 @@
             padding: 0;
         }
 
-        ul, ol {
-            margin: 16px 0;
-            padding-left: 32px;
-        }
-
-        li {
-            margin: 8px 0;
-        }
-
-        hr {
-            border: none;
-            border-top: 1px solid var(--border-color);
-            margin: 24px 0;
-        }
-
         table {
             width: 100%;
             border-collapse: collapse;
-            margin: 16px 0;
+            margin: 20px 0;
         }
 
         th, td {
-            border: 1px solid var(--border-color);
+            border: 1px solid #ddd;
             padding: 8px 12px;
             text-align: left;
         }
 
         th {
-            background: var(--bg-secondary);
+            background: #f5f5f5;
             font-weight: 600;
         }
 
-        .chapter-nav {
-            display: flex;
-            justify-content: space-between;
-            margin: 40px 0;
-            padding: 20px 0;
-            border-top: 1px solid var(--border-color);
+        ul, ol {
+            margin: 10px 0;
+            padding-left: 30px;
         }
 
-        .chapter-nav a {
-            color: var(--accent-color);
+        li {
+            margin: 5px 0;
+        }
+
+        a {
+            color: #0066cc;
             text-decoration: none;
-            padding: 10px 20px;
-            border: 1px solid var(--accent-color);
-            border-radius: 6px;
-            transition: all 0.2s;
         }
 
-        .chapter-nav a:hover {
-            background: var(--accent-color);
-            color: white;
+        a:hover {
+            text-decoration: underline;
+        }
+
+        strong {
+            font-weight: 600;
+        }
+
+        .nav {
+            margin: 40px 0;
+            padding: 15px 0;
+            border-top: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .nav a {
+            margin-right: 20px;
         }
 
         @media print {
-            .sidebar, .sidebar-toggle, .theme-toggle, .progress-bar {
-                display: none;
-            }
-            main {
-                margin-left: 0;
-                margin-top: 0;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-            .sidebar.show {
-                transform: translateX(0);
-            }
-            main {
-                margin-left: 0;
-                padding: 20px;
-            }
+            body { margin: 0; padding: 20px; }
+            .nav { display: none; }
         }
     </style>
 </head>
 <body>
-    <div class="progress-bar"></div>
+    <div class="nav">
+        <a href="index.html">← 返回主页</a>
+    </div>
 
-    <header>
-        <div class="header-title">位运算</div>
-        <div class="header-controls">
-            <button class="theme-toggle" onclick="toggleTheme()" title="切换主题">🌓</button>
-        </div>
-    </header>
-
-    <nav class="sidebar" id="sidebar">
-        <h3>目录</h3>
-        <ul class="toc">
-    <li><a href="#什么时候用">什么时候用</a></li>
-    <li><a href="#核心要点">核心要点</a></li>
-    <li><a href="#例题演示">例题演示</a></li>
-    <li><a href="#位运算技巧总结">位运算技巧总结</a></li>
-    <li><a href="#常见陷阱">常见陷阱</a></li>
-    <li><a href="#内置函数gcc">内置函数（GCC）</a></li>
-    <li><a href="#适用场景总结">适用场景总结</a></li>
-</ul>
-    </nav>
-
-    <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
-
-    <main>
-        <h1>位运算</h1>
-
-        <h2 id="什么时候用">什么时候用</h2>
+    <h1>位运算</h1>
+<h2>什么时候用</h2>
 <p>看到以下特征优先考虑位运算：</p>
 <ul>
 <li>判断奇偶、2的幂</li>
-<ul>
 <li>集合的表示和操作</li>
-<ul>
 <li>状态压缩</li>
-<ul>
 <li>位掩码、位标记</li>
-<ul>
 <li>快速乘除2的幂</li>
-<ul>
 <li>交换两个数（不用中间变量）</li>
-<ul>
 <li>统计二进制中1的个数</li>
-<ul>
 <li>找出唯一的数字</li>
+</ul>
 <p>核心思路：<strong>用二进制位表示状态，用位运算加速计算</strong>。</p>
-<h2 id="核心要点">核心要点</h2>
+<h2>核心要点</h2>
 <ol>
 <li><strong>基本运算</strong>：</li>
-<ul>
-<li><code>&</code> 与：都为1才为1</li>
-<ul>
-<li><code>|</code> 或：有1就为1</li>
-<ul>
-<li><code>^</code> 异或：不同为1，相同为0</li>
-<ul>
-<li><code>~</code> 取反：0变1，1变0</li>
-<ul>
-<li><code><<</code> 左移：乘以2</li>
-<ul>
-<li><code>>></code> 右移：除以2</li>
+</ol>
+<p>   - <code>&</code> 与：都为1才为1</p>
+<p>   - <code>|</code> 或：有1就为1</p>
+<p>   - <code>^</code> 异或：不同为1，相同为0</p>
+<p>   - <code>~</code> 取反：0变1，1变0</p>
+<p>   - <code><<</code> 左移：乘以2</p>
+<p>   - <code>>></code> 右移：除以2</p>
 <ol>
 <li><strong>关键性质</strong>：</li>
-<ul>
-<li><code>a ^ a = 0</code></li>
-<ul>
-<li><code>a ^ 0 = a</code></li>
-<ul>
-<li><code>a & (a-1)</code> 去除最右边的1</li>
-<ul>
-<li><code>a & -a</code> 提取最右边的1（lowbit）</li>
+</ol>
+<p>   - <code>a ^ a = 0</code></p>
+<p>   - <code>a ^ 0 = a</code></p>
+<p>   - <code>a & (a-1)</code> 去除最右边的1</p>
+<p>   - <code>a & -a</code> 提取最右边的1（lowbit）</p>
 <ol>
 <li><strong>常用技巧</strong>：</li>
-<ul>
-<li>判断奇偶：<code>n & 1</code></li>
-<ul>
-<li>乘2：<code>n << 1</code></li>
-<ul>
-<li>除2：<code>n >> 1</code></li>
-<ul>
-<li>判断2的幂：<code>n & (n-1) == 0</code></li>
-<h2 id="例题演示">例题演示</h2>
-<h3 id="例题-1基础位运算操作">例题 1：基础位运算操作</h3>
+</ol>
+<p>   - 判断奇偶：<code>n & 1</code></p>
+<p>   - 乘2：<code>n << 1</code></p>
+<p>   - 除2：<code>n >> 1</code></p>
+<p>   - 判断2的幂：<code>n & (n-1) == 0</code></p>
+<h2>例题演示</h2>
+<h3>例题 1：基础位运算操作</h3>
 <p><strong>题目</strong>：实现常见位运算技巧。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 // 判断奇偶
@@ -453,11 +205,9 @@ int main() {
     cout &lt;&lt; &quot;最右边的1: &quot; &lt;&lt; lowbit(n) &lt;&lt; &quot; (&quot; &lt;&lt; bitset&lt;8&gt;(lowbit(n)) &lt;&lt; &quot;)\n&quot;;
     
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>输出示例</strong>：</p>
-<pre><code class="language-">
-n = 12 (二进制: 00001100)
+<pre><code>n = 12 (二进制: 00001100)
 是否为奇数: 0
 是否为2的幂: 0
 第2位: 1
@@ -465,15 +215,13 @@ n = 12 (二进制: 00001100)
 清除第2位: 8 (00001000)
 翻转第0位: 13 (00001101)
 去除最右边的1: 8 (00001000)
-最右边的1: 4 (00000100)
-</code></pre>
+最右边的1: 4 (00000100)</code></pre>
 <p><strong>复杂度</strong>：所有操作都是 <code>O(1)</code></p>
-<hr>
-<h3 id="例题-2统计二进制中1的个数">例题 2：统计二进制中1的个数</h3>
+<p>---</p>
+<h3>例题 2：统计二进制中1的个数</h3>
 <p><strong>题目</strong>：给定整数 n，统计其二进制表示中1的个数。</p>
 <p><strong>思路</strong>：不断去除最右边的1。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 // 方法1：逐位检查
@@ -509,22 +257,19 @@ int main() {
     cout &lt;&lt; &quot;1的个数: &quot; &lt;&lt; count_ones_v2(n) &lt;&lt; &quot;\n&quot;;
     
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：</p>
 <ul>
 <li>方法1：<code>O(log n)</code> - 位数</li>
-<ul>
 <li>方法2：<code>O(k)</code> - k 是1的个数</li>
-<ul>
 <li>方法3：<code>O(1)</code> - 内置指令</li>
+</ul>
 <p><strong>易错点</strong>：负数的处理，需要用 <code>unsigned</code> 或处理符号位</p>
-<hr>
-<h3 id="例题-3只出现一次的数字">例题 3：只出现一次的数字</h3>
+<p>---</p>
+<h3>例题 3：只出现一次的数字</h3>
 <p><strong>题目</strong>：数组中每个元素都出现两次，只有一个元素出现一次，找出它。</p>
 <p><strong>思路</strong>：异或运算，<code>a ^ a = 0</code>，<code>a ^ 0 = a</code>。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 int single_number(vector&lt;int&gt;&amp; nums) {
@@ -546,16 +291,14 @@ int main() {
     
     cout &lt;&lt; single_number(nums) &lt;&lt; &quot;\n&quot;;
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：时间 <code>O(n)</code>，空间 <code>O(1)</code></p>
 <p><strong>易错点</strong>：异或满足交换律和结合律</p>
-<hr>
-<h3 id="例题-4只出现一次的数字-ii">例题 4：只出现一次的数字 II</h3>
+<p>---</p>
+<h3>例题 4：只出现一次的数字 II</h3>
 <p><strong>题目</strong>：数组中每个元素都出现三次，只有一个元素出现一次，找出它。</p>
 <p><strong>思路</strong>：统计每一位上1出现的次数，对3取模。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 int single_number_ii(vector&lt;int&gt;&amp; nums) {
@@ -585,15 +328,13 @@ int main() {
     
     cout &lt;&lt; single_number_ii(nums) &lt;&lt; &quot;\n&quot;;
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：时间 <code>O(32n) = O(n)</code>，空间 <code>O(1)</code></p>
-<hr>
-<h3 id="例题-5两个数字只出现一次">例题 5：两个数字只出现一次</h3>
+<p>---</p>
+<h3>例题 5：两个数字只出现一次</h3>
 <p><strong>题目</strong>：数组中有两个元素只出现一次，其他都出现两次，找出这两个数。</p>
 <p><strong>思路</strong>：先全部异或得到 <code>a ^ b</code>，然后按某一位分组。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 vector&lt;int&gt; single_number_iii(vector&lt;int&gt;&amp; nums) {
@@ -630,16 +371,14 @@ int main() {
     cout &lt;&lt; result[0] &lt;&lt; &quot; &quot; &lt;&lt; result[1] &lt;&lt; &quot;\n&quot;;
     
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：时间 <code>O(n)</code>，空间 <code>O(1)</code></p>
 <p><strong>易错点</strong>：用 <code>rightmost_bit</code> 分组，而不是用值的大小</p>
-<hr>
-<h3 id="例题-6子集生成状态压缩">例题 6：子集生成（状态压缩）</h3>
+<p>---</p>
+<h3>例题 6：子集生成（状态压缩）</h3>
 <p><strong>题目</strong>：给定集合 {1, 2, 3}，生成所有子集。</p>
 <p><strong>思路</strong>：用二进制位表示元素是否在子集中。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 vector&lt;vector&lt;int&gt;&gt; subsets(vector&lt;int&gt;&amp; nums) {
@@ -675,16 +414,14 @@ int main() {
     }
     
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：时间 <code>O(n * 2^n)</code>，空间 <code>O(2^n)</code></p>
 <p><strong>易错点</strong>：<code>1 << n</code> 是 2^n，要加括号</p>
-<hr>
-<h3 id="例题-7汉明距离">例题 7：汉明距离</h3>
+<p>---</p>
+<h3>例题 7：汉明距离</h3>
 <p><strong>题目</strong>：两个整数之间的汉明距离是对应位不同的位置数量。</p>
 <p><strong>思路</strong>：异或后统计1的个数。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 int hamming_distance(int x, int y) {
@@ -710,19 +447,17 @@ int main() {
     
     cout &lt;&lt; &quot;汉明距离: &quot; &lt;&lt; hamming_distance(x, y) &lt;&lt; &quot;\n&quot;;
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：时间 <code>O(log n)</code>，空间 <code>O(1)</code></p>
-<hr>
-<h3 id="例题-8位运算实现加法不用运算符">例题 8：位运算实现加法（不用+运算符）</h3>
+<p>---</p>
+<h3>例题 8：位运算实现加法（不用+运算符）</h3>
 <p><strong>题目</strong>：不使用 + 和 - 运算符，实现两数相加。</p>
 <p><strong>思路</strong>：</p>
 <ul>
 <li><code>a ^ b</code> 得到无进位和</li>
-<ul>
 <li><code>(a & b) << 1</code> 得到进位</li>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+</ul>
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 int add(int a, int b) {
@@ -741,15 +476,13 @@ int main() {
     
     cout &lt;&lt; a &lt;&lt; &quot; + &quot; &lt;&lt; b &lt;&lt; &quot; = &quot; &lt;&lt; add(a, b) &lt;&lt; &quot;\n&quot;;
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：时间 <code>O(log n)</code>，空间 <code>O(1)</code></p>
 <p><strong>易错点</strong>：负数处理需要特别注意</p>
-<hr>
-<h2 id="位运算技巧总结">位运算技巧总结</h2>
-<h3 id="常用操作">常用操作</h3>
-<pre><code class="language-cpp">
-// 判断奇偶
+<p>---</p>
+<h2>位运算技巧总结</h2>
+<h3>常用操作</h3>
+<pre><code>// 判断奇偶
 bool is_odd = n &amp; 1;
 
 // 快速乘除2的幂
@@ -775,12 +508,10 @@ int neg = ~n + 1;
 int avg = (a + b) &gt;&gt; 1;  // 注意溢出
 
 // 判断符号是否相同
-bool same_sign = (a ^ b) &gt;= 0;
-</code></pre>
-<h3 id="集合操作">集合操作</h3>
+bool same_sign = (a ^ b) &gt;= 0;</code></pre>
+<h3>集合操作</h3>
 <p>假设用整数表示集合，第 i 位为1表示元素 i 在集合中。</p>
-<pre><code class="language-cpp">
-int S = 0;  // 空集
+<pre><code>int S = 0;  // 空集
 
 // 添加元素 i
 S |= (1 &lt;&lt; i);
@@ -822,44 +553,36 @@ for (int i = 0; i &lt; n; ++i) {
 // 遍历所有子集
 for (int subset = S; subset; subset = (subset - 1) &amp; S) {
     // subset 是 S 的一个子集
-}
-</code></pre>
-<h2 id="常见陷阱">常见陷阱</h2>
+}</code></pre>
+<h2>常见陷阱</h2>
 <ol>
 <li><strong>运算符优先级</strong>：</li>
-<ul>
-<li><code>&</code> 和 <code>|</code> 优先级低于比较运算符，要加括号</li>
-<ul>
-<li>错误：<code>if (n & 1 == 0)</code></li>
-<ul>
-<li>正确：<code>if ((n & 1) == 0)</code></li>
+</ol>
+<p>   - <code>&</code> 和 <code>|</code> 优先级低于比较运算符，要加括号</p>
+<p>   - 错误：<code>if (n & 1 == 0)</code> </p>
+<p>   - 正确：<code>if ((n & 1) == 0)</code></p>
 <ol>
 <li><strong>左移溢出</strong>：</li>
-<ul>
-<li><code>1 << 31</code> 可能溢出，用 <code>1LL << 31</code></li>
-<ul>
-<li><code>1 << n</code> 当 n >= 32 时未定义</li>
+</ol>
+<p>   - <code>1 << 31</code> 可能溢出，用 <code>1LL << 31</code></p>
+<p>   - <code>1 << n</code> 当 n >= 32 时未定义</p>
 <ol>
 <li><strong>负数右移</strong>：</li>
-<ul>
-<li>算术右移（填充符号位）vs 逻辑右移（填充0）</li>
-<ul>
-<li>C++ 中有符号数右移是算术右移</li>
+</ol>
+<p>   - 算术右移（填充符号位）vs 逻辑右移（填充0）</p>
+<p>   - C++ 中有符号数右移是算术右移</p>
 <ol>
 <li><strong>符号位</strong>：</li>
-<ul>
-<li>负数的补码表示要注意</li>
-<ul>
-<li><code>-n = ~n + 1</code></li>
+</ol>
+<p>   - 负数的补码表示要注意</p>
+<p>   - <code>-n = ~n + 1</code></p>
 <ol>
 <li><strong>整数类型</strong>：</li>
-<ul>
-<li><code>int</code> 通常32位，<code>long long</code> 64位</li>
-<ul>
-<li>位运算超出范围会截断</li>
-<h2 id="内置函数gcc">内置函数（GCC）</h2>
-<pre><code class="language-cpp">
-// 统计1的个数
+</ol>
+<p>   - <code>int</code> 通常32位，<code>long long</code> 64位</p>
+<p>   - 位运算超出范围会截断</p>
+<h2>内置函数（GCC）</h2>
+<pre><code>// 统计1的个数
 __builtin_popcount(x)      // int
 __builtin_popcountll(x)    // long long
 
@@ -873,77 +596,20 @@ __builtin_ctzll(x)         // long long
 
 // 奇偶校验（1的个数的奇偶性）
 __builtin_parity(x)        // int
-__builtin_parityll(x)      // long long
-</code></pre>
-<h2 id="适用场景总结">适用场景总结</h2>
+__builtin_parityll(x)      // long long</code></pre>
+<h2>适用场景总结</h2>
 <ul>
 <li><strong>判断性质</strong>：奇偶、2的幂、符号</li>
-<ul>
 <li><strong>快速运算</strong>：乘除2、交换、求反</li>
-<ul>
 <li><strong>集合表示</strong>：状态压缩 DP、子集枚举</li>
-<ul>
 <li><strong>数字处理</strong>：去重、找唯一元素</li>
-<ul>
 <li><strong>优化空间</strong>：用位表示状态，节省内存</li>
-<ul>
 <li><strong>哈希/校验</strong>：位运算可以用于哈希函数</li>
-<ul>
 <li><strong>图论</strong>：用位表示访问状态、连通性</li>
+</ul>
 
-        <div class="chapter-nav">
-    <a href="17-math-number-theory.html" class="prev-chapter">← 数学与数论</a>
-</div>
-    </main>
-
-    <script>
-        // 主题切换
-        function toggleTheme() {
-            document.body.classList.toggle('dark-mode');
-            localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
-        }
-
-        // 加载保存的主题
-        if (localStorage.getItem('theme') === 'dark') {
-            document.body.classList.add('dark-mode');
-        }
-
-        // 侧边栏切换
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('collapsed');
-        }
-
-        // 进度条
-        window.addEventListener('scroll', () => {
-            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            const scrolled = (winScroll / height) * 100;
-            document.documentElement.style.setProperty('--scroll-progress', scrolled + '%');
-        });
-
-        // 目录高亮
-        const sections = document.querySelectorAll('h2[id]');
-        const tocLinks = document.querySelectorAll('.toc a');
-
-        window.addEventListener('scroll', () => {
-            let current = '';
-            sections.forEach(section => {
-                const sectionTop = section.offsetTop;
-                if (scrollY >= sectionTop - 100) {
-                    current = section.getAttribute('id');
-                }
-            });
-
-            tocLinks.forEach(link => {
-                link.classList.remove('active');
-                if (link.getAttribute('href') === '#' + current) {
-                    link.classList.add('active');
-                }
-            });
-        });
-
-        // 代码高亮
-        hljs.highlightAll();
-    </script>
+    <div class="nav">
+        <a href="17-math-number-theory.html">← 17 数学与数论</a> | <a href="io-handling.html">输入输出处理 →</a>
+    </div>
 </body>
 </html>

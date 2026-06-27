@@ -3,228 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>前缀和与差分 - 算法竞赛速成</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <title>04 前缀和与差分 - C++算法竞赛</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --bg-primary: #ffffff;
-            --bg-secondary: #f8f9fa;
-            --bg-code: #f6f8fa;
-            --text-primary: #24292f;
-            --text-secondary: #57606a;
-            --border-color: #d0d7de;
-            --accent-color: #0969da;
-            --accent-hover: #0550ae;
-            --sidebar-width: 280px;
-            --header-height: 60px;
-        }
-
-        body.dark-mode {
-            --bg-primary: #0d1117;
-            --bg-secondary: #161b22;
-            --bg-code: #161b22;
-            --text-primary: #c9d1d9;
-            --text-secondary: #8b949e;
-            --border-color: #30363d;
-            --accent-color: #58a6ff;
-            --accent-hover: #79c0ff;
-        }
-
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
-            line-height: 1.6;
-            color: var(--text-primary);
-            background-color: var(--bg-primary);
-            transition: background-color 0.3s, color 0.3s;
-        }
-
-        .progress-bar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--accent-color) 0%, var(--accent-color) var(--scroll-progress, 0%), transparent var(--scroll-progress, 0%));
-            z-index: 1001;
-        }
-
-        header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: var(--header-height);
-            background: var(--bg-secondary);
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 20px;
-            z-index: 1000;
-        }
-
-        .header-title {
-            font-size: 20px;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .header-controls {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-        }
-
-        .theme-toggle {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 24px;
-            padding: 5px;
-            transition: transform 0.2s;
-        }
-
-        .theme-toggle:hover {
-            transform: scale(1.1);
-        }
-
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: var(--header-height);
-            bottom: 0;
-            width: var(--sidebar-width);
-            background: var(--bg-secondary);
-            border-right: 1px solid var(--border-color);
-            overflow-y: auto;
-            padding: 20px;
-            transition: transform 0.3s;
-        }
-
-        .sidebar.collapsed {
-            transform: translateX(-100%);
-        }
-
-        .sidebar-toggle {
-            position: fixed;
-            left: var(--sidebar-width);
-            top: calc(var(--header-height) + 20px);
-            background: var(--accent-color);
-            color: white;
-            border: none;
-            border-radius: 0 4px 4px 0;
-            padding: 10px 8px;
-            cursor: pointer;
-            z-index: 999;
-            transition: left 0.3s;
-        }
-
-        .sidebar.collapsed + .sidebar-toggle {
-            left: 0;
-        }
-
-        .sidebar h3 {
-            font-size: 14px;
-            font-weight: 600;
-            text-transform: uppercase;
-            color: var(--text-secondary);
-            margin-bottom: 10px;
-        }
-
-        .toc {
-            list-style: none;
-        }
-
-        .toc li {
-            margin: 5px 0;
-        }
-
-        .toc a {
-            color: var(--text-primary);
-            text-decoration: none;
-            display: block;
-            padding: 6px 10px;
-            border-radius: 6px;
-            transition: background 0.2s;
-        }
-
-        .toc a:hover {
-            background: var(--bg-primary);
-        }
-
-        .toc a.active {
-            background: var(--accent-color);
-            color: white;
-        }
-
-        main {
-            margin-left: var(--sidebar-width);
-            margin-top: var(--header-height);
-            padding: 40px;
             max-width: 900px;
-            transition: margin-left 0.3s;
+            margin: 40px auto;
+            padding: 0 20px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            font-size: 16px;
+            line-height: 1.6;
+            color: #333;
         }
 
-        .sidebar.collapsed ~ main {
-            margin-left: 0;
-        }
+        h1 { font-size: 32px; margin: 40px 0 20px; border-bottom: 2px solid #333; padding-bottom: 10px; }
+        h2 { font-size: 24px; margin: 30px 0 15px; }
+        h3 { font-size: 20px; margin: 20px 0 10px; }
+        h4 { font-size: 18px; margin: 20px 0 10px; }
 
-        h1 {
-            font-size: 32px;
-            margin-bottom: 10px;
-            color: var(--text-primary);
-        }
+        p { margin: 10px 0; }
 
-        h2 {
-            font-size: 24px;
-            margin-top: 40px;
-            margin-bottom: 16px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid var(--border-color);
-            color: var(--text-primary);
-        }
-
-        h3 {
-            font-size: 20px;
-            margin-top: 24px;
-            margin-bottom: 12px;
-            color: var(--text-primary);
-        }
-
-        h4 {
-            font-size: 18px;
-            margin-top: 20px;
-            margin-bottom: 10px;
-            color: var(--text-primary);
-        }
-
-        p {
-            margin: 16px 0;
-            color: var(--text-primary);
+        pre {
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            padding: 15px;
+            overflow-x: auto;
+            font-size: 14px;
+            line-height: 1.4;
+            margin: 15px 0;
         }
 
         code {
-            background: var(--bg-code);
-            padding: 2px 6px;
+            background: #f5f5f5;
+            padding: 2px 5px;
             border-radius: 3px;
-            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
-            font-size: 0.9em;
-        }
-
-        pre {
-            background: var(--bg-code);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 16px;
-            overflow-x: auto;
-            margin: 16px 0;
+            font-family: "SF Mono", Monaco, Consolas, monospace;
+            font-size: 14px;
         }
 
         pre code {
@@ -232,139 +46,90 @@
             padding: 0;
         }
 
-        ul, ol {
-            margin: 16px 0;
-            padding-left: 32px;
-        }
-
-        li {
-            margin: 8px 0;
-        }
-
-        hr {
-            border: none;
-            border-top: 1px solid var(--border-color);
-            margin: 24px 0;
-        }
-
         table {
             width: 100%;
             border-collapse: collapse;
-            margin: 16px 0;
+            margin: 20px 0;
         }
 
         th, td {
-            border: 1px solid var(--border-color);
+            border: 1px solid #ddd;
             padding: 8px 12px;
             text-align: left;
         }
 
         th {
-            background: var(--bg-secondary);
+            background: #f5f5f5;
             font-weight: 600;
         }
 
-        .chapter-nav {
-            display: flex;
-            justify-content: space-between;
-            margin: 40px 0;
-            padding: 20px 0;
-            border-top: 1px solid var(--border-color);
+        ul, ol {
+            margin: 10px 0;
+            padding-left: 30px;
         }
 
-        .chapter-nav a {
-            color: var(--accent-color);
+        li {
+            margin: 5px 0;
+        }
+
+        a {
+            color: #0066cc;
             text-decoration: none;
-            padding: 10px 20px;
-            border: 1px solid var(--accent-color);
-            border-radius: 6px;
-            transition: all 0.2s;
         }
 
-        .chapter-nav a:hover {
-            background: var(--accent-color);
-            color: white;
+        a:hover {
+            text-decoration: underline;
+        }
+
+        strong {
+            font-weight: 600;
+        }
+
+        .nav {
+            margin: 40px 0;
+            padding: 15px 0;
+            border-top: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .nav a {
+            margin-right: 20px;
         }
 
         @media print {
-            .sidebar, .sidebar-toggle, .theme-toggle, .progress-bar {
-                display: none;
-            }
-            main {
-                margin-left: 0;
-                margin-top: 0;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-            .sidebar.show {
-                transform: translateX(0);
-            }
-            main {
-                margin-left: 0;
-                padding: 20px;
-            }
+            body { margin: 0; padding: 20px; }
+            .nav { display: none; }
         }
     </style>
 </head>
 <body>
-    <div class="progress-bar"></div>
+    <div class="nav">
+        <a href="index.html">← 返回主页</a>
+    </div>
 
-    <header>
-        <div class="header-title">前缀和与差分</div>
-        <div class="header-controls">
-            <button class="theme-toggle" onclick="toggleTheme()" title="切换主题">🌓</button>
-        </div>
-    </header>
-
-    <nav class="sidebar" id="sidebar">
-        <h3>目录</h3>
-        <ul class="toc">
-    <li><a href="#什么时候用">什么时候用</a></li>
-    <li><a href="#前缀和核心公式">前缀和核心公式</a></li>
-    <li><a href="#差分数组">差分数组</a></li>
-    <li><a href="#例题演示">例题演示</a></li>
-    <li><a href="#前缀和变体">前缀和变体</a></li>
-    <li><a href="#常见陷阱">常见陷阱</a></li>
-    <li><a href="#适用场景总结">适用场景总结</a></li>
-</ul>
-    </nav>
-
-    <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
-
-    <main>
-        <h1>前缀和与差分</h1>
-
-        <h2 id="什么时候用">什么时候用</h2>
+    <h1>前缀和与差分</h1>
+<h2>什么时候用</h2>
 <p>看到以下特征优先考虑前缀和/差分：</p>
 <ul>
 <li><strong>多次查询</strong>区间和/区域和</li>
-<ul>
 <li>子数组和问题：和为 k、最大子数组和</li>
-<ul>
 <li>二维矩阵的子矩形和</li>
-<ul>
 <li><strong>多次区间修改 + 一次查询</strong>：差分数组</li>
+</ul>
 <p>核心思路：<strong>用 O(1) 查询替代 O(n) 的累加</strong>。</p>
-<h2 id="前缀和核心公式">前缀和核心公式</h2>
-<h3 id="一维前缀和">一维前缀和</h3>
-<pre><code class="language-cpp">
-// 构建
+<h2>前缀和核心公式</h2>
+<h3>一维前缀和</h3>
+<pre><code>// 构建
 vector&lt;long long&gt; pre(n + 1, 0);
 for (int i = 0; i &lt; n; ++i) {
     pre[i + 1] = pre[i] + arr[i];
 }
 
 // 查询 [l, r] 的和
-long long sum = pre[r + 1] - pre[l];
-</code></pre>
+long long sum = pre[r + 1] - pre[l];</code></pre>
 <p><strong>为什么用 n+1</strong>：避免 <code>l=0</code> 时特判，<code>pre[0] = 0</code> 表示空前缀。</p>
-<h3 id="二维前缀和">二维前缀和</h3>
-<pre><code class="language-cpp">
-// 构建
+<h3>二维前缀和</h3>
+<pre><code>// 构建
 vector&lt;vector&lt;long long&gt;&gt; pre(n + 1, vector&lt;long long&gt;(m + 1, 0));
 for (int i = 0; i &lt; n; ++i) {
     for (int j = 0; j &lt; m; ++j) {
@@ -375,13 +140,11 @@ for (int i = 0; i &lt; n; ++i) {
 
 // 查询矩形 (x1, y1) 到 (x2, y2) 的和
 long long sum = pre[x2 + 1][y2 + 1] - pre[x1][y2 + 1] 
-              - pre[x2 + 1][y1] + pre[x1][y1];
-</code></pre>
+              - pre[x2 + 1][y1] + pre[x1][y1];</code></pre>
 <p><strong>记忆方法</strong>：容斥原理，加右下，减左下和右上，加回左上。</p>
-<h2 id="差分数组">差分数组</h2>
+<h2>差分数组</h2>
 <p>差分是前缀和的逆运算，用于<strong>批量区间修改</strong>。</p>
-<pre><code class="language-cpp">
-// 初始化
+<pre><code>// 初始化
 vector&lt;long long&gt; diff(n + 1, 0);
 
 // 区间 [l, r] 加 v
@@ -394,14 +157,12 @@ long long sum = 0;
 for (int i = 0; i &lt; n; ++i) {
     sum += diff[i];
     arr[i] = sum;
-}
-</code></pre>
+}</code></pre>
 <p><strong>适用场景</strong>：多次区间修改，最后一次性查询。</p>
-<h2 id="例题演示">例题演示</h2>
-<h3 id="例题-1区域和检索不可变">例题 1：区域和检索（不可变）</h3>
+<h2>例题演示</h2>
+<h3>例题 1：区域和检索（不可变）</h3>
 <p><strong>题目</strong>：LeetCode 303 - 给定数组，多次查询区间 [l, r] 的和。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 class NumArray {
@@ -439,15 +200,13 @@ int main() {
     }
     
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：预处理 O(n)，每次查询 O(1)</p>
-<hr>
-<h3 id="例题-2和为-k-的子数组">例题 2：和为 K 的子数组</h3>
+<p>---</p>
+<h3>例题 2：和为 K 的子数组</h3>
 <p><strong>题目</strong>：LeetCode 560 - 给定数组和整数 k，找出和为 k 的连续子数组个数。</p>
 <p><strong>思路</strong>：前缀和 + 哈希表。如果 <code>pre[j] - pre[i] = k</code>，则 <code>pre[i] = pre[j] - k</code>。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 int subarray_sum(vector&lt;int&gt;&amp; nums, int k) {
@@ -482,15 +241,13 @@ int main() {
     cout &lt;&lt; subarray_sum(nums, k) &lt;&lt; &quot;\n&quot;;
     
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：时间 O(n)，空间 O(n)</p>
-<hr>
-<h3 id="例题-3连续子数组的最大和前缀和优化">例题 3：连续子数组的最大和（前缀和优化）</h3>
+<p>---</p>
+<h3>例题 3：连续子数组的最大和（前缀和优化）</h3>
 <p><strong>题目</strong>：LeetCode 53 - 找出数组中和最大的连续子数组。</p>
 <p><strong>思路 1</strong>：Kadane 算法（贪心）</p>
-<pre><code class="language-cpp">
-int max_subarray(vector&lt;int&gt;&amp; nums) {
+<pre><code>int max_subarray(vector&lt;int&gt;&amp; nums) {
     int max_sum = INT_MIN, current_sum = 0;
     
     for (int num : nums) {
@@ -499,11 +256,9 @@ int max_subarray(vector&lt;int&gt;&amp; nums) {
     }
     
     return max_sum;
-}
-</code></pre>
+}</code></pre>
 <p><strong>思路 2</strong>：前缀和 + 维护最小前缀</p>
-<pre><code class="language-cpp">
-int max_subarray(vector&lt;int&gt;&amp; nums) {
+<pre><code>int max_subarray(vector&lt;int&gt;&amp; nums) {
     long long pre = 0, min_pre = 0, max_sum = LLONG_MIN;
     
     for (int num : nums) {
@@ -513,14 +268,12 @@ int max_subarray(vector&lt;int&gt;&amp; nums) {
     }
     
     return max_sum;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：时间 O(n)，空间 O(1)</p>
-<hr>
-<h3 id="例题-4二维区域和检索">例题 4：二维区域和检索</h3>
+<p>---</p>
+<h3>例题 4：二维区域和检索</h3>
 <p><strong>题目</strong>：LeetCode 304 - 给定矩阵，多次查询子矩形和。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 class NumMatrix {
@@ -567,14 +320,12 @@ int main() {
     }
     
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：预处理 O(n·m)，每次查询 O(1)</p>
-<hr>
-<h3 id="例题-5差分数组---区间加法">例题 5：差分数组 - 区间加法</h3>
+<p>---</p>
+<h3>例题 5：差分数组 - 区间加法</h3>
 <p><strong>题目</strong>：LeetCode 370 - 给定长度 n 的全 0 数组，执行 m 次区间加操作，返回最终数组。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 vector&lt;int&gt; get_modified_array(int n, vector&lt;vector&lt;int&gt;&gt;&amp; updates) {
@@ -614,15 +365,13 @@ int main() {
     }
     
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：时间 O(n + m)，空间 O(n)</p>
 <p><strong>不用差分</strong>：直接修改需要 O(n·m)</p>
-<hr>
-<h3 id="例题-6航班预订统计">例题 6：航班预订统计</h3>
+<p>---</p>
+<h3>例题 6：航班预订统计</h3>
 <p><strong>题目</strong>：LeetCode 1109 - n 个航班，m 个预订记录 [first, last, seats]，统计每个航班的座位数。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 vector&lt;int&gt; corp_flight_bookings(vector&lt;vector&lt;int&gt;&gt;&amp; bookings, int n) {
@@ -660,15 +409,13 @@ int main() {
     }
     
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：时间 O(n + m)，空间 O(n)</p>
-<hr>
-<h3 id="例题-7连续数组01-个数相等">例题 7：连续数组（01 个数相等）</h3>
+<p>---</p>
+<h3>例题 7：连续数组（01 个数相等）</h3>
 <p><strong>题目</strong>：LeetCode 525 - 找出 01 数组中 0 和 1 数量相等的最长连续子数组。</p>
 <p><strong>思路</strong>：将 0 看作 -1，问题转化为"和为 0 的最长子数组"。用前缀和 + 哈希表记录每个前缀和第一次出现的位置。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 int find_max_length(vector&lt;int&gt;&amp; nums) {
@@ -701,15 +448,13 @@ int main() {
     cout &lt;&lt; find_max_length(nums) &lt;&lt; &quot;\n&quot;;
     
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：时间 O(n)，空间 O(n)</p>
-<hr>
-<h3 id="例题-8可被-k-整除的子数组">例题 8：可被 K 整除的子数组</h3>
+<p>---</p>
+<h3>例题 8：可被 K 整除的子数组</h3>
 <p><strong>题目</strong>：LeetCode 974 - 找出和可被 k 整除的连续子数组个数。</p>
 <p><strong>思路</strong>：前缀和取模。如果 <code>(pre[j] - pre[i]) % k == 0</code>，则 <code>pre[j] % k == pre[i] % k</code>。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 int subarrays_div_by_k(vector&lt;int&gt;&amp; nums, int k) {
@@ -740,167 +485,76 @@ int main() {
     cout &lt;&lt; subarrays_div_by_k(nums, k) &lt;&lt; &quot;\n&quot;;
     
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：时间 O(n)，空间 O(k)</p>
 <p><strong>易错点</strong>：C++ 负数取模是负数，需要 <code>((x % k) + k) % k</code> 转换为正数</p>
-<hr>
-<h2 id="前缀和变体">前缀和变体</h2>
-<h3 id="前缀积">前缀积</h3>
-<pre><code class="language-cpp">
-vector&lt;long long&gt; pre(n + 1, 1);
+<p>---</p>
+<h2>前缀和变体</h2>
+<h3>前缀积</h3>
+<pre><code>vector&lt;long long&gt; pre(n + 1, 1);
 for (int i = 0; i &lt; n; ++i) {
     pre[i + 1] = pre[i] * arr[i];
-}
-</code></pre>
-<h3 id="前缀异或">前缀异或</h3>
-<pre><code class="language-cpp">
-vector&lt;int&gt; pre(n + 1, 0);
+}</code></pre>
+<h3>前缀异或</h3>
+<pre><code>vector&lt;int&gt; pre(n + 1, 0);
 for (int i = 0; i &lt; n; ++i) {
     pre[i + 1] = pre[i] ^ arr[i];
 }
 
 // 区间 [l, r] 的异或和
-int xor_sum = pre[r + 1] ^ pre[l];
-</code></pre>
-<h3 id="前缀最大值最小值">前缀最大值/最小值</h3>
-<pre><code class="language-cpp">
-vector&lt;int&gt; pre_max(n);
+int xor_sum = pre[r + 1] ^ pre[l];</code></pre>
+<h3>前缀最大值/最小值</h3>
+<pre><code>vector&lt;int&gt; pre_max(n);
 pre_max[0] = arr[0];
 for (int i = 1; i &lt; n; ++i) {
     pre_max[i] = max(pre_max[i - 1], arr[i]);
-}
-</code></pre>
-<h2 id="常见陷阱">常见陷阱</h2>
+}</code></pre>
+<h2>常见陷阱</h2>
 <ol>
 <li><strong>溢出</strong>：累加和用 <code>long long</code></li>
-<ol>
 <li><strong>下标混淆</strong>：统一用 <code>pre[n+1]</code>，查询 <code>[l, r]</code> 用 <code>pre[r+1] - pre[l]</code></li>
-<ol>
 <li><strong>负数取模</strong>：C++ 中 <code>-5 % 3 = -2</code>，需要 <code>((x % k) + k) % k</code></li>
-<ol>
 <li><strong>二维前缀和公式</strong>：容斥原理，注意符号</li>
-<ol>
 <li><strong>哈希表初始化</strong>：<code>mp[0] = 1</code> 或 <code>mp[0] = -1</code>，根据题意决定</li>
-<h2 id="适用场景总结">适用场景总结</h2>
+</ol>
+<h2>适用场景总结</h2>
 <table>
-<thead>
-<tr>
+<thead><tr>
 <th>技巧</th>
 <th>适用场景</th>
 <th>复杂度</th>
-</tr>
-</thead>
+</tr></thead>
 <tbody>
-<table>
-<thead>
 <tr>
-<th>------</th>
-<th>----------</th>
-<th>--------</th>
+<td>一维前缀和</td>
+<td>多次查询区间和</td>
+<td>预处理 O(n)，查询 O(1)</td>
 </tr>
-</thead>
-<tbody>
-<table>
-<thead>
 <tr>
-<th>一维前缀和</th>
-<th>多次查询区间和</th>
-<th>预处理 O(n)，查询 O(1)</th>
+<td>二维前缀和</td>
+<td>多次查询子矩形和</td>
+<td>预处理 O(n·m)，查询 O(1)</td>
 </tr>
-</thead>
-<tbody>
-<table>
-<thead>
 <tr>
-<th>二维前缀和</th>
-<th>多次查询子矩形和</th>
-<th>预处理 O(n·m)，查询 O(1)</th>
+<td>差分数组</td>
+<td>多次区间修改 + 一次查询</td>
+<td>O(n + m)</td>
 </tr>
-</thead>
-<tbody>
-<table>
-<thead>
 <tr>
-<th>差分数组</th>
-<th>多次区间修改 + 一次查询</th>
-<th>O(n + m)</th>
+<td>前缀和 + 哈希</td>
+<td>子数组和为 k、和可被 k 整除</td>
+<td>O(n)</td>
 </tr>
-</thead>
-<tbody>
-<table>
-<thead>
 <tr>
-<th>前缀和 + 哈希</th>
-<th>子数组和为 k、和可被 k 整除</th>
-<th>O(n)</th>
+<td>前缀和 + 最值</td>
+<td>最大子数组和</td>
+<td>O(n)</td>
 </tr>
-</thead>
-<tbody>
-<table>
-<thead>
-<tr>
-<th>前缀和 + 最值</th>
-<th>最大子数组和</th>
-<th>O(n)</th>
-</tr>
-</thead>
-<tbody>
+</tbody>
+</table>
 
-        <div class="chapter-nav">
-    <a href="03-two-pointers-sliding-window.html" class="prev-chapter">← 双指针与滑动窗口</a>
-    <a href="05-binary-search.html" class="next-chapter">二分查找 →</a>
-</div>
-    </main>
-
-    <script>
-        // 主题切换
-        function toggleTheme() {
-            document.body.classList.toggle('dark-mode');
-            localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
-        }
-
-        // 加载保存的主题
-        if (localStorage.getItem('theme') === 'dark') {
-            document.body.classList.add('dark-mode');
-        }
-
-        // 侧边栏切换
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('collapsed');
-        }
-
-        // 进度条
-        window.addEventListener('scroll', () => {
-            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            const scrolled = (winScroll / height) * 100;
-            document.documentElement.style.setProperty('--scroll-progress', scrolled + '%');
-        });
-
-        // 目录高亮
-        const sections = document.querySelectorAll('h2[id]');
-        const tocLinks = document.querySelectorAll('.toc a');
-
-        window.addEventListener('scroll', () => {
-            let current = '';
-            sections.forEach(section => {
-                const sectionTop = section.offsetTop;
-                if (scrollY >= sectionTop - 100) {
-                    current = section.getAttribute('id');
-                }
-            });
-
-            tocLinks.forEach(link => {
-                link.classList.remove('active');
-                if (link.getAttribute('href') === '#' + current) {
-                    link.classList.add('active');
-                }
-            });
-        });
-
-        // 代码高亮
-        hljs.highlightAll();
-    </script>
+    <div class="nav">
+        <a href="03-two-pointers-sliding-window.html">← 03 双指针与滑动窗口</a> | <a href="05-binary-search.html">05 二分查找与二分答案 →</a>
+    </div>
 </body>
 </html>

@@ -3,228 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>最短路径：Dijkstra, Floyd 等 - 算法竞赛速成</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <title>12 最短路径 - C++算法竞赛</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --bg-primary: #ffffff;
-            --bg-secondary: #f8f9fa;
-            --bg-code: #f6f8fa;
-            --text-primary: #24292f;
-            --text-secondary: #57606a;
-            --border-color: #d0d7de;
-            --accent-color: #0969da;
-            --accent-hover: #0550ae;
-            --sidebar-width: 280px;
-            --header-height: 60px;
-        }
-
-        body.dark-mode {
-            --bg-primary: #0d1117;
-            --bg-secondary: #161b22;
-            --bg-code: #161b22;
-            --text-primary: #c9d1d9;
-            --text-secondary: #8b949e;
-            --border-color: #30363d;
-            --accent-color: #58a6ff;
-            --accent-hover: #79c0ff;
-        }
-
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
-            line-height: 1.6;
-            color: var(--text-primary);
-            background-color: var(--bg-primary);
-            transition: background-color 0.3s, color 0.3s;
-        }
-
-        .progress-bar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--accent-color) 0%, var(--accent-color) var(--scroll-progress, 0%), transparent var(--scroll-progress, 0%));
-            z-index: 1001;
-        }
-
-        header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: var(--header-height);
-            background: var(--bg-secondary);
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 20px;
-            z-index: 1000;
-        }
-
-        .header-title {
-            font-size: 20px;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .header-controls {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-        }
-
-        .theme-toggle {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 24px;
-            padding: 5px;
-            transition: transform 0.2s;
-        }
-
-        .theme-toggle:hover {
-            transform: scale(1.1);
-        }
-
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: var(--header-height);
-            bottom: 0;
-            width: var(--sidebar-width);
-            background: var(--bg-secondary);
-            border-right: 1px solid var(--border-color);
-            overflow-y: auto;
-            padding: 20px;
-            transition: transform 0.3s;
-        }
-
-        .sidebar.collapsed {
-            transform: translateX(-100%);
-        }
-
-        .sidebar-toggle {
-            position: fixed;
-            left: var(--sidebar-width);
-            top: calc(var(--header-height) + 20px);
-            background: var(--accent-color);
-            color: white;
-            border: none;
-            border-radius: 0 4px 4px 0;
-            padding: 10px 8px;
-            cursor: pointer;
-            z-index: 999;
-            transition: left 0.3s;
-        }
-
-        .sidebar.collapsed + .sidebar-toggle {
-            left: 0;
-        }
-
-        .sidebar h3 {
-            font-size: 14px;
-            font-weight: 600;
-            text-transform: uppercase;
-            color: var(--text-secondary);
-            margin-bottom: 10px;
-        }
-
-        .toc {
-            list-style: none;
-        }
-
-        .toc li {
-            margin: 5px 0;
-        }
-
-        .toc a {
-            color: var(--text-primary);
-            text-decoration: none;
-            display: block;
-            padding: 6px 10px;
-            border-radius: 6px;
-            transition: background 0.2s;
-        }
-
-        .toc a:hover {
-            background: var(--bg-primary);
-        }
-
-        .toc a.active {
-            background: var(--accent-color);
-            color: white;
-        }
-
-        main {
-            margin-left: var(--sidebar-width);
-            margin-top: var(--header-height);
-            padding: 40px;
             max-width: 900px;
-            transition: margin-left 0.3s;
+            margin: 40px auto;
+            padding: 0 20px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            font-size: 16px;
+            line-height: 1.6;
+            color: #333;
         }
 
-        .sidebar.collapsed ~ main {
-            margin-left: 0;
-        }
+        h1 { font-size: 32px; margin: 40px 0 20px; border-bottom: 2px solid #333; padding-bottom: 10px; }
+        h2 { font-size: 24px; margin: 30px 0 15px; }
+        h3 { font-size: 20px; margin: 20px 0 10px; }
+        h4 { font-size: 18px; margin: 20px 0 10px; }
 
-        h1 {
-            font-size: 32px;
-            margin-bottom: 10px;
-            color: var(--text-primary);
-        }
+        p { margin: 10px 0; }
 
-        h2 {
-            font-size: 24px;
-            margin-top: 40px;
-            margin-bottom: 16px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid var(--border-color);
-            color: var(--text-primary);
-        }
-
-        h3 {
-            font-size: 20px;
-            margin-top: 24px;
-            margin-bottom: 12px;
-            color: var(--text-primary);
-        }
-
-        h4 {
-            font-size: 18px;
-            margin-top: 20px;
-            margin-bottom: 10px;
-            color: var(--text-primary);
-        }
-
-        p {
-            margin: 16px 0;
-            color: var(--text-primary);
+        pre {
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            padding: 15px;
+            overflow-x: auto;
+            font-size: 14px;
+            line-height: 1.4;
+            margin: 15px 0;
         }
 
         code {
-            background: var(--bg-code);
-            padding: 2px 6px;
+            background: #f5f5f5;
+            padding: 2px 5px;
             border-radius: 3px;
-            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
-            font-size: 0.9em;
-        }
-
-        pre {
-            background: var(--bg-code);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 16px;
-            overflow-x: auto;
-            margin: 16px 0;
+            font-family: "SF Mono", Monaco, Consolas, monospace;
+            font-size: 14px;
         }
 
         pre code {
@@ -232,127 +46,81 @@
             padding: 0;
         }
 
-        ul, ol {
-            margin: 16px 0;
-            padding-left: 32px;
-        }
-
-        li {
-            margin: 8px 0;
-        }
-
-        hr {
-            border: none;
-            border-top: 1px solid var(--border-color);
-            margin: 24px 0;
-        }
-
         table {
             width: 100%;
             border-collapse: collapse;
-            margin: 16px 0;
+            margin: 20px 0;
         }
 
         th, td {
-            border: 1px solid var(--border-color);
+            border: 1px solid #ddd;
             padding: 8px 12px;
             text-align: left;
         }
 
         th {
-            background: var(--bg-secondary);
+            background: #f5f5f5;
             font-weight: 600;
         }
 
-        .chapter-nav {
-            display: flex;
-            justify-content: space-between;
-            margin: 40px 0;
-            padding: 20px 0;
-            border-top: 1px solid var(--border-color);
+        ul, ol {
+            margin: 10px 0;
+            padding-left: 30px;
         }
 
-        .chapter-nav a {
-            color: var(--accent-color);
+        li {
+            margin: 5px 0;
+        }
+
+        a {
+            color: #0066cc;
             text-decoration: none;
-            padding: 10px 20px;
-            border: 1px solid var(--accent-color);
-            border-radius: 6px;
-            transition: all 0.2s;
         }
 
-        .chapter-nav a:hover {
-            background: var(--accent-color);
-            color: white;
+        a:hover {
+            text-decoration: underline;
+        }
+
+        strong {
+            font-weight: 600;
+        }
+
+        .nav {
+            margin: 40px 0;
+            padding: 15px 0;
+            border-top: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .nav a {
+            margin-right: 20px;
         }
 
         @media print {
-            .sidebar, .sidebar-toggle, .theme-toggle, .progress-bar {
-                display: none;
-            }
-            main {
-                margin-left: 0;
-                margin-top: 0;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-            .sidebar.show {
-                transform: translateX(0);
-            }
-            main {
-                margin-left: 0;
-                padding: 20px;
-            }
+            body { margin: 0; padding: 20px; }
+            .nav { display: none; }
         }
     </style>
 </head>
 <body>
-    <div class="progress-bar"></div>
+    <div class="nav">
+        <a href="index.html">← 返回主页</a>
+    </div>
 
-    <header>
-        <div class="header-title">最短路径：Dijkstra, Floyd 等</div>
-        <div class="header-controls">
-            <button class="theme-toggle" onclick="toggleTheme()" title="切换主题">🌓</button>
-        </div>
-    </header>
-
-    <nav class="sidebar" id="sidebar">
-        <h3>目录</h3>
-        <ul class="toc">
-    <li><a href="#什么时候用">什么时候用</a></li>
-    <li><a href="#核心模板">核心模板</a></li>
-    <li><a href="#例题演示">例题演示</a></li>
-    <li><a href="#常见陷阱">常见陷阱</a></li>
-    <li><a href="#适用场景总结">适用场景总结</a></li>
-</ul>
-    </nav>
-
-    <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
-
-    <main>
-        <h1>最短路径：Dijkstra, Floyd 等</h1>
-
-        <h2 id="什么时候用">什么时候用</h2>
+    <h1>最短路径：Dijkstra, Floyd 等</h1>
+<h2>什么时候用</h2>
 <p>看到以下特征优先考虑最短路径算法：</p>
 <ul>
 <li><strong>单源最短路径</strong>：从一个点到其他所有点的最短距离</li>
-<ul>
 <li><strong>全源最短路径</strong>：任意两点之间的最短距离</li>
-<ul>
 <li><strong>带权图最短路径</strong>：边有权值（距离、时间、代价）</li>
-<ul>
 <li><strong>网络延迟、最小成本</strong>：实际应用问题</li>
-<ul>
 <li>题目中出现"最短"、"最快"、"最小代价"、"最优路径"等字眼</li>
+</ul>
 <p>核心思路：<strong>贪心选择当前最近的未访问节点（Dijkstra），或动态规划枚举中间节点（Floyd）</strong>。</p>
-<h2 id="核心模板">核心模板</h2>
-<h3 id="dijkstra单源最短路径非负权">Dijkstra（单源最短路径，非负权）</h3>
-<pre><code class="language-cpp">
-vector&lt;int&gt; dijkstra(int n, vector&lt;vector&lt;pair&lt;int,int&gt;&gt;&gt;&amp; graph, int start) {
+<h2>核心模板</h2>
+<h3>Dijkstra（单源最短路径，非负权）</h3>
+<pre><code>vector&lt;int&gt; dijkstra(int n, vector&lt;vector&lt;pair&lt;int,int&gt;&gt;&gt;&amp; graph, int start) {
     vector&lt;int&gt; dist(n, INT_MAX);
     priority_queue&lt;pair&lt;int,int&gt;, vector&lt;pair&lt;int,int&gt;&gt;, greater&lt;&gt;&gt; pq;
     
@@ -374,11 +142,9 @@ vector&lt;int&gt; dijkstra(int n, vector&lt;vector&lt;pair&lt;int,int&gt;&gt;&gt
     }
     
     return dist;
-}
-</code></pre>
-<h3 id="floyd-warshall全源最短路径">Floyd-Warshall（全源最短路径）</h3>
-<pre><code class="language-cpp">
-void floyd(vector&lt;vector&lt;int&gt;&gt;&amp; dist, int n) {
+}</code></pre>
+<h3>Floyd-Warshall（全源最短路径）</h3>
+<pre><code>void floyd(vector&lt;vector&lt;int&gt;&gt;&amp; dist, int n) {
     // dist[i][j] 初始化为边权，无边为 INF，自己到自己为 0
     
     for (int k = 0; k &lt; n; ++k) {
@@ -390,11 +156,9 @@ void floyd(vector&lt;vector&lt;int&gt;&gt;&amp; dist, int n) {
             }
         }
     }
-}
-</code></pre>
-<h3 id="bellman-ford单源最短路径可有负权">Bellman-Ford（单源最短路径，可有负权）</h3>
-<pre><code class="language-cpp">
-vector&lt;int&gt; bellmanFord(int n, vector&lt;vector&lt;int&gt;&gt;&amp; edges, int start) {
+}</code></pre>
+<h3>Bellman-Ford（单源最短路径，可有负权）</h3>
+<pre><code>vector&lt;int&gt; bellmanFord(int n, vector&lt;vector&lt;int&gt;&gt;&amp; edges, int start) {
     vector&lt;int&gt; dist(n, INT_MAX);
     dist[start] = 0;
     
@@ -417,11 +181,9 @@ vector&lt;int&gt; bellmanFord(int n, vector&lt;vector&lt;int&gt;&gt;&amp; edges,
     }
     
     return dist;
-}
-</code></pre>
-<h3 id="spfabellman-ford-优化">SPFA（Bellman-Ford 优化）</h3>
-<pre><code class="language-cpp">
-vector&lt;int&gt; spfa(int n, vector&lt;vector&lt;pair&lt;int,int&gt;&gt;&gt;&amp; graph, int start) {
+}</code></pre>
+<h3>SPFA（Bellman-Ford 优化）</h3>
+<pre><code>vector&lt;int&gt; spfa(int n, vector&lt;vector&lt;pair&lt;int,int&gt;&gt;&gt;&amp; graph, int start) {
     vector&lt;int&gt; dist(n, INT_MAX);
     vector&lt;bool&gt; inQueue(n, false);
     queue&lt;int&gt; q;
@@ -448,14 +210,12 @@ vector&lt;int&gt; spfa(int n, vector&lt;vector&lt;pair&lt;int,int&gt;&gt;&gt;&am
     }
     
     return dist;
-}
-</code></pre>
-<h2 id="例题演示">例题演示</h2>
-<h3 id="例题-1网络延迟时间dijkstra">例题 1：网络延迟时间（Dijkstra）</h3>
+}</code></pre>
+<h2>例题演示</h2>
+<h3>例题 1：网络延迟时间（Dijkstra）</h3>
 <p><strong>题目</strong>：n 个节点的网络，给定边和传输时间，从节点 k 发信号，求所有节点收到信号的时间。</p>
 <p><strong>思路</strong>：单源最短路径，Dijkstra 算法。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 int networkDelayTime(vector&lt;vector&lt;int&gt;&gt;&amp; times, int n, int k) {
@@ -507,22 +267,19 @@ int main() {
     cout &lt;&lt; networkDelayTime(times, n, k) &lt;&lt; &quot;\n&quot;;
     
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：时间 <code>O((V + E) log V)</code>，空间 <code>O(V + E)</code></p>
 <p><strong>易错点</strong>：</p>
 <ul>
 <li>优先队列存 {距离, 节点}，按距离排序</li>
-<ul>
 <li>如果有节点不可达，返回 -1</li>
-<ul>
 <li>答案是最大的距离，不是总和</li>
-<hr>
-<h3 id="例题-2最便宜的航班有限制的最短路径">例题 2：最便宜的航班（有限制的最短路径）</h3>
+</ul>
+<p>---</p>
+<h3>例题 2：最便宜的航班（有限制的最短路径）</h3>
 <p><strong>题目</strong>：n 个城市，给定航班和价格，从 src 到 dst 最多经过 k 站，求最低价格。</p>
 <p><strong>思路</strong>：BFS + 分层，或 Bellman-Ford 限制松弛次数。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 int findCheapestPrice(int n, vector&lt;vector&lt;int&gt;&gt;&amp; flights, int src, int dst, int k) {
@@ -559,22 +316,19 @@ int main() {
     cout &lt;&lt; findCheapestPrice(n, flights, src, dst, k) &lt;&lt; &quot;\n&quot;;
     
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：时间 <code>O(k × E)</code>，空间 <code>O(V)</code></p>
 <p><strong>易错点</strong>：</p>
 <ul>
 <li>每次松弛要用上一轮的结果，不能直接修改 dist</li>
-<ul>
 <li>k 个中间站意味着最多 k+1 次松弛</li>
-<ul>
 <li>Dijkstra 不适用，因为贪心会跳过一些绕路但更便宜的路径</li>
-<hr>
-<h3 id="例题-3找到最小权值路径floyd">例题 3：找到最小权值路径（Floyd）</h3>
+</ul>
+<p>---</p>
+<h3>例题 3：找到最小权值路径（Floyd）</h3>
 <p><strong>题目</strong>：给定 n 个节点的带权有向图，求任意两点之间的最短距离。</p>
 <p><strong>思路</strong>：Floyd-Warshall 算法，O(n³) 求全源最短路径。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 vector&lt;vector&lt;int&gt;&gt; floydWarshall(int n, vector&lt;vector&lt;int&gt;&gt;&amp; edges) {
@@ -627,22 +381,19 @@ int main() {
     }
     
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：时间 <code>O(n³)</code>，空间 <code>O(n²)</code></p>
 <p><strong>易错点</strong>：</p>
 <ul>
 <li>k 必须在最外层循环</li>
-<ul>
 <li>防止溢出：先判断 dist[i][k] 和 dist[k][j] 不是 INT_MAX</li>
-<ul>
 <li>适合小规模图（n ≤ 500）</li>
-<hr>
-<h3 id="例题-4路径最小代价带权重">例题 4：路径最小代价（带权重）</h3>
+</ul>
+<p>---</p>
+<h3>例题 4：路径最小代价（带权重）</h3>
 <p><strong>题目</strong>：二维网格，每个格子有代价，从左上角到右下角的最小代价。</p>
 <p><strong>思路</strong>：Dijkstra 或 DP，这里用 Dijkstra。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 int minPathCost(vector&lt;vector&lt;int&gt;&gt;&amp; grid) {
@@ -696,22 +447,19 @@ int main() {
     cout &lt;&lt; minPathCost(grid) &lt;&lt; &quot;\n&quot;;
     
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：时间 <code>O(mn log(mn))</code>，空间 <code>O(mn)</code></p>
 <p><strong>易错点</strong>：</p>
 <ul>
 <li>起点的代价也要计算</li>
-<ul>
 <li>可以用 DP 优化到 O(mn)，但 Dijkstra 更通用</li>
-<ul>
 <li>优先队列存 {距离, x, y}</li>
-<hr>
-<h3 id="例题-5概率最大的路径">例题 5：概率最大的路径</h3>
+</ul>
+<p>---</p>
+<h3>例题 5：概率最大的路径</h3>
 <p><strong>题目</strong>：带概率的图，求从起点到终点成功概率最大的路径。</p>
 <p><strong>思路</strong>：Dijkstra 变形，最大化概率（乘法变加法用对数）。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 double maxProbability(int n, vector&lt;vector&lt;int&gt;&gt;&amp; edges, 
@@ -764,22 +512,19 @@ int main() {
     cout &lt;&lt; fixed &lt;&lt; setprecision(5) &lt;&lt; maxProbability(n, edges, succProb, start, end) &lt;&lt; &quot;\n&quot;;
     
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：时间 <code>O((V + E) log V)</code>，空间 <code>O(V + E)</code></p>
 <p><strong>易错点</strong>：</p>
 <ul>
 <li>概率是乘法，要用大根堆（求最大）</li>
-<ul>
 <li>初始概率是 1.0，不是 0</li>
-<ul>
 <li>也可以用对数转换成加法，用小根堆</li>
-<hr>
-<h3 id="例题-6有负权边的最短路径bellman-ford">例题 6：有负权边的最短路径（Bellman-Ford）</h3>
+</ul>
+<p>---</p>
+<h3>例题 6：有负权边的最短路径（Bellman-Ford）</h3>
 <p><strong>题目</strong>：带负权边的图，求单源最短路径，如果有负环返回 -1。</p>
 <p><strong>思路</strong>：Bellman-Ford 算法，可以检测负环。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 vector&lt;int&gt; bellmanFord(int n, vector&lt;vector&lt;int&gt;&gt;&amp; edges, int start) {
@@ -839,22 +584,19 @@ int main() {
     }
     
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：时间 <code>O(VE)</code>，空间 <code>O(V)</code></p>
 <p><strong>易错点</strong>：</p>
 <ul>
 <li>松弛 n-1 次（n 个节点最多 n-1 条边）</li>
-<ul>
 <li>如果第 n 次还能松弛，说明有负环</li>
-<ul>
 <li>Dijkstra 不适用于负权图</li>
-<hr>
-<h3 id="例题-7k-站中转内最便宜航班spfa">例题 7：K 站中转内最便宜航班（SPFA）</h3>
+</ul>
+<p>---</p>
+<h3>例题 7：K 站中转内最便宜航班（SPFA）</h3>
 <p><strong>题目</strong>：带限制次数的最短路径。</p>
 <p><strong>思路</strong>：SPFA（队列优化的 Bellman-Ford）。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 int findCheapestPrice(int n, vector&lt;vector&lt;int&gt;&gt;&amp; flights, int src, int dst, int k) {
@@ -900,20 +642,18 @@ int main() {
     cout &lt;&lt; findCheapestPrice(n, flights, src, dst, k) &lt;&lt; &quot;\n&quot;;
     
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：时间 平均 <code>O(kE)</code>，最坏 <code>O(VE)</code></p>
 <p><strong>易错点</strong>：</p>
 <ul>
 <li>队列存 {节点, 步数}，步数超过 k 就停止</li>
-<ul>
 <li>SPFA 可能被卡成 O(VE)，慎用</li>
-<hr>
-<h3 id="例题-8二维网格中的最短路径障碍物消除">例题 8：二维网格中的最短路径（障碍物消除）</h3>
+</ul>
+<p>---</p>
+<h3>例题 8：二维网格中的最短路径（障碍物消除）</h3>
 <p><strong>题目</strong>：网格中有障碍，可以消除 k 个障碍，求最短路径。</p>
 <p><strong>思路</strong>：BFS + 状态 {x, y, 剩余消除次数}。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 int shortestPath(vector&lt;vector&lt;int&gt;&gt;&amp; grid, int k) {
@@ -975,193 +715,97 @@ int main() {
     cout &lt;&lt; shortestPath(grid, k) &lt;&lt; &quot;\n&quot;;
     
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：时间 <code>O(mnk)</code>，空间 <code>O(mnk)</code></p>
 <p><strong>易错点</strong>：</p>
 <ul>
 <li>状态是三维：{x, y, 剩余消除次数}</li>
-<ul>
 <li>visited 也是三维数组</li>
-<ul>
 <li>如果 k 足够大可以直走，特判优化</li>
-<hr>
-<h2 id="常见陷阱">常见陷阱</h2>
+</ul>
+<p>---</p>
+<h2>常见陷阱</h2>
 <ol>
 <li><strong>算法选择</strong>：</li>
-<ul>
-<li>非负权单源：Dijkstra</li>
-<ul>
-<li>有负权单源：Bellman-Ford / SPFA</li>
-<ul>
-<li>全源最短路：Floyd（小规模）或多次 Dijkstra</li>
-<ul>
-<li>无权图：BFS</li>
+</ol>
+<p>   - 非负权单源：Dijkstra</p>
+<p>   - 有负权单源：Bellman-Ford / SPFA</p>
+<p>   - 全源最短路：Floyd（小规模）或多次 Dijkstra</p>
+<p>   - 无权图：BFS</p>
 <ol>
 <li><strong>Dijkstra 易错</strong>：</li>
-<ul>
-<li>不适用于负权边</li>
-<ul>
-<li>优先队列存 {距离, 节点}，按距离排序</li>
-<ul>
-<li>出队时检查是否已找到更短路径</li>
+</ol>
+<p>   - 不适用于负权边</p>
+<p>   - 优先队列存 {距离, 节点}，按距离排序</p>
+<p>   - 出队时检查是否已找到更短路径</p>
 <ol>
 <li><strong>Floyd 易错</strong>：</li>
-<ul>
-<li>k 必须在最外层</li>
-<ul>
-<li>防止溢出：先判断不是 INT_MAX</li>
+</ol>
+<p>   - k 必须在最外层</p>
+<p>   - 防止溢出：先判断不是 INT_MAX</p>
 <ol>
 <li><strong>Bellman-Ford 易错</strong>：</li>
-<ul>
-<li>松弛 n-1 次</li>
-<ul>
-<li>第 n 次还能松弛说明有负环</li>
-<ul>
-<li>每次松弛要遍历所有边</li>
+</ol>
+<p>   - 松弛 n-1 次</p>
+<p>   - 第 n 次还能松弛说明有负环</p>
+<p>   - 每次松弛要遍历所有边</p>
 <ol>
 <li><strong>INF 处理</strong>：</li>
-<ul>
-<li>用 INT_MAX 表示不可达</li>
-<ul>
-<li>加法前要检查是否为 INT_MAX，防止溢出</li>
-<h2 id="适用场景总结">适用场景总结</h2>
+</ol>
+<p>   - 用 INT_MAX 表示不可达</p>
+<p>   - 加法前要检查是否为 INT_MAX，防止溢出</p>
+<h2>适用场景总结</h2>
 <table>
-<thead>
-<tr>
+<thead><tr>
 <th>算法</th>
 <th>适用场景</th>
 <th>时间复杂度</th>
 <th>能否处理负权</th>
-</tr>
-</thead>
+</tr></thead>
 <tbody>
-<table>
-<thead>
 <tr>
-<th>------</th>
-<th>---------</th>
-<th>-----------</th>
-<th>------------</th>
+<td>Dijkstra</td>
+<td>非负权单源</td>
+<td>O((V+E) log V)</td>
+<td>否</td>
 </tr>
-</thead>
-<tbody>
-<table>
-<thead>
 <tr>
-<th>Dijkstra</th>
-<th>非负权单源</th>
-<th>O((V+E) log V)</th>
-<th>否</th>
+<td>Bellman-Ford</td>
+<td>有负权单源</td>
+<td>O(VE)</td>
+<td>是</td>
 </tr>
-</thead>
-<tbody>
-<table>
-<thead>
 <tr>
-<th>Bellman-Ford</th>
-<th>有负权单源</th>
-<th>O(VE)</th>
-<th>是</th>
+<td>SPFA</td>
+<td>一般情况单源</td>
+<td>平均 O(kE)</td>
+<td>是</td>
 </tr>
-</thead>
-<tbody>
-<table>
-<thead>
 <tr>
-<th>SPFA</th>
-<th>一般情况单源</th>
-<th>平均 O(kE)</th>
-<th>是</th>
+<td>Floyd-Warshall</td>
+<td>全源最短路</td>
+<td>O(V³)</td>
+<td>是</td>
 </tr>
-</thead>
-<tbody>
-<table>
-<thead>
 <tr>
-<th>Floyd-Warshall</th>
-<th>全源最短路</th>
-<th>O(V³)</th>
-<th>是</th>
+<td>BFS</td>
+<td>无权图</td>
+<td>O(V + E)</td>
+<td>-</td>
 </tr>
-</thead>
-<tbody>
-<table>
-<thead>
-<tr>
-<th>BFS</th>
-<th>无权图</th>
-<th>O(V + E)</th>
-<th>-</th>
-</tr>
-</thead>
-<tbody>
+</tbody>
+</table>
 <p><strong>核心技巧</strong>：</p>
 <ul>
 <li>Dijkstra：贪心 + 优先队列，适合非负权</li>
-<ul>
 <li>Floyd：DP，枚举中间节点，适合小规模全源</li>
-<ul>
 <li>Bellman-Ford：松弛所有边 n-1 次，可检测负环</li>
-<ul>
 <li>状态扩展：网格问题可以用多维状态（位置 + 其他信息）</li>
-<ul>
 <li>变形问题：最大概率、最小代价等都可以套用模板</li>
+</ul>
 
-        <div class="chapter-nav">
-    <a href="11-graph-traversal.html" class="prev-chapter">← 图遍历</a>
-    <a href="13-topological-sort.html" class="next-chapter">拓扑排序 →</a>
-</div>
-    </main>
-
-    <script>
-        // 主题切换
-        function toggleTheme() {
-            document.body.classList.toggle('dark-mode');
-            localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
-        }
-
-        // 加载保存的主题
-        if (localStorage.getItem('theme') === 'dark') {
-            document.body.classList.add('dark-mode');
-        }
-
-        // 侧边栏切换
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('collapsed');
-        }
-
-        // 进度条
-        window.addEventListener('scroll', () => {
-            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            const scrolled = (winScroll / height) * 100;
-            document.documentElement.style.setProperty('--scroll-progress', scrolled + '%');
-        });
-
-        // 目录高亮
-        const sections = document.querySelectorAll('h2[id]');
-        const tocLinks = document.querySelectorAll('.toc a');
-
-        window.addEventListener('scroll', () => {
-            let current = '';
-            sections.forEach(section => {
-                const sectionTop = section.offsetTop;
-                if (scrollY >= sectionTop - 100) {
-                    current = section.getAttribute('id');
-                }
-            });
-
-            tocLinks.forEach(link => {
-                link.classList.remove('active');
-                if (link.getAttribute('href') === '#' + current) {
-                    link.classList.add('active');
-                }
-            });
-        });
-
-        // 代码高亮
-        hljs.highlightAll();
-    </script>
+    <div class="nav">
+        <a href="11-graph-traversal.html">← 11 图的遍历与连通性</a> | <a href="13-topological-sort.html">13 拓扑排序与DAG →</a>
+    </div>
 </body>
 </html>

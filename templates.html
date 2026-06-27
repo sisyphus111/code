@@ -3,228 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>C++ 算法模板库 - 算法竞赛速成</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <title>算法模板库 - C++算法竞赛</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --bg-primary: #ffffff;
-            --bg-secondary: #f8f9fa;
-            --bg-code: #f6f8fa;
-            --text-primary: #24292f;
-            --text-secondary: #57606a;
-            --border-color: #d0d7de;
-            --accent-color: #0969da;
-            --accent-hover: #0550ae;
-            --sidebar-width: 280px;
-            --header-height: 60px;
-        }
-
-        body.dark-mode {
-            --bg-primary: #0d1117;
-            --bg-secondary: #161b22;
-            --bg-code: #161b22;
-            --text-primary: #c9d1d9;
-            --text-secondary: #8b949e;
-            --border-color: #30363d;
-            --accent-color: #58a6ff;
-            --accent-hover: #79c0ff;
-        }
-
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
-            line-height: 1.6;
-            color: var(--text-primary);
-            background-color: var(--bg-primary);
-            transition: background-color 0.3s, color 0.3s;
-        }
-
-        .progress-bar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--accent-color) 0%, var(--accent-color) var(--scroll-progress, 0%), transparent var(--scroll-progress, 0%));
-            z-index: 1001;
-        }
-
-        header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: var(--header-height);
-            background: var(--bg-secondary);
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 20px;
-            z-index: 1000;
-        }
-
-        .header-title {
-            font-size: 20px;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .header-controls {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-        }
-
-        .theme-toggle {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 24px;
-            padding: 5px;
-            transition: transform 0.2s;
-        }
-
-        .theme-toggle:hover {
-            transform: scale(1.1);
-        }
-
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: var(--header-height);
-            bottom: 0;
-            width: var(--sidebar-width);
-            background: var(--bg-secondary);
-            border-right: 1px solid var(--border-color);
-            overflow-y: auto;
-            padding: 20px;
-            transition: transform 0.3s;
-        }
-
-        .sidebar.collapsed {
-            transform: translateX(-100%);
-        }
-
-        .sidebar-toggle {
-            position: fixed;
-            left: var(--sidebar-width);
-            top: calc(var(--header-height) + 20px);
-            background: var(--accent-color);
-            color: white;
-            border: none;
-            border-radius: 0 4px 4px 0;
-            padding: 10px 8px;
-            cursor: pointer;
-            z-index: 999;
-            transition: left 0.3s;
-        }
-
-        .sidebar.collapsed + .sidebar-toggle {
-            left: 0;
-        }
-
-        .sidebar h3 {
-            font-size: 14px;
-            font-weight: 600;
-            text-transform: uppercase;
-            color: var(--text-secondary);
-            margin-bottom: 10px;
-        }
-
-        .toc {
-            list-style: none;
-        }
-
-        .toc li {
-            margin: 5px 0;
-        }
-
-        .toc a {
-            color: var(--text-primary);
-            text-decoration: none;
-            display: block;
-            padding: 6px 10px;
-            border-radius: 6px;
-            transition: background 0.2s;
-        }
-
-        .toc a:hover {
-            background: var(--bg-primary);
-        }
-
-        .toc a.active {
-            background: var(--accent-color);
-            color: white;
-        }
-
-        main {
-            margin-left: var(--sidebar-width);
-            margin-top: var(--header-height);
-            padding: 40px;
             max-width: 900px;
-            transition: margin-left 0.3s;
+            margin: 40px auto;
+            padding: 0 20px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            font-size: 16px;
+            line-height: 1.6;
+            color: #333;
         }
 
-        .sidebar.collapsed ~ main {
-            margin-left: 0;
-        }
+        h1 { font-size: 32px; margin: 40px 0 20px; border-bottom: 2px solid #333; padding-bottom: 10px; }
+        h2 { font-size: 24px; margin: 30px 0 15px; }
+        h3 { font-size: 20px; margin: 20px 0 10px; }
+        h4 { font-size: 18px; margin: 20px 0 10px; }
 
-        h1 {
-            font-size: 32px;
-            margin-bottom: 10px;
-            color: var(--text-primary);
-        }
+        p { margin: 10px 0; }
 
-        h2 {
-            font-size: 24px;
-            margin-top: 40px;
-            margin-bottom: 16px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid var(--border-color);
-            color: var(--text-primary);
-        }
-
-        h3 {
-            font-size: 20px;
-            margin-top: 24px;
-            margin-bottom: 12px;
-            color: var(--text-primary);
-        }
-
-        h4 {
-            font-size: 18px;
-            margin-top: 20px;
-            margin-bottom: 10px;
-            color: var(--text-primary);
-        }
-
-        p {
-            margin: 16px 0;
-            color: var(--text-primary);
+        pre {
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            padding: 15px;
+            overflow-x: auto;
+            font-size: 14px;
+            line-height: 1.4;
+            margin: 15px 0;
         }
 
         code {
-            background: var(--bg-code);
-            padding: 2px 6px;
+            background: #f5f5f5;
+            padding: 2px 5px;
             border-radius: 3px;
-            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
-            font-size: 0.9em;
-        }
-
-        pre {
-            background: var(--bg-code);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 16px;
-            overflow-x: auto;
-            margin: 16px 0;
+            font-family: "SF Mono", Monaco, Consolas, monospace;
+            font-size: 14px;
         }
 
         pre code {
@@ -232,124 +46,71 @@
             padding: 0;
         }
 
-        ul, ol {
-            margin: 16px 0;
-            padding-left: 32px;
-        }
-
-        li {
-            margin: 8px 0;
-        }
-
-        hr {
-            border: none;
-            border-top: 1px solid var(--border-color);
-            margin: 24px 0;
-        }
-
         table {
             width: 100%;
             border-collapse: collapse;
-            margin: 16px 0;
+            margin: 20px 0;
         }
 
         th, td {
-            border: 1px solid var(--border-color);
+            border: 1px solid #ddd;
             padding: 8px 12px;
             text-align: left;
         }
 
         th {
-            background: var(--bg-secondary);
+            background: #f5f5f5;
             font-weight: 600;
         }
 
-        .chapter-nav {
-            display: flex;
-            justify-content: space-between;
-            margin: 40px 0;
-            padding: 20px 0;
-            border-top: 1px solid var(--border-color);
+        ul, ol {
+            margin: 10px 0;
+            padding-left: 30px;
         }
 
-        .chapter-nav a {
-            color: var(--accent-color);
+        li {
+            margin: 5px 0;
+        }
+
+        a {
+            color: #0066cc;
             text-decoration: none;
-            padding: 10px 20px;
-            border: 1px solid var(--accent-color);
-            border-radius: 6px;
-            transition: all 0.2s;
         }
 
-        .chapter-nav a:hover {
-            background: var(--accent-color);
-            color: white;
+        a:hover {
+            text-decoration: underline;
+        }
+
+        strong {
+            font-weight: 600;
+        }
+
+        .nav {
+            margin: 40px 0;
+            padding: 15px 0;
+            border-top: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .nav a {
+            margin-right: 20px;
         }
 
         @media print {
-            .sidebar, .sidebar-toggle, .theme-toggle, .progress-bar {
-                display: none;
-            }
-            main {
-                margin-left: 0;
-                margin-top: 0;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-            .sidebar.show {
-                transform: translateX(0);
-            }
-            main {
-                margin-left: 0;
-                padding: 20px;
-            }
+            body { margin: 0; padding: 20px; }
+            .nav { display: none; }
         }
     </style>
 </head>
 <body>
-    <div class="progress-bar"></div>
+    <div class="nav">
+        <a href="index.html">← 返回主页</a>
+    </div>
 
-    <header>
-        <div class="header-title">C++ 算法模板库</div>
-        <div class="header-controls">
-            <button class="theme-toggle" onclick="toggleTheme()" title="切换主题">🌓</button>
-        </div>
-    </header>
-
-    <nav class="sidebar" id="sidebar">
-        <h3>目录</h3>
-        <ul class="toc">
-    <li><a href="#基础主函数">基础主函数</a></li>
-    <li><a href="#二分查找">二分查找</a></li>
-    <li><a href="#前缀和与差分">前缀和与差分</a></li>
-    <li><a href="#单调栈与单调队列">单调栈与单调队列</a></li>
-    <li><a href="#dfs-与-bfs">DFS 与 BFS</a></li>
-    <li><a href="#回溯">回溯</a></li>
-    <li><a href="#并查集">并查集</a></li>
-    <li><a href="#拓扑排序">拓扑排序</a></li>
-    <li><a href="#dijkstra-最短路">Dijkstra 最短路</a></li>
-    <li><a href="#floyd-全源最短路">Floyd 全源最短路</a></li>
-    <li><a href="#动态规划">动态规划</a></li>
-    <li><a href="#树状数组">树状数组</a></li>
-    <li><a href="#线段树">线段树</a></li>
-    <li><a href="#数学">数学</a></li>
-    <li><a href="#位运算">位运算</a></li>
-    <li><a href="#常用技巧">常用技巧</a></li>
-</ul>
-    </nav>
-
-    <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
-
-    <main>
-        <h1>C++ 算法模板库</h1>
-
-        <h2 id="基础主函数">基础主函数</h2>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+    <h1>C++ 算法模板库</h1>
+<p>可直接复制使用的算法模板集合，考前快速复习用。</p>
+<h2>基础主函数</h2>
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 using ll = long long;
@@ -369,11 +130,9 @@ int main() {
     
     solve();
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>多组测试</strong>：</p>
-<pre><code class="language-cpp">
-int main() {
+<pre><code>int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
     
@@ -381,13 +140,11 @@ int main() {
     cin &gt;&gt; T;
     while (T--) solve();
     return 0;
-}
-</code></pre>
-<hr>
-<h2 id="二分查找">二分查找</h2>
-<h3 id="查找第一个--x">查找第一个 &gt;= x</h3>
-<pre><code class="language-cpp">
-int lower_bound_manual(const vector&lt;int&gt;&amp; a, int x) {
+}</code></pre>
+<p>---</p>
+<h2>二分查找</h2>
+<h3>查找第一个 &gt;= x</h3>
+<pre><code>int lower_bound_manual(const vector&lt;int&gt;&amp; a, int x) {
     int l = 0, r = a.size();
     while (l &lt; r) {
         int m = l + (r - l) / 2;
@@ -395,11 +152,9 @@ int lower_bound_manual(const vector&lt;int&gt;&amp; a, int x) {
         else l = m + 1;
     }
     return l;
-}
-</code></pre>
-<h3 id="二分答案---最小可行">二分答案 - 最小可行</h3>
-<pre><code class="language-cpp">
-bool check(long long x) {
+}</code></pre>
+<h3>二分答案 - 最小可行</h3>
+<pre><code>bool check(long long x) {
     return true; // 判断 x 是否可行
 }
 
@@ -410,34 +165,28 @@ long long binary_min(long long l, long long r) {
         else l = m + 1;
     }
     return l;
-}
-</code></pre>
-<h3 id="二分答案---最大可行">二分答案 - 最大可行</h3>
-<pre><code class="language-cpp">
-long long binary_max(long long l, long long r) {
+}</code></pre>
+<h3>二分答案 - 最大可行</h3>
+<pre><code>long long binary_max(long long l, long long r) {
     while (l &lt; r) {
         long long m = l + (r - l + 1) / 2;
         if (check(m)) l = m;
         else r = m - 1;
     }
     return l;
-}
-</code></pre>
-<hr>
-<h2 id="前缀和与差分">前缀和与差分</h2>
-<h3 id="一维前缀和">一维前缀和</h3>
-<pre><code class="language-cpp">
-vector&lt;ll&gt; pre(n + 1, 0);
+}</code></pre>
+<p>---</p>
+<h2>前缀和与差分</h2>
+<h3>一维前缀和</h3>
+<pre><code>vector&lt;ll&gt; pre(n + 1, 0);
 for (int i = 0; i &lt; n; ++i) {
     pre[i + 1] = pre[i] + a[i];
 }
 
 // 查询 [l, r]
-ll sum = pre[r + 1] - pre[l];
-</code></pre>
-<h3 id="二维前缀和">二维前缀和</h3>
-<pre><code class="language-cpp">
-vector&lt;vector&lt;ll&gt;&gt; pre(n + 1, vector&lt;ll&gt;(m + 1, 0));
+ll sum = pre[r + 1] - pre[l];</code></pre>
+<h3>二维前缀和</h3>
+<pre><code>vector&lt;vector&lt;ll&gt;&gt; pre(n + 1, vector&lt;ll&gt;(m + 1, 0));
 for (int i = 0; i &lt; n; ++i) {
     for (int j = 0; j &lt; m; ++j) {
         pre[i + 1][j + 1] = pre[i][j + 1] + pre[i + 1][j] 
@@ -447,11 +196,9 @@ for (int i = 0; i &lt; n; ++i) {
 
 // 查询 (x1,y1) 到 (x2,y2)
 ll sum = pre[x2 + 1][y2 + 1] - pre[x1][y2 + 1] 
-       - pre[x2 + 1][y1] + pre[x1][y1];
-</code></pre>
-<h3 id="差分数组">差分数组</h3>
-<pre><code class="language-cpp">
-vector&lt;ll&gt; diff(n + 1, 0);
+       - pre[x2 + 1][y1] + pre[x1][y1];</code></pre>
+<h3>差分数组</h3>
+<pre><code>vector&lt;ll&gt; diff(n + 1, 0);
 
 // 区间 [l, r] 加 v
 diff[l] += v;
@@ -463,13 +210,11 @@ ll sum = 0;
 for (int i = 0; i &lt; n; ++i) {
     sum += diff[i];
     a[i] = sum;
-}
-</code></pre>
-<hr>
-<h2 id="单调栈与单调队列">单调栈与单调队列</h2>
-<h3 id="下一个更大元素">下一个更大元素</h3>
-<pre><code class="language-cpp">
-vector&lt;int&gt; next_greater(n, -1);
+}</code></pre>
+<p>---</p>
+<h2>单调栈与单调队列</h2>
+<h3>下一个更大元素</h3>
+<pre><code>vector&lt;int&gt; next_greater(n, -1);
 stack&lt;int&gt; st;
 
 for (int i = 0; i &lt; n; ++i) {
@@ -478,11 +223,9 @@ for (int i = 0; i &lt; n; ++i) {
         st.pop();
     }
     st.push(i);
-}
-</code></pre>
-<h3 id="滑动窗口最大值">滑动窗口最大值</h3>
-<pre><code class="language-cpp">
-deque&lt;int&gt; dq;
+}</code></pre>
+<h3>滑动窗口最大值</h3>
+<pre><code>deque&lt;int&gt; dq;
 vector&lt;int&gt; ans;
 
 for (int i = 0; i &lt; n; ++i) {
@@ -490,13 +233,11 @@ for (int i = 0; i &lt; n; ++i) {
     while (!dq.empty() &amp;&amp; a[dq.back()] &lt;= a[i]) dq.pop_back();
     dq.push_back(i);
     if (i &gt;= k - 1) ans.push_back(a[dq.front()]);
-}
-</code></pre>
-<hr>
-<h2 id="dfs-与-bfs">DFS 与 BFS</h2>
-<h3 id="dfs-网格">DFS 网格</h3>
-<pre><code class="language-cpp">
-int n, m;
+}</code></pre>
+<p>---</p>
+<h2>DFS 与 BFS</h2>
+<h3>DFS 网格</h3>
+<pre><code>int n, m;
 vector&lt;vector&lt;int&gt;&gt; vis;
 int dx[4] = {1, -1, 0, 0};
 int dy[4] = {0, 0, 1, -1};
@@ -512,11 +253,9 @@ void dfs(int x, int y) {
         if (!inside(nx, ny) || vis[nx][ny]) continue;
         dfs(nx, ny);
     }
-}
-</code></pre>
-<h3 id="bfs-网格最短路">BFS 网格最短路</h3>
-<pre><code class="language-cpp">
-vector&lt;vector&lt;int&gt;&gt; dist(n, vector&lt;int&gt;(m, -1));
+}</code></pre>
+<h3>BFS 网格最短路</h3>
+<pre><code>vector&lt;vector&lt;int&gt;&gt; dist(n, vector&lt;int&gt;(m, -1));
 queue&lt;pii&gt; q;
 
 dist[sx][sy] = 0;
@@ -532,13 +271,11 @@ while (!q.empty()) {
         dist[nx][ny] = dist[x][y] + 1;
         q.push({nx, ny});
     }
-}
-</code></pre>
-<hr>
-<h2 id="回溯">回溯</h2>
-<h3 id="组合">组合</h3>
-<pre><code class="language-cpp">
-vector&lt;int&gt; path;
+}</code></pre>
+<p>---</p>
+<h2>回溯</h2>
+<h3>组合</h3>
+<pre><code>vector&lt;int&gt; path;
 vector&lt;vector&lt;int&gt;&gt; ans;
 
 void backtrack(int start, int n, int k) {
@@ -551,11 +288,9 @@ void backtrack(int start, int n, int k) {
         backtrack(i + 1, n, k);
         path.pop_back();
     }
-}
-</code></pre>
-<h3 id="排列">排列</h3>
-<pre><code class="language-cpp">
-vector&lt;int&gt; path, used;
+}</code></pre>
+<h3>排列</h3>
+<pre><code>vector&lt;int&gt; path, used;
 vector&lt;vector&lt;int&gt;&gt; ans;
 
 void permute(vector&lt;int&gt;&amp; nums) {
@@ -571,12 +306,10 @@ void permute(vector&lt;int&gt;&amp; nums) {
         path.pop_back();
         used[i] = 0;
     }
-}
-</code></pre>
-<hr>
-<h2 id="并查集">并查集</h2>
-<pre><code class="language-cpp">
-struct DSU {
+}</code></pre>
+<p>---</p>
+<h2>并查集</h2>
+<pre><code>struct DSU {
     vector&lt;int&gt; p, sz;
     
     DSU(int n) : p(n), sz(n, 1) {
@@ -599,12 +332,10 @@ struct DSU {
     bool same(int a, int b) {
         return find(a) == find(b);
     }
-};
-</code></pre>
-<hr>
-<h2 id="拓扑排序">拓扑排序</h2>
-<pre><code class="language-cpp">
-vector&lt;int&gt; topo_sort(int n, vector&lt;vector&lt;int&gt;&gt;&amp; g) {
+};</code></pre>
+<p>---</p>
+<h2>拓扑排序</h2>
+<pre><code>vector&lt;int&gt; topo_sort(int n, vector&lt;vector&lt;int&gt;&gt;&amp; g) {
     vector&lt;int&gt; indeg(n, 0);
     for (int u = 0; u &lt; n; ++u) {
         for (int v : g[u]) indeg[v]++;
@@ -625,12 +356,10 @@ vector&lt;int&gt; topo_sort(int n, vector&lt;vector&lt;int&gt;&gt;&amp; g) {
     }
     
     return order; // size &lt; n 说明有环
-}
-</code></pre>
-<hr>
-<h2 id="dijkstra-最短路">Dijkstra 最短路</h2>
-<pre><code class="language-cpp">
-vector&lt;ll&gt; dijkstra(int n, int s, vector&lt;vector&lt;pii&gt;&gt;&amp; g) {
+}</code></pre>
+<p>---</p>
+<h2>Dijkstra 最短路</h2>
+<pre><code>vector&lt;ll&gt; dijkstra(int n, int s, vector&lt;vector&lt;pii&gt;&gt;&amp; g) {
     vector&lt;ll&gt; dist(n, LINF);
     priority_queue&lt;pair&lt;ll, int&gt;, vector&lt;pair&lt;ll, int&gt;&gt;, greater&lt;&gt;&gt; pq;
     
@@ -650,12 +379,10 @@ vector&lt;ll&gt; dijkstra(int n, int s, vector&lt;vector&lt;pii&gt;&gt;&amp; g) 
     }
     
     return dist;
-}
-</code></pre>
-<hr>
-<h2 id="floyd-全源最短路">Floyd 全源最短路</h2>
-<pre><code class="language-cpp">
-vector&lt;vector&lt;ll&gt;&gt; dist(n, vector&lt;ll&gt;(n, LINF));
+}</code></pre>
+<p>---</p>
+<h2>Floyd 全源最短路</h2>
+<pre><code>vector&lt;vector&lt;ll&gt;&gt; dist(n, vector&lt;ll&gt;(n, LINF));
 for (int i = 0; i &lt; n; ++i) dist[i][i] = 0;
 
 // 添加边
@@ -671,44 +398,36 @@ for (int k = 0; k &lt; n; ++k) {
             }
         }
     }
-}
-</code></pre>
-<hr>
-<h2 id="动态规划">动态规划</h2>
-<h3 id="01-背包">0/1 背包</h3>
-<pre><code class="language-cpp">
-vector&lt;ll&gt; dp(W + 1, 0);
+}</code></pre>
+<p>---</p>
+<h2>动态规划</h2>
+<h3>0/1 背包</h3>
+<pre><code>vector&lt;ll&gt; dp(W + 1, 0);
 
 for (int i = 0; i &lt; n; ++i) {
     for (int w = W; w &gt;= weight[i]; --w) {
         dp[w] = max(dp[w], dp[w - weight[i]] + value[i]);
     }
-}
-</code></pre>
-<h3 id="完全背包">完全背包</h3>
-<pre><code class="language-cpp">
-vector&lt;ll&gt; dp(W + 1, 0);
+}</code></pre>
+<h3>完全背包</h3>
+<pre><code>vector&lt;ll&gt; dp(W + 1, 0);
 
 for (int i = 0; i &lt; n; ++i) {
     for (int w = weight[i]; w &lt;= W; ++w) {
         dp[w] = max(dp[w], dp[w - weight[i]] + value[i]);
     }
-}
-</code></pre>
-<h3 id="lis-最长上升子序列">LIS (最长上升子序列)</h3>
-<pre><code class="language-cpp">
-vector&lt;int&gt; tails;
+}</code></pre>
+<h3>LIS (最长上升子序列)</h3>
+<pre><code>vector&lt;int&gt; tails;
 for (int x : a) {
     auto it = lower_bound(tails.begin(), tails.end(), x);
     if (it == tails.end()) tails.push_back(x);
     else *it = x;
 }
-int lis_len = tails.size();
-</code></pre>
-<hr>
-<h2 id="树状数组">树状数组</h2>
-<pre><code class="language-cpp">
-struct Fenwick {
+int lis_len = tails.size();</code></pre>
+<p>---</p>
+<h2>树状数组</h2>
+<pre><code>struct Fenwick {
     int n;
     vector&lt;ll&gt; bit;
     
@@ -729,12 +448,10 @@ struct Fenwick {
     ll range_sum(int l, int r) {
         return sum(r) - (l == 0 ? 0 : sum(l - 1));
     }
-};
-</code></pre>
-<hr>
-<h2 id="线段树">线段树</h2>
-<pre><code class="language-cpp">
-struct SegTree {
+};</code></pre>
+<p>---</p>
+<h2>线段树</h2>
+<pre><code>struct SegTree {
     int n;
     vector&lt;ll&gt; tr;
     
@@ -766,23 +483,19 @@ struct SegTree {
         if (qr &gt; m) res += query(o * 2 + 1, m + 1, r, ql, qr);
         return res;
     }
-};
-</code></pre>
-<hr>
-<h2 id="数学">数学</h2>
-<h3 id="gcd-和-lcm">GCD 和 LCM</h3>
-<pre><code class="language-cpp">
-ll gcd(ll a, ll b) {
+};</code></pre>
+<p>---</p>
+<h2>数学</h2>
+<h3>GCD 和 LCM</h3>
+<pre><code>ll gcd(ll a, ll b) {
     return b == 0 ? a : gcd(b, a % b);
 }
 
 ll lcm(ll a, ll b) {
     return a / gcd(a, b) * b;
-}
-</code></pre>
-<h3 id="快速幂">快速幂</h3>
-<pre><code class="language-cpp">
-ll mod_pow(ll a, ll e, ll mod) {
+}</code></pre>
+<h3>快速幂</h3>
+<pre><code>ll mod_pow(ll a, ll e, ll mod) {
     ll r = 1 % mod;
     a %= mod;
     while (e &gt; 0) {
@@ -791,11 +504,9 @@ ll mod_pow(ll a, ll e, ll mod) {
         e &gt;&gt;= 1;
     }
     return r;
-}
-</code></pre>
-<h3 id="埃氏筛">埃氏筛</h3>
-<pre><code class="language-cpp">
-vector&lt;int&gt; primes;
+}</code></pre>
+<h3>埃氏筛</h3>
+<pre><code>vector&lt;int&gt; primes;
 vector&lt;bool&gt; is_prime(n + 1, true);
 is_prime[0] = is_prime[1] = false;
 
@@ -808,12 +519,10 @@ for (int i = 2; i &lt;= n; ++i) {
             }
         }
     }
-}
-</code></pre>
-<hr>
-<h2 id="位运算">位运算</h2>
-<pre><code class="language-cpp">
-// 基本操作
+}</code></pre>
+<p>---</p>
+<h2>位运算</h2>
+<pre><code>// 基本操作
 x &amp; 1              // 判断奇偶
 x &amp; (x - 1)        // 清除最低位的 1
 x &amp; -x             // 保留最低位的 1
@@ -829,23 +538,19 @@ __builtin_popcountll(x)    // long long
 // 枚举子集
 for (int s = mask; s; s = (s - 1) &amp; mask) {
     // s 是 mask 的子集
-}
-</code></pre>
-<hr>
-<h2 id="常用技巧">常用技巧</h2>
-<h3 id="坐标离散化">坐标离散化</h3>
-<pre><code class="language-cpp">
-vector&lt;int&gt; vals = coords;
+}</code></pre>
+<p>---</p>
+<h2>常用技巧</h2>
+<h3>坐标离散化</h3>
+<pre><code>vector&lt;int&gt; vals = coords;
 sort(vals.begin(), vals.end());
 vals.erase(unique(vals.begin(), vals.end()), vals.end());
 
 for (int&amp; x : coords) {
     x = lower_bound(vals.begin(), vals.end(), x) - vals.begin();
-}
-</code></pre>
-<h3 id="读到-eof">读到 EOF</h3>
-<pre><code class="language-cpp">
-int n;
+}</code></pre>
+<h3>读到 EOF</h3>
+<pre><code>int n;
 while (cin &gt;&gt; n) {
     // 处理
 }
@@ -853,72 +558,18 @@ while (cin &gt;&gt; n) {
 string line;
 while (getline(cin, line)) {
     // 处理
-}
-</code></pre>
-<h3 id="输出格式">输出格式</h3>
-<pre><code class="language-cpp">
-// 行末无空格
+}</code></pre>
+<h3>输出格式</h3>
+<pre><code>// 行末无空格
 for (int i = 0; i &lt; n; ++i) {
     cout &lt;&lt; a[i] &lt;&lt; &quot; \n&quot;[i == n - 1];
 }
 
 // 固定精度
-cout &lt;&lt; fixed &lt;&lt; setprecision(2) &lt;&lt; x &lt;&lt; &quot;\n&quot;;
-</code></pre>
+cout &lt;&lt; fixed &lt;&lt; setprecision(2) &lt;&lt; x &lt;&lt; &quot;\n&quot;;</code></pre>
 
-        <div class="chapter-nav">
-    <a href="cpp-stl.html" class="next-chapter">C++ STL使用指南 →</a>
-</div>
-    </main>
-
-    <script>
-        // 主题切换
-        function toggleTheme() {
-            document.body.classList.toggle('dark-mode');
-            localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
-        }
-
-        // 加载保存的主题
-        if (localStorage.getItem('theme') === 'dark') {
-            document.body.classList.add('dark-mode');
-        }
-
-        // 侧边栏切换
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('collapsed');
-        }
-
-        // 进度条
-        window.addEventListener('scroll', () => {
-            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            const scrolled = (winScroll / height) * 100;
-            document.documentElement.style.setProperty('--scroll-progress', scrolled + '%');
-        });
-
-        // 目录高亮
-        const sections = document.querySelectorAll('h2[id]');
-        const tocLinks = document.querySelectorAll('.toc a');
-
-        window.addEventListener('scroll', () => {
-            let current = '';
-            sections.forEach(section => {
-                const sectionTop = section.offsetTop;
-                if (scrollY >= sectionTop - 100) {
-                    current = section.getAttribute('id');
-                }
-            });
-
-            tocLinks.forEach(link => {
-                link.classList.remove('active');
-                if (link.getAttribute('href') === '#' + current) {
-                    link.classList.add('active');
-                }
-            });
-        });
-
-        // 代码高亮
-        hljs.highlightAll();
-    </script>
+    <div class="nav">
+        <a href="cpp-stl.html">← C++ STL使用</a>
+    </div>
 </body>
 </html>

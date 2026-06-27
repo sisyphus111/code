@@ -3,228 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>拓扑排序与 DAG - 算法竞赛速成</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <title>13 拓扑排序与DAG - C++算法竞赛</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --bg-primary: #ffffff;
-            --bg-secondary: #f8f9fa;
-            --bg-code: #f6f8fa;
-            --text-primary: #24292f;
-            --text-secondary: #57606a;
-            --border-color: #d0d7de;
-            --accent-color: #0969da;
-            --accent-hover: #0550ae;
-            --sidebar-width: 280px;
-            --header-height: 60px;
-        }
-
-        body.dark-mode {
-            --bg-primary: #0d1117;
-            --bg-secondary: #161b22;
-            --bg-code: #161b22;
-            --text-primary: #c9d1d9;
-            --text-secondary: #8b949e;
-            --border-color: #30363d;
-            --accent-color: #58a6ff;
-            --accent-hover: #79c0ff;
-        }
-
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
-            line-height: 1.6;
-            color: var(--text-primary);
-            background-color: var(--bg-primary);
-            transition: background-color 0.3s, color 0.3s;
-        }
-
-        .progress-bar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--accent-color) 0%, var(--accent-color) var(--scroll-progress, 0%), transparent var(--scroll-progress, 0%));
-            z-index: 1001;
-        }
-
-        header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: var(--header-height);
-            background: var(--bg-secondary);
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 20px;
-            z-index: 1000;
-        }
-
-        .header-title {
-            font-size: 20px;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .header-controls {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-        }
-
-        .theme-toggle {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 24px;
-            padding: 5px;
-            transition: transform 0.2s;
-        }
-
-        .theme-toggle:hover {
-            transform: scale(1.1);
-        }
-
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: var(--header-height);
-            bottom: 0;
-            width: var(--sidebar-width);
-            background: var(--bg-secondary);
-            border-right: 1px solid var(--border-color);
-            overflow-y: auto;
-            padding: 20px;
-            transition: transform 0.3s;
-        }
-
-        .sidebar.collapsed {
-            transform: translateX(-100%);
-        }
-
-        .sidebar-toggle {
-            position: fixed;
-            left: var(--sidebar-width);
-            top: calc(var(--header-height) + 20px);
-            background: var(--accent-color);
-            color: white;
-            border: none;
-            border-radius: 0 4px 4px 0;
-            padding: 10px 8px;
-            cursor: pointer;
-            z-index: 999;
-            transition: left 0.3s;
-        }
-
-        .sidebar.collapsed + .sidebar-toggle {
-            left: 0;
-        }
-
-        .sidebar h3 {
-            font-size: 14px;
-            font-weight: 600;
-            text-transform: uppercase;
-            color: var(--text-secondary);
-            margin-bottom: 10px;
-        }
-
-        .toc {
-            list-style: none;
-        }
-
-        .toc li {
-            margin: 5px 0;
-        }
-
-        .toc a {
-            color: var(--text-primary);
-            text-decoration: none;
-            display: block;
-            padding: 6px 10px;
-            border-radius: 6px;
-            transition: background 0.2s;
-        }
-
-        .toc a:hover {
-            background: var(--bg-primary);
-        }
-
-        .toc a.active {
-            background: var(--accent-color);
-            color: white;
-        }
-
-        main {
-            margin-left: var(--sidebar-width);
-            margin-top: var(--header-height);
-            padding: 40px;
             max-width: 900px;
-            transition: margin-left 0.3s;
+            margin: 40px auto;
+            padding: 0 20px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            font-size: 16px;
+            line-height: 1.6;
+            color: #333;
         }
 
-        .sidebar.collapsed ~ main {
-            margin-left: 0;
-        }
+        h1 { font-size: 32px; margin: 40px 0 20px; border-bottom: 2px solid #333; padding-bottom: 10px; }
+        h2 { font-size: 24px; margin: 30px 0 15px; }
+        h3 { font-size: 20px; margin: 20px 0 10px; }
+        h4 { font-size: 18px; margin: 20px 0 10px; }
 
-        h1 {
-            font-size: 32px;
-            margin-bottom: 10px;
-            color: var(--text-primary);
-        }
+        p { margin: 10px 0; }
 
-        h2 {
-            font-size: 24px;
-            margin-top: 40px;
-            margin-bottom: 16px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid var(--border-color);
-            color: var(--text-primary);
-        }
-
-        h3 {
-            font-size: 20px;
-            margin-top: 24px;
-            margin-bottom: 12px;
-            color: var(--text-primary);
-        }
-
-        h4 {
-            font-size: 18px;
-            margin-top: 20px;
-            margin-bottom: 10px;
-            color: var(--text-primary);
-        }
-
-        p {
-            margin: 16px 0;
-            color: var(--text-primary);
+        pre {
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            padding: 15px;
+            overflow-x: auto;
+            font-size: 14px;
+            line-height: 1.4;
+            margin: 15px 0;
         }
 
         code {
-            background: var(--bg-code);
-            padding: 2px 6px;
+            background: #f5f5f5;
+            padding: 2px 5px;
             border-radius: 3px;
-            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
-            font-size: 0.9em;
-        }
-
-        pre {
-            background: var(--bg-code);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 16px;
-            overflow-x: auto;
-            margin: 16px 0;
+            font-family: "SF Mono", Monaco, Consolas, monospace;
+            font-size: 14px;
         }
 
         pre code {
@@ -232,129 +46,82 @@
             padding: 0;
         }
 
-        ul, ol {
-            margin: 16px 0;
-            padding-left: 32px;
-        }
-
-        li {
-            margin: 8px 0;
-        }
-
-        hr {
-            border: none;
-            border-top: 1px solid var(--border-color);
-            margin: 24px 0;
-        }
-
         table {
             width: 100%;
             border-collapse: collapse;
-            margin: 16px 0;
+            margin: 20px 0;
         }
 
         th, td {
-            border: 1px solid var(--border-color);
+            border: 1px solid #ddd;
             padding: 8px 12px;
             text-align: left;
         }
 
         th {
-            background: var(--bg-secondary);
+            background: #f5f5f5;
             font-weight: 600;
         }
 
-        .chapter-nav {
-            display: flex;
-            justify-content: space-between;
-            margin: 40px 0;
-            padding: 20px 0;
-            border-top: 1px solid var(--border-color);
+        ul, ol {
+            margin: 10px 0;
+            padding-left: 30px;
         }
 
-        .chapter-nav a {
-            color: var(--accent-color);
+        li {
+            margin: 5px 0;
+        }
+
+        a {
+            color: #0066cc;
             text-decoration: none;
-            padding: 10px 20px;
-            border: 1px solid var(--accent-color);
-            border-radius: 6px;
-            transition: all 0.2s;
         }
 
-        .chapter-nav a:hover {
-            background: var(--accent-color);
-            color: white;
+        a:hover {
+            text-decoration: underline;
+        }
+
+        strong {
+            font-weight: 600;
+        }
+
+        .nav {
+            margin: 40px 0;
+            padding: 15px 0;
+            border-top: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .nav a {
+            margin-right: 20px;
         }
 
         @media print {
-            .sidebar, .sidebar-toggle, .theme-toggle, .progress-bar {
-                display: none;
-            }
-            main {
-                margin-left: 0;
-                margin-top: 0;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-            .sidebar.show {
-                transform: translateX(0);
-            }
-            main {
-                margin-left: 0;
-                padding: 20px;
-            }
+            body { margin: 0; padding: 20px; }
+            .nav { display: none; }
         }
     </style>
 </head>
 <body>
-    <div class="progress-bar"></div>
+    <div class="nav">
+        <a href="index.html">← 返回主页</a>
+    </div>
 
-    <header>
-        <div class="header-title">拓扑排序与 DAG</div>
-        <div class="header-controls">
-            <button class="theme-toggle" onclick="toggleTheme()" title="切换主题">🌓</button>
-        </div>
-    </header>
-
-    <nav class="sidebar" id="sidebar">
-        <h3>目录</h3>
-        <ul class="toc">
-    <li><a href="#什么时候用">什么时候用</a></li>
-    <li><a href="#核心模板">核心模板</a></li>
-    <li><a href="#例题演示">例题演示</a></li>
-    <li><a href="#常见陷阱">常见陷阱</a></li>
-    <li><a href="#适用场景总结">适用场景总结</a></li>
-</ul>
-    </nav>
-
-    <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
-
-    <main>
-        <h1>拓扑排序与 DAG</h1>
-
-        <h2 id="什么时候用">什么时候用</h2>
+    <h1>拓扑排序与 DAG</h1>
+<h2>什么时候用</h2>
 <p>看到以下特征优先考虑拓扑排序：</p>
 <ul>
 <li><strong>有向无环图（DAG）</strong>：依赖关系、先后顺序</li>
-<ul>
 <li><strong>任务调度</strong>：某些任务必须在其他任务之前完成</li>
-<ul>
 <li><strong>课程安排</strong>：先修课程关系</li>
-<ul>
 <li><strong>编译顺序</strong>：模块依赖</li>
-<ul>
 <li><strong>事件顺序</strong>：事件之间有先后约束</li>
-<ul>
 <li>题目中出现"依赖"、"前置条件"、"顺序"、"先后"等字眼</li>
+</ul>
 <p>核心思路：<strong>不断选择入度为 0 的节点，去除后更新其他节点的入度</strong>。</p>
-<h2 id="核心模板">核心模板</h2>
-<h3 id="bfs-拓扑排序kahn-算法">BFS 拓扑排序（Kahn 算法）</h3>
-<pre><code class="language-cpp">
-vector&lt;int&gt; topologicalSort(int n, vector&lt;vector&lt;int&gt;&gt;&amp; edges) {
+<h2>核心模板</h2>
+<h3>BFS 拓扑排序（Kahn 算法）</h3>
+<pre><code>vector&lt;int&gt; topologicalSort(int n, vector&lt;vector&lt;int&gt;&gt;&amp; edges) {
     vector&lt;vector&lt;int&gt;&gt; graph(n);
     vector&lt;int&gt; inDegree(n, 0);
     
@@ -390,11 +157,9 @@ vector&lt;int&gt; topologicalSort(int n, vector&lt;vector&lt;int&gt;&gt;&amp; ed
     
     // 如果不能访问所有节点，说明有环
     return result.size() == n ? result : vector&lt;int&gt;();
-}
-</code></pre>
-<h3 id="dfs-拓扑排序">DFS 拓扑排序</h3>
-<pre><code class="language-cpp">
-bool dfs(int u, vector&lt;vector&lt;int&gt;&gt;&amp; graph, vector&lt;int&gt;&amp; color, vector&lt;int&gt;&amp; result) {
+}</code></pre>
+<h3>DFS 拓扑排序</h3>
+<pre><code>bool dfs(int u, vector&lt;vector&lt;int&gt;&gt;&amp; graph, vector&lt;int&gt;&amp; color, vector&lt;int&gt;&amp; result) {
     color[u] = 1;  // 标记为访问中
     
     for (int v : graph[u]) {
@@ -429,11 +194,9 @@ vector&lt;int&gt; topologicalSort(int n, vector&lt;vector&lt;int&gt;&gt;&amp; ed
     
     reverse(result.begin(), result.end());  // 逆序
     return result;
-}
-</code></pre>
-<h3 id="dag-上的最长路径">DAG 上的最长路径</h3>
-<pre><code class="language-cpp">
-int longestPath(int n, vector&lt;vector&lt;int&gt;&gt;&amp; edges) {
+}</code></pre>
+<h3>DAG 上的最长路径</h3>
+<pre><code>int longestPath(int n, vector&lt;vector&lt;int&gt;&gt;&amp; edges) {
     vector&lt;vector&lt;int&gt;&gt; graph(n);
     vector&lt;int&gt; inDegree(n, 0);
     
@@ -469,14 +232,12 @@ int longestPath(int n, vector&lt;vector&lt;int&gt;&gt;&amp; edges) {
     }
     
     return maxDist;
-}
-</code></pre>
-<h2 id="例题演示">例题演示</h2>
-<h3 id="例题-1课程表">例题 1：课程表</h3>
+}</code></pre>
+<h2>例题演示</h2>
+<h3>例题 1：课程表</h3>
 <p><strong>题目</strong>：n 门课程，给定先修关系，判断是否能完成所有课程（是否有环）。</p>
 <p><strong>思路</strong>：拓扑排序，如果能排序成功说明无环。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 bool canFinish(int n, vector&lt;vector&lt;int&gt;&gt;&amp; prerequisites) {
@@ -525,22 +286,19 @@ int main() {
     cout &lt;&lt; (canFinish(n, prerequisites) ? &quot;YES&quot; : &quot;NO&quot;) &lt;&lt; &quot;\n&quot;;
     
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：时间 <code>O(V + E)</code>，空间 <code>O(V + E)</code></p>
 <p><strong>易错点</strong>：</p>
 <ul>
 <li>边的方向：prerequisite → course</li>
-<ul>
 <li>如果 count != n 说明有环</li>
-<ul>
 <li>也可以用 DFS 三色标记判断环</li>
-<hr>
-<h3 id="例题-2课程表-ii输出拓扑序">例题 2：课程表 II（输出拓扑序）</h3>
+</ul>
+<p>---</p>
+<h3>例题 2：课程表 II（输出拓扑序）</h3>
 <p><strong>题目</strong>：返回一个合法的课程学习顺序，如果不存在返回空。</p>
 <p><strong>思路</strong>：拓扑排序，记录访问顺序。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 vector&lt;int&gt; findOrder(int n, vector&lt;vector&lt;int&gt;&gt;&amp; prerequisites) {
@@ -596,20 +354,18 @@ int main() {
     }
     
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：时间 <code>O(V + E)</code>，空间 <code>O(V + E)</code></p>
 <p><strong>易错点</strong>：</p>
 <ul>
 <li>拓扑序不唯一，任何合法序列都可以</li>
-<ul>
 <li>结果长度不等于 n 说明有环</li>
-<hr>
-<h3 id="例题-3外星文字典推导字符顺序">例题 3：外星文字典（推导字符顺序）</h3>
+</ul>
+<p>---</p>
+<h3>例题 3：外星文字典（推导字符顺序）</h3>
 <p><strong>题目</strong>：给定按字典序排列的外星单词，推导字符的字典序。</p>
 <p><strong>思路</strong>：相邻单词比较，第一个不同字符决定顺序，建图后拓扑排序。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 string alienOrder(vector&lt;string&gt;&amp; words) {
@@ -687,22 +443,19 @@ int main() {
     }
     
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：时间 <code>O(C)</code> C 是所有单词的字符总数，空间 <code>O(1)</code> 最多 26 个字符</p>
 <p><strong>易错点</strong>：</p>
 <ul>
 <li>只比较相邻单词的第一个不同字符</li>
-<ul>
 <li>特判：前面单词是后面单词的前缀但更长，非法</li>
-<ul>
 <li>用 set 避免重复边</li>
-<hr>
-<h3 id="例题-4并行课程最少学期数">例题 4：并行课程（最少学期数）</h3>
+</ul>
+<p>---</p>
+<h3>例题 4：并行课程（最少学期数）</h3>
 <p><strong>题目</strong>：给定课程依赖关系，每学期可以学多门课，求最少需要多少学期。</p>
 <p><strong>思路</strong>：拓扑排序 + 分层 BFS，层数就是学期数。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 int minimumSemesters(int n, vector&lt;vector&lt;int&gt;&gt;&amp; relations) {
@@ -756,20 +509,18 @@ int main() {
     cout &lt;&lt; minimumSemesters(n, relations) &lt;&lt; &quot;\n&quot;;
     
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：时间 <code>O(V + E)</code>，空间 <code>O(V + E)</code></p>
 <p><strong>易错点</strong>：</p>
 <ul>
 <li>每层是一个学期，要记录层数</li>
-<ul>
 <li>如果 studied != n 说明有环</li>
-<hr>
-<h3 id="例题-5序列重建唯一拓扑序">例题 5：序列重建（唯一拓扑序）</h3>
+</ul>
+<p>---</p>
+<h3>例题 5：序列重建（唯一拓扑序）</h3>
 <p><strong>题目</strong>：给定原序列和若干子序列，判断子序列能否唯一重建原序列。</p>
 <p><strong>思路</strong>：拓扑排序，检查是否唯一（每次只有一个入度为 0 的节点）。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 bool sequenceReconstruction(vector&lt;int&gt;&amp; org, vector&lt;vector&lt;int&gt;&gt;&amp; seqs) {
@@ -847,22 +598,19 @@ int main() {
     cout &lt;&lt; (sequenceReconstruction(org, seqs) ? &quot;YES&quot; : &quot;NO&quot;) &lt;&lt; &quot;\n&quot;;
     
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：时间 <code>O(V + E)</code>，空间 <code>O(V + E)</code></p>
 <p><strong>易错点</strong>：</p>
 <ul>
 <li>唯一性：每次队列只有一个元素</li>
-<ul>
 <li>要验证拓扑序和原序列完全一致</li>
-<ul>
 <li>数字范围要在 [1, n]</li>
-<hr>
-<h3 id="例题-6dag-上的最长路径">例题 6：DAG 上的最长路径</h3>
+</ul>
+<p>---</p>
+<h3>例题 6：DAG 上的最长路径</h3>
 <p><strong>题目</strong>：有向无环图，求最长路径长度。</p>
 <p><strong>思路</strong>：拓扑排序 + DP，每个节点的最长路径是其前驱的最长路径 + 1。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 int longestPath(int n, vector&lt;vector&lt;int&gt;&gt;&amp; edges) {
@@ -915,20 +663,18 @@ int main() {
     cout &lt;&lt; longestPath(n, edges) &lt;&lt; &quot;\n&quot;;
     
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：时间 <code>O(V + E)</code>，空间 <code>O(V)</code></p>
 <p><strong>易错点</strong>：</p>
 <ul>
 <li>dist[v] 取所有前驱的最大值 + 1</li>
-<ul>
 <li>最长路径不一定经过所有节点</li>
-<hr>
-<h3 id="例题-7受限条件下的可达性">例题 7：受限条件下的可达性</h3>
+</ul>
+<p>---</p>
+<h3>例题 7：受限条件下的可达性</h3>
 <p><strong>题目</strong>：给定有向图和一些限制边，问从起点到终点是否可达且满足限制。</p>
 <p><strong>思路</strong>：拓扑排序 + 可达性判断。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 bool isReachable(int n, vector&lt;vector&lt;int&gt;&gt;&amp; edges, 
@@ -998,20 +744,18 @@ int main() {
     cout &lt;&lt; (isReachable(n, edges, restrictions, src, dst) ? &quot;YES&quot; : &quot;NO&quot;) &lt;&lt; &quot;\n&quot;;
     
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：时间 <code>O(V + E)</code>，空间 <code>O(V + E)</code></p>
 <p><strong>易错点</strong>：</p>
 <ul>
 <li>受限边要从图中删除</li>
-<ul>
 <li>用 BFS 判断可达性</li>
-<hr>
-<h3 id="例题-8找到所有的祖先节点">例题 8：找到所有的祖先节点</h3>
+</ul>
+<p>---</p>
+<h3>例题 8：找到所有的祖先节点</h3>
 <p><strong>题目</strong>：给定 DAG，找到每个节点的所有祖先。</p>
 <p><strong>思路</strong>：拓扑排序 + 传递祖先集合。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 vector&lt;vector&lt;int&gt;&gt; getAncestors(int n, vector&lt;vector&lt;int&gt;&gt;&amp; edges) {
@@ -1077,196 +821,97 @@ int main() {
     }
     
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：时间 <code>O(V × (V + E))</code>，空间 <code>O(V^2)</code></p>
 <p><strong>易错点</strong>：</p>
 <ul>
 <li>要传递祖先集合，不只是直接父节点</li>
-<ul>
 <li>用 set 自动去重和排序</li>
-<hr>
-<h2 id="常见陷阱">常见陷阱</h2>
+</ul>
+<p>---</p>
+<h2>常见陷阱</h2>
 <ol>
 <li><strong>环检测</strong>：</li>
-<ul>
-<li>拓扑排序成功 ⇔ 无环</li>
-<ul>
-<li>如果访问节点数 < 总节点数，说明有环</li>
+</ol>
+<p>   - 拓扑排序成功 ⇔ 无环</p>
+<p>   - 如果访问节点数 < 总节点数，说明有环</p>
 <ol>
 <li><strong>边的方向</strong>：</li>
-<ul>
-<li>依赖关系：前置 → 后续</li>
-<ul>
-<li>入度：指向该节点的边数</li>
+</ol>
+<p>   - 依赖关系：前置 → 后续</p>
+<p>   - 入度：指向该节点的边数</p>
 <ol>
 <li><strong>拓扑序不唯一</strong>：</li>
-<ul>
-<li>多个入度为 0 的节点可以任意顺序</li>
-<ul>
-<li>唯一性判断：每次只有一个入度为 0 的节点</li>
+</ol>
+<p>   - 多个入度为 0 的节点可以任意顺序</p>
+<p>   - 唯一性判断：每次只有一个入度为 0 的节点</p>
 <ol>
 <li><strong>BFS vs DFS</strong>：</li>
-<ul>
-<li>BFS（Kahn）：更直观，易于分层</li>
-<ul>
-<li>DFS：代码更短，结果需要逆序</li>
+</ol>
+<p>   - BFS（Kahn）：更直观，易于分层</p>
+<p>   - DFS：代码更短，结果需要逆序</p>
 <ol>
 <li><strong>初始化</strong>：</li>
-<ul>
-<li>所有节点都要初始化入度</li>
-<ul>
-<li>孤立节点入度为 0</li>
-<h2 id="适用场景总结">适用场景总结</h2>
+</ol>
+<p>   - 所有节点都要初始化入度</p>
+<p>   - 孤立节点入度为 0</p>
+<h2>适用场景总结</h2>
 <table>
-<thead>
-<tr>
+<thead><tr>
 <th>问题类型</th>
 <th>关键技巧</th>
 <th>时间复杂度</th>
-</tr>
-</thead>
+</tr></thead>
 <tbody>
-<table>
-<thead>
 <tr>
-<th>---------</th>
-<th>---------</th>
-<th>-----------</th>
+<td>环检测</td>
+<td>拓扑排序成功 ⇔ 无环</td>
+<td>O(V + E)</td>
 </tr>
-</thead>
-<tbody>
-<table>
-<thead>
 <tr>
-<th>环检测</th>
-<th>拓扑排序成功 ⇔ 无环</th>
-<th>O(V + E)</th>
+<td>任务调度</td>
+<td>拓扑序就是执行顺序</td>
+<td>O(V + E)</td>
 </tr>
-</thead>
-<tbody>
-<table>
-<thead>
 <tr>
-<th>任务调度</th>
-<th>拓扑序就是执行顺序</th>
-<th>O(V + E)</th>
+<td>最少批次</td>
+<td>拓扑排序 + 分层 BFS</td>
+<td>O(V + E)</td>
 </tr>
-</thead>
-<tbody>
-<table>
-<thead>
 <tr>
-<th>最少批次</th>
-<th>拓扑排序 + 分层 BFS</th>
-<th>O(V + E)</th>
+<td>唯一性判断</td>
+<td>每次队列只有一个元素</td>
+<td>O(V + E)</td>
 </tr>
-</thead>
-<tbody>
-<table>
-<thead>
 <tr>
-<th>唯一性判断</th>
-<th>每次队列只有一个元素</th>
-<th>O(V + E)</th>
+<td>DAG 最长路径</td>
+<td>拓扑排序 + DP</td>
+<td>O(V + E)</td>
 </tr>
-</thead>
-<tbody>
-<table>
-<thead>
 <tr>
-<th>DAG 最长路径</th>
-<th>拓扑排序 + DP</th>
-<th>O(V + E)</th>
+<td>字典序推导</td>
+<td>相邻比较 + 拓扑排序</td>
+<td>O(C)</td>
 </tr>
-</thead>
-<tbody>
-<table>
-<thead>
 <tr>
-<th>字典序推导</th>
-<th>相邻比较 + 拓扑排序</th>
-<th>O(C)</th>
+<td>祖先传递</td>
+<td>拓扑排序 + 集合合并</td>
+<td>O(V × (V+E))</td>
 </tr>
-</thead>
-<tbody>
-<table>
-<thead>
-<tr>
-<th>祖先传递</th>
-<th>拓扑排序 + 集合合并</th>
-<th>O(V × (V+E))</th>
-</tr>
-</thead>
-<tbody>
+</tbody>
+</table>
 <p><strong>核心技巧</strong>：</p>
 <ul>
 <li>拓扑排序只适用于 DAG（有向无环图）</li>
-<ul>
 <li>BFS（Kahn）：从入度为 0 开始，逐步删除节点</li>
-<ul>
 <li>DFS：后序遍历逆序就是拓扑序</li>
-<ul>
 <li>拓扑排序 + DP 可以求 DAG 上的路径问题</li>
-<ul>
 <li>分层 BFS 可以求最少批次/最短时间</li>
-<ul>
 <li>唯一拓扑序：每次只有一个选择</li>
+</ul>
 
-        <div class="chapter-nav">
-    <a href="12-shortest-path.html" class="prev-chapter">← 最短路径</a>
-    <a href="14-dynamic-programming.html" class="next-chapter">动态规划 →</a>
-</div>
-    </main>
-
-    <script>
-        // 主题切换
-        function toggleTheme() {
-            document.body.classList.toggle('dark-mode');
-            localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
-        }
-
-        // 加载保存的主题
-        if (localStorage.getItem('theme') === 'dark') {
-            document.body.classList.add('dark-mode');
-        }
-
-        // 侧边栏切换
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('collapsed');
-        }
-
-        // 进度条
-        window.addEventListener('scroll', () => {
-            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            const scrolled = (winScroll / height) * 100;
-            document.documentElement.style.setProperty('--scroll-progress', scrolled + '%');
-        });
-
-        // 目录高亮
-        const sections = document.querySelectorAll('h2[id]');
-        const tocLinks = document.querySelectorAll('.toc a');
-
-        window.addEventListener('scroll', () => {
-            let current = '';
-            sections.forEach(section => {
-                const sectionTop = section.offsetTop;
-                if (scrollY >= sectionTop - 100) {
-                    current = section.getAttribute('id');
-                }
-            });
-
-            tocLinks.forEach(link => {
-                link.classList.remove('active');
-                if (link.getAttribute('href') === '#' + current) {
-                    link.classList.add('active');
-                }
-            });
-        });
-
-        // 代码高亮
-        hljs.highlightAll();
-    </script>
+    <div class="nav">
+        <a href="12-shortest-path.html">← 12 最短路径</a> | <a href="14-dynamic-programming.html">14 动态规划 →</a>
+    </div>
 </body>
 </html>

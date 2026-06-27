@@ -3,228 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>输入输出处理 - 算法竞赛速成</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <title>输入输出处理 - C++算法竞赛</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --bg-primary: #ffffff;
-            --bg-secondary: #f8f9fa;
-            --bg-code: #f6f8fa;
-            --text-primary: #24292f;
-            --text-secondary: #57606a;
-            --border-color: #d0d7de;
-            --accent-color: #0969da;
-            --accent-hover: #0550ae;
-            --sidebar-width: 280px;
-            --header-height: 60px;
-        }
-
-        body.dark-mode {
-            --bg-primary: #0d1117;
-            --bg-secondary: #161b22;
-            --bg-code: #161b22;
-            --text-primary: #c9d1d9;
-            --text-secondary: #8b949e;
-            --border-color: #30363d;
-            --accent-color: #58a6ff;
-            --accent-hover: #79c0ff;
-        }
-
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
-            line-height: 1.6;
-            color: var(--text-primary);
-            background-color: var(--bg-primary);
-            transition: background-color 0.3s, color 0.3s;
-        }
-
-        .progress-bar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--accent-color) 0%, var(--accent-color) var(--scroll-progress, 0%), transparent var(--scroll-progress, 0%));
-            z-index: 1001;
-        }
-
-        header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: var(--header-height);
-            background: var(--bg-secondary);
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 20px;
-            z-index: 1000;
-        }
-
-        .header-title {
-            font-size: 20px;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .header-controls {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-        }
-
-        .theme-toggle {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 24px;
-            padding: 5px;
-            transition: transform 0.2s;
-        }
-
-        .theme-toggle:hover {
-            transform: scale(1.1);
-        }
-
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: var(--header-height);
-            bottom: 0;
-            width: var(--sidebar-width);
-            background: var(--bg-secondary);
-            border-right: 1px solid var(--border-color);
-            overflow-y: auto;
-            padding: 20px;
-            transition: transform 0.3s;
-        }
-
-        .sidebar.collapsed {
-            transform: translateX(-100%);
-        }
-
-        .sidebar-toggle {
-            position: fixed;
-            left: var(--sidebar-width);
-            top: calc(var(--header-height) + 20px);
-            background: var(--accent-color);
-            color: white;
-            border: none;
-            border-radius: 0 4px 4px 0;
-            padding: 10px 8px;
-            cursor: pointer;
-            z-index: 999;
-            transition: left 0.3s;
-        }
-
-        .sidebar.collapsed + .sidebar-toggle {
-            left: 0;
-        }
-
-        .sidebar h3 {
-            font-size: 14px;
-            font-weight: 600;
-            text-transform: uppercase;
-            color: var(--text-secondary);
-            margin-bottom: 10px;
-        }
-
-        .toc {
-            list-style: none;
-        }
-
-        .toc li {
-            margin: 5px 0;
-        }
-
-        .toc a {
-            color: var(--text-primary);
-            text-decoration: none;
-            display: block;
-            padding: 6px 10px;
-            border-radius: 6px;
-            transition: background 0.2s;
-        }
-
-        .toc a:hover {
-            background: var(--bg-primary);
-        }
-
-        .toc a.active {
-            background: var(--accent-color);
-            color: white;
-        }
-
-        main {
-            margin-left: var(--sidebar-width);
-            margin-top: var(--header-height);
-            padding: 40px;
             max-width: 900px;
-            transition: margin-left 0.3s;
+            margin: 40px auto;
+            padding: 0 20px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            font-size: 16px;
+            line-height: 1.6;
+            color: #333;
         }
 
-        .sidebar.collapsed ~ main {
-            margin-left: 0;
-        }
+        h1 { font-size: 32px; margin: 40px 0 20px; border-bottom: 2px solid #333; padding-bottom: 10px; }
+        h2 { font-size: 24px; margin: 30px 0 15px; }
+        h3 { font-size: 20px; margin: 20px 0 10px; }
+        h4 { font-size: 18px; margin: 20px 0 10px; }
 
-        h1 {
-            font-size: 32px;
-            margin-bottom: 10px;
-            color: var(--text-primary);
-        }
+        p { margin: 10px 0; }
 
-        h2 {
-            font-size: 24px;
-            margin-top: 40px;
-            margin-bottom: 16px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid var(--border-color);
-            color: var(--text-primary);
-        }
-
-        h3 {
-            font-size: 20px;
-            margin-top: 24px;
-            margin-bottom: 12px;
-            color: var(--text-primary);
-        }
-
-        h4 {
-            font-size: 18px;
-            margin-top: 20px;
-            margin-bottom: 10px;
-            color: var(--text-primary);
-        }
-
-        p {
-            margin: 16px 0;
-            color: var(--text-primary);
+        pre {
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            padding: 15px;
+            overflow-x: auto;
+            font-size: 14px;
+            line-height: 1.4;
+            margin: 15px 0;
         }
 
         code {
-            background: var(--bg-code);
-            padding: 2px 6px;
+            background: #f5f5f5;
+            padding: 2px 5px;
             border-radius: 3px;
-            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
-            font-size: 0.9em;
-        }
-
-        pre {
-            background: var(--bg-code);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 16px;
-            overflow-x: auto;
-            margin: 16px 0;
+            font-family: "SF Mono", Monaco, Consolas, monospace;
+            font-size: 14px;
         }
 
         pre code {
@@ -232,133 +46,83 @@
             padding: 0;
         }
 
-        ul, ol {
-            margin: 16px 0;
-            padding-left: 32px;
-        }
-
-        li {
-            margin: 8px 0;
-        }
-
-        hr {
-            border: none;
-            border-top: 1px solid var(--border-color);
-            margin: 24px 0;
-        }
-
         table {
             width: 100%;
             border-collapse: collapse;
-            margin: 16px 0;
+            margin: 20px 0;
         }
 
         th, td {
-            border: 1px solid var(--border-color);
+            border: 1px solid #ddd;
             padding: 8px 12px;
             text-align: left;
         }
 
         th {
-            background: var(--bg-secondary);
+            background: #f5f5f5;
             font-weight: 600;
         }
 
-        .chapter-nav {
-            display: flex;
-            justify-content: space-between;
-            margin: 40px 0;
-            padding: 20px 0;
-            border-top: 1px solid var(--border-color);
+        ul, ol {
+            margin: 10px 0;
+            padding-left: 30px;
         }
 
-        .chapter-nav a {
-            color: var(--accent-color);
+        li {
+            margin: 5px 0;
+        }
+
+        a {
+            color: #0066cc;
             text-decoration: none;
-            padding: 10px 20px;
-            border: 1px solid var(--accent-color);
-            border-radius: 6px;
-            transition: all 0.2s;
         }
 
-        .chapter-nav a:hover {
-            background: var(--accent-color);
-            color: white;
+        a:hover {
+            text-decoration: underline;
+        }
+
+        strong {
+            font-weight: 600;
+        }
+
+        .nav {
+            margin: 40px 0;
+            padding: 15px 0;
+            border-top: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .nav a {
+            margin-right: 20px;
         }
 
         @media print {
-            .sidebar, .sidebar-toggle, .theme-toggle, .progress-bar {
-                display: none;
-            }
-            main {
-                margin-left: 0;
-                margin-top: 0;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-            .sidebar.show {
-                transform: translateX(0);
-            }
-            main {
-                margin-left: 0;
-                padding: 20px;
-            }
+            body { margin: 0; padding: 20px; }
+            .nav { display: none; }
         }
     </style>
 </head>
 <body>
-    <div class="progress-bar"></div>
+    <div class="nav">
+        <a href="index.html">← 返回主页</a>
+    </div>
 
-    <header>
-        <div class="header-title">输入输出处理</div>
-        <div class="header-controls">
-            <button class="theme-toggle" onclick="toggleTheme()" title="切换主题">🌓</button>
-        </div>
-    </header>
-
-    <nav class="sidebar" id="sidebar">
-        <h3>目录</h3>
-        <ul class="toc">
-    <li><a href="#oj-模式分类">OJ 模式分类</a></li>
-    <li><a href="#常见输入格式">常见输入格式</a></li>
-    <li><a href="#常见输出格式">常见输出格式</a></li>
-    <li><a href="#输入输出优化">输入输出优化</a></li>
-    <li><a href="#特殊情况处理">特殊情况处理</a></li>
-    <li><a href="#文件输入输出">文件输入输出</a></li>
-    <li><a href="#调试输出">调试输出</a></li>
-    <li><a href="#常见陷阱">常见陷阱</a></li>
-    <li><a href="#输入输出速度对比">输入输出速度对比</a></li>
-    <li><a href="#推荐做法">推荐做法</a></li>
-</ul>
-    </nav>
-
-    <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
-
-    <main>
-        <h1>输入输出处理</h1>
-
-        <h2 id="oj-模式分类">OJ 模式分类</h2>
-<h3 id="leetcode-函数模式">LeetCode 函数模式</h3>
+    <h1>输入输出处理</h1>
+<h2>OJ 模式分类</h2>
+<h3>LeetCode 函数模式</h3>
 <p><strong>特点</strong>：给定函数签名，直接写逻辑，不需要处理输入输出。</p>
-<pre><code class="language-cpp">
-class Solution {
+<pre><code>class Solution {
 public:
     int twoSum(vector&lt;int&gt;&amp; nums, int target) {
         // 直接写逻辑
         return 0;
     }
-};
-</code></pre>
-<hr>
-<h3 id="acmicpc-模式">ACM/ICPC 模式</h3>
+};</code></pre>
+<p>---</p>
+<h3>ACM/ICPC 模式</h3>
 <p><strong>特点</strong>：需要自己处理输入输出，完整的 <code>main</code> 函数。</p>
 <h4>单组输入</h4>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 int main() {
@@ -377,11 +141,9 @@ int main() {
     cout &lt;&lt; result &lt;&lt; &quot;\n&quot;;
     
     return 0;
-}
-</code></pre>
+}</code></pre>
 <h4>多组输入（给定组数）</h4>
-<pre><code class="language-cpp">
-int main() {
+<pre><code>int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
     
@@ -394,11 +156,9 @@ int main() {
     }
     
     return 0;
-}
-</code></pre>
+}</code></pre>
 <h4>多组输入（读到 EOF）</h4>
-<pre><code class="language-cpp">
-int main() {
+<pre><code>int main() {
     int n;
     while (cin &gt;&gt; n) {
         // 处理
@@ -413,13 +173,11 @@ int main() {
         // 处理
     }
     return 0;
-}
-</code></pre>
-<hr>
-<h2 id="常见输入格式">常见输入格式</h2>
-<h3 id="读取数组">读取数组</h3>
-<pre><code class="language-cpp">
-// 一行 n 个数
+}</code></pre>
+<p>---</p>
+<h2>常见输入格式</h2>
+<h3>读取数组</h3>
+<pre><code>// 一行 n 个数
 int n;
 cin &gt;&gt; n;
 vector&lt;int&gt; a(n);
@@ -435,12 +193,10 @@ vector&lt;int&gt; a;
 int x;
 while (ss &gt;&gt; x) {
     a.push_back(x);
-}
-</code></pre>
-<hr>
-<h3 id="读取矩阵">读取矩阵</h3>
-<pre><code class="language-cpp">
-int n, m;
+}</code></pre>
+<p>---</p>
+<h3>读取矩阵</h3>
+<pre><code>int n, m;
 cin &gt;&gt; n &gt;&gt; m;
 vector&lt;vector&lt;int&gt;&gt; mat(n, vector&lt;int&gt;(m));
 
@@ -454,12 +210,10 @@ for (int i = 0; i &lt; n; ++i) {
 vector&lt;string&gt; grid(n);
 for (int i = 0; i &lt; n; ++i) {
     cin &gt;&gt; grid[i];
-}
-</code></pre>
-<hr>
-<h3 id="读取整行">读取整行</h3>
-<pre><code class="language-cpp">
-string line;
+}</code></pre>
+<p>---</p>
+<h3>读取整行</h3>
+<pre><code>string line;
 getline(cin, line);
 
 // 按空白分割
@@ -474,24 +228,20 @@ stringstream ss(line);
 string part;
 while (getline(ss, part, ',')) {
     // 按逗号分割
-}
-</code></pre>
-<hr>
-<h3 id="混合输入数字--整行">混合输入（数字 + 整行）</h3>
+}</code></pre>
+<p>---</p>
+<h3>混合输入（数字 + 整行）</h3>
 <p><strong>问题</strong>：<code>cin >> x</code> 后用 <code>getline</code> 会读到残留换行符。</p>
 <p><strong>解决</strong>：</p>
-<pre><code class="language-cpp">
-int n;
+<pre><code>int n;
 cin &gt;&gt; n;
 cin.ignore();  // 忽略换行符
 
 string line;
-getline(cin, line);
-</code></pre>
-<hr>
-<h3 id="读到特定标记">读到特定标记</h3>
-<pre><code class="language-cpp">
-int n;
+getline(cin, line);</code></pre>
+<p>---</p>
+<h3>读到特定标记</h3>
+<pre><code>int n;
 while (cin &gt;&gt; n &amp;&amp; n != 0) {  // 读到 0 结束
     // 处理
 }
@@ -499,13 +249,11 @@ while (cin &gt;&gt; n &amp;&amp; n != 0) {  // 读到 0 结束
 string s;
 while (cin &gt;&gt; s &amp;&amp; s != &quot;#&quot;) {  // 读到 # 结束
     // 处理
-}
-</code></pre>
-<hr>
-<h2 id="常见输出格式">常见输出格式</h2>
-<h3 id="基本输出">基本输出</h3>
-<pre><code class="language-cpp">
-cout &lt;&lt; x &lt;&lt; &quot;\n&quot;;              // 输出 + 换行
+}</code></pre>
+<p>---</p>
+<h2>常见输出格式</h2>
+<h3>基本输出</h3>
+<pre><code>cout &lt;&lt; x &lt;&lt; &quot;\n&quot;;              // 输出 + 换行
 cout &lt;&lt; x &lt;&lt; &quot; &quot; &lt;&lt; y &lt;&lt; &quot;\n&quot;;  // 多个值
 
 // 行末无空格
@@ -518,12 +266,10 @@ cout &lt;&lt; &quot;\n&quot;;
 // 更简洁的写法
 for (int i = 0; i &lt; n; ++i) {
     cout &lt;&lt; a[i] &lt;&lt; &quot; \n&quot;[i == n - 1];
-}
-</code></pre>
-<hr>
-<h3 id="格式化输出">格式化输出</h3>
-<pre><code class="language-cpp">
-#include &lt;iomanip&gt;
+}</code></pre>
+<p>---</p>
+<h3>格式化输出</h3>
+<pre><code>#include &lt;iomanip&gt;
 
 // 保留小数
 cout &lt;&lt; fixed &lt;&lt; setprecision(2) &lt;&lt; x &lt;&lt; &quot;\n&quot;;
@@ -532,12 +278,10 @@ cout &lt;&lt; fixed &lt;&lt; setprecision(2) &lt;&lt; x &lt;&lt; &quot;\n&quot;;
 cout &lt;&lt; setw(5) &lt;&lt; setfill('0') &lt;&lt; x &lt;&lt; &quot;\n&quot;;  // 00123
 
 // 科学计数法
-cout &lt;&lt; scientific &lt;&lt; x &lt;&lt; &quot;\n&quot;;
-</code></pre>
-<hr>
-<h3 id="布尔值">布尔值</h3>
-<pre><code class="language-cpp">
-bool flag = true;
+cout &lt;&lt; scientific &lt;&lt; x &lt;&lt; &quot;\n&quot;;</code></pre>
+<p>---</p>
+<h3>布尔值</h3>
+<pre><code>bool flag = true;
 
 // 输出 1 或 0
 cout &lt;&lt; flag &lt;&lt; &quot;\n&quot;;
@@ -546,20 +290,16 @@ cout &lt;&lt; flag &lt;&lt; &quot;\n&quot;;
 cout &lt;&lt; boolalpha &lt;&lt; flag &lt;&lt; &quot;\n&quot;;
 
 // 输出 YES 或 NO
-cout &lt;&lt; (flag ? &quot;YES&quot; : &quot;NO&quot;) &lt;&lt; &quot;\n&quot;;
-</code></pre>
-<hr>
-<h2 id="输入输出优化">输入输出优化</h2>
-<h3 id="关闭同步c-常用">关闭同步（C++ 常用）</h3>
-<pre><code class="language-cpp">
-ios::sync_with_stdio(false);
-cin.tie(nullptr);
-</code></pre>
+cout &lt;&lt; (flag ? &quot;YES&quot; : &quot;NO&quot;) &lt;&lt; &quot;\n&quot;;</code></pre>
+<p>---</p>
+<h2>输入输出优化</h2>
+<h3>关闭同步（C++ 常用）</h3>
+<pre><code>ios::sync_with_stdio(false);
+cin.tie(nullptr);</code></pre>
 <p><strong>效果</strong>：加速 <code>cin/cout</code>，但不能混用 <code>scanf/printf</code>。</p>
-<hr>
-<h3 id="使用-scanfprintfc-风格">使用 scanf/printf（C 风格）</h3>
-<pre><code class="language-cpp">
-int n;
+<p>---</p>
+<h3>使用 scanf/printf（C 风格）</h3>
+<pre><code>int n;
 scanf(&quot;%d&quot;, &amp;n);
 
 double x;
@@ -570,33 +310,27 @@ scanf(&quot;%lld&quot;, &amp;ll);
 
 printf(&quot;%d\n&quot;, n);
 printf(&quot;%.2lf\n&quot;, x);
-printf(&quot;%lld\n&quot;, ll);
-</code></pre>
-<p><strong>优点</strong>：比 <code>cin/cout</code> 快（不开优化时）</p>
+printf(&quot;%lld\n&quot;, ll);</code></pre>
+<p><strong>优点</strong>：比 <code>cin/cout</code> 快（不开优化时）  </p>
 <p><strong>缺点</strong>：容易写错格式串</p>
-<hr>
-<h3 id="读入整个文件">读入整个文件</h3>
-<pre><code class="language-cpp">
-string content((istreambuf_iterator&lt;char&gt;(cin)),
-               istreambuf_iterator&lt;char&gt;());
-</code></pre>
-<hr>
-<h2 id="特殊情况处理">特殊情况处理</h2>
-<h3 id="空行处理">空行处理</h3>
-<pre><code class="language-cpp">
-string line;
+<p>---</p>
+<h3>读入整个文件</h3>
+<pre><code>string content((istreambuf_iterator&lt;char&gt;(cin)),
+               istreambuf_iterator&lt;char&gt;());</code></pre>
+<p>---</p>
+<h2>特殊情况处理</h2>
+<h3>空行处理</h3>
+<pre><code>string line;
 while (getline(cin, line)) {
     if (line.empty()) {
         // 空行
         continue;
     }
     // 处理非空行
-}
-</code></pre>
-<hr>
-<h3 id="前导后缀空格">前导/后缀空格</h3>
-<pre><code class="language-cpp">
-// 去掉前导空格
+}</code></pre>
+<p>---</p>
+<h3>前导/后缀空格</h3>
+<pre><code>// 去掉前导空格
 line.erase(line.begin(), find_if(line.begin(), line.end(), [](char c) {
     return !isspace(c);
 }));
@@ -609,12 +343,10 @@ line.erase(find_if(line.rbegin(), line.rend(), [](char c) {
 // 使用 stringstream 自动忽略空格
 stringstream ss(line);
 string word;
-while (ss &gt;&gt; word) { }  // 自动跳过前后空格
-</code></pre>
-<hr>
-<h3 id="不定长数组">不定长数组</h3>
-<pre><code class="language-cpp">
-// 方法 1：读一行再解析
+while (ss &gt;&gt; word) { }  // 自动跳过前后空格</code></pre>
+<p>---</p>
+<h3>不定长数组</h3>
+<pre><code>// 方法 1：读一行再解析
 string line;
 getline(cin, line);
 stringstream ss(line);
@@ -630,23 +362,19 @@ int x;
 while (cin &gt;&gt; x) {
     a.push_back(x);
     if (cin.peek() == '\n') break;
-}
-</code></pre>
-<hr>
-<h2 id="文件输入输出">文件输入输出</h2>
-<h3 id="从文件读取">从文件读取</h3>
-<pre><code class="language-cpp">
-freopen(&quot;input.txt&quot;, &quot;r&quot;, stdin);
+}</code></pre>
+<p>---</p>
+<h2>文件输入输出</h2>
+<h3>从文件读取</h3>
+<pre><code>freopen(&quot;input.txt&quot;, &quot;r&quot;, stdin);
 freopen(&quot;output.txt&quot;, &quot;w&quot;, stdout);
 
 // 之后用 cin/cout 正常读写即可
 int n;
 cin &gt;&gt; n;
-cout &lt;&lt; n &lt;&lt; &quot;\n&quot;;
-</code></pre>
-<h3 id="使用-fstream">使用 fstream</h3>
-<pre><code class="language-cpp">
-#include &lt;fstream&gt;
+cout &lt;&lt; n &lt;&lt; &quot;\n&quot;;</code></pre>
+<h3>使用 fstream</h3>
+<pre><code>#include &lt;fstream&gt;
 
 ifstream fin(&quot;input.txt&quot;);
 ofstream fout(&quot;output.txt&quot;);
@@ -656,97 +384,62 @@ fin &gt;&gt; n;
 fout &lt;&lt; n &lt;&lt; &quot;\n&quot;;
 
 fin.close();
-fout.close();
-</code></pre>
-<hr>
-<h2 id="调试输出">调试输出</h2>
-<h3 id="标准错误流">标准错误流</h3>
-<pre><code class="language-cpp">
-cerr &lt;&lt; &quot;Debug: x = &quot; &lt;&lt; x &lt;&lt; &quot;\n&quot;;  // 不影响标准输出
-</code></pre>
-<h3 id="条件编译">条件编译</h3>
-<pre><code class="language-cpp">
-#ifdef LOCAL
+fout.close();</code></pre>
+<p>---</p>
+<h2>调试输出</h2>
+<h3>标准错误流</h3>
+<pre><code>cerr &lt;&lt; &quot;Debug: x = &quot; &lt;&lt; x &lt;&lt; &quot;\n&quot;;  // 不影响标准输出</code></pre>
+<h3>条件编译</h3>
+<pre><code>#ifdef LOCAL
     freopen(&quot;input.txt&quot;, &quot;r&quot;, stdin);
     #define debug(x) cerr &lt;&lt; #x &lt;&lt; &quot; = &quot; &lt;&lt; x &lt;&lt; &quot;\n&quot;
 #else
     #define debug(x)
 #endif
 
-debug(n);  // 本地运行时输出，提交时自动忽略
-</code></pre>
-<hr>
-<h2 id="常见陷阱">常见陷阱</h2>
+debug(n);  // 本地运行时输出，提交时自动忽略</code></pre>
+<p>---</p>
+<h2>常见陷阱</h2>
 <ol>
 <li><strong>混用 cin 和 getline</strong>：<code>cin >> x</code> 后用 <code>getline</code> 要先 <code>cin.ignore()</code></li>
-<ol>
 <li><strong>行末空格</strong>：题目要求行末无空格时注意处理</li>
-<ol>
 <li><strong>多组数据不清空</strong>：<code>vector</code>、<code>map</code>、全局数组要清空</li>
-<ol>
 <li><strong>EOF 判断</strong>：<code>while (cin >> n)</code> 自动处理 EOF</li>
-<ol>
 <li><strong>精度问题</strong>：浮点输出注意 <code>fixed</code> 和 <code>setprecision</code></li>
-<ol>
 <li><strong>换行符</strong>：<code>\n</code> 比 <code>endl</code> 快（<code>endl</code> 会刷新缓冲区）</li>
-<h2 id="输入输出速度对比">输入输出速度对比</h2>
+</ol>
+<h2>输入输出速度对比</h2>
 <table>
-<thead>
-<tr>
+<thead><tr>
 <th>方法</th>
 <th>速度</th>
 <th>使用场景</th>
-</tr>
-</thead>
+</tr></thead>
 <tbody>
-<table>
-<thead>
 <tr>
-<th>------</th>
-<th>------</th>
-<th>----------</th>
+<td><code>scanf/printf</code></td>
+<td>快</td>
+<td>简单格式，需要速度</td>
 </tr>
-</thead>
-<tbody>
-<table>
-<thead>
 <tr>
-<th>`scanf/printf`</th>
-<th>快</th>
-<th>简单格式，需要速度</th>
+<td><code>cin/cout</code> + 优化</td>
+<td>中等</td>
+<td>C++ 风格，推荐</td>
 </tr>
-</thead>
-<tbody>
-<table>
-<thead>
 <tr>
-<th>`cin/cout` + 优化</th>
-<th>中等</th>
-<th>C++ 风格，推荐</th>
+<td><code>cin/cout</code> 不优化</td>
+<td>慢</td>
+<td>数据量小</td>
 </tr>
-</thead>
-<tbody>
-<table>
-<thead>
 <tr>
-<th>`cin/cout` 不优化</th>
-<th>慢</th>
-<th>数据量小</th>
+<td><code>getline</code></td>
+<td>中等</td>
+<td>需要读整行</td>
 </tr>
-</thead>
-<tbody>
-<table>
-<thead>
-<tr>
-<th>`getline`</th>
-<th>中等</th>
-<th>需要读整行</th>
-</tr>
-</thead>
-<tbody>
-<h2 id="推荐做法">推荐做法</h2>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+</tbody>
+</table>
+<h2>推荐做法</h2>
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 int main() {
@@ -756,62 +449,10 @@ int main() {
     // 使用 cin/cout 即可
     
     return 0;
-}
-</code></pre>
+}</code></pre>
 
-        <div class="chapter-nav">
-    <a href="cpp-stl.html" class="prev-chapter">← C++ STL使用指南</a>
-</div>
-    </main>
-
-    <script>
-        // 主题切换
-        function toggleTheme() {
-            document.body.classList.toggle('dark-mode');
-            localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
-        }
-
-        // 加载保存的主题
-        if (localStorage.getItem('theme') === 'dark') {
-            document.body.classList.add('dark-mode');
-        }
-
-        // 侧边栏切换
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('collapsed');
-        }
-
-        // 进度条
-        window.addEventListener('scroll', () => {
-            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            const scrolled = (winScroll / height) * 100;
-            document.documentElement.style.setProperty('--scroll-progress', scrolled + '%');
-        });
-
-        // 目录高亮
-        const sections = document.querySelectorAll('h2[id]');
-        const tocLinks = document.querySelectorAll('.toc a');
-
-        window.addEventListener('scroll', () => {
-            let current = '';
-            sections.forEach(section => {
-                const sectionTop = section.offsetTop;
-                if (scrollY >= sectionTop - 100) {
-                    current = section.getAttribute('id');
-                }
-            });
-
-            tocLinks.forEach(link => {
-                link.classList.remove('active');
-                if (link.getAttribute('href') === '#' + current) {
-                    link.classList.add('active');
-                }
-            });
-        });
-
-        // 代码高亮
-        hljs.highlightAll();
-    </script>
+    <div class="nav">
+        <a href="18-bit-manipulation.html">← 18 位运算</a> | <a href="cpp-stl.html">C++ STL使用 →</a>
+    </div>
 </body>
 </html>

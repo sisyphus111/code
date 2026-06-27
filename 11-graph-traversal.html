@@ -3,228 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>图的遍历与连通性 - 算法竞赛速成</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <title>11 图的遍历与连通性 - C++算法竞赛</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --bg-primary: #ffffff;
-            --bg-secondary: #f8f9fa;
-            --bg-code: #f6f8fa;
-            --text-primary: #24292f;
-            --text-secondary: #57606a;
-            --border-color: #d0d7de;
-            --accent-color: #0969da;
-            --accent-hover: #0550ae;
-            --sidebar-width: 280px;
-            --header-height: 60px;
-        }
-
-        body.dark-mode {
-            --bg-primary: #0d1117;
-            --bg-secondary: #161b22;
-            --bg-code: #161b22;
-            --text-primary: #c9d1d9;
-            --text-secondary: #8b949e;
-            --border-color: #30363d;
-            --accent-color: #58a6ff;
-            --accent-hover: #79c0ff;
-        }
-
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
-            line-height: 1.6;
-            color: var(--text-primary);
-            background-color: var(--bg-primary);
-            transition: background-color 0.3s, color 0.3s;
-        }
-
-        .progress-bar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--accent-color) 0%, var(--accent-color) var(--scroll-progress, 0%), transparent var(--scroll-progress, 0%));
-            z-index: 1001;
-        }
-
-        header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: var(--header-height);
-            background: var(--bg-secondary);
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 20px;
-            z-index: 1000;
-        }
-
-        .header-title {
-            font-size: 20px;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .header-controls {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-        }
-
-        .theme-toggle {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 24px;
-            padding: 5px;
-            transition: transform 0.2s;
-        }
-
-        .theme-toggle:hover {
-            transform: scale(1.1);
-        }
-
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: var(--header-height);
-            bottom: 0;
-            width: var(--sidebar-width);
-            background: var(--bg-secondary);
-            border-right: 1px solid var(--border-color);
-            overflow-y: auto;
-            padding: 20px;
-            transition: transform 0.3s;
-        }
-
-        .sidebar.collapsed {
-            transform: translateX(-100%);
-        }
-
-        .sidebar-toggle {
-            position: fixed;
-            left: var(--sidebar-width);
-            top: calc(var(--header-height) + 20px);
-            background: var(--accent-color);
-            color: white;
-            border: none;
-            border-radius: 0 4px 4px 0;
-            padding: 10px 8px;
-            cursor: pointer;
-            z-index: 999;
-            transition: left 0.3s;
-        }
-
-        .sidebar.collapsed + .sidebar-toggle {
-            left: 0;
-        }
-
-        .sidebar h3 {
-            font-size: 14px;
-            font-weight: 600;
-            text-transform: uppercase;
-            color: var(--text-secondary);
-            margin-bottom: 10px;
-        }
-
-        .toc {
-            list-style: none;
-        }
-
-        .toc li {
-            margin: 5px 0;
-        }
-
-        .toc a {
-            color: var(--text-primary);
-            text-decoration: none;
-            display: block;
-            padding: 6px 10px;
-            border-radius: 6px;
-            transition: background 0.2s;
-        }
-
-        .toc a:hover {
-            background: var(--bg-primary);
-        }
-
-        .toc a.active {
-            background: var(--accent-color);
-            color: white;
-        }
-
-        main {
-            margin-left: var(--sidebar-width);
-            margin-top: var(--header-height);
-            padding: 40px;
             max-width: 900px;
-            transition: margin-left 0.3s;
+            margin: 40px auto;
+            padding: 0 20px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            font-size: 16px;
+            line-height: 1.6;
+            color: #333;
         }
 
-        .sidebar.collapsed ~ main {
-            margin-left: 0;
-        }
+        h1 { font-size: 32px; margin: 40px 0 20px; border-bottom: 2px solid #333; padding-bottom: 10px; }
+        h2 { font-size: 24px; margin: 30px 0 15px; }
+        h3 { font-size: 20px; margin: 20px 0 10px; }
+        h4 { font-size: 18px; margin: 20px 0 10px; }
 
-        h1 {
-            font-size: 32px;
-            margin-bottom: 10px;
-            color: var(--text-primary);
-        }
+        p { margin: 10px 0; }
 
-        h2 {
-            font-size: 24px;
-            margin-top: 40px;
-            margin-bottom: 16px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid var(--border-color);
-            color: var(--text-primary);
-        }
-
-        h3 {
-            font-size: 20px;
-            margin-top: 24px;
-            margin-bottom: 12px;
-            color: var(--text-primary);
-        }
-
-        h4 {
-            font-size: 18px;
-            margin-top: 20px;
-            margin-bottom: 10px;
-            color: var(--text-primary);
-        }
-
-        p {
-            margin: 16px 0;
-            color: var(--text-primary);
+        pre {
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            padding: 15px;
+            overflow-x: auto;
+            font-size: 14px;
+            line-height: 1.4;
+            margin: 15px 0;
         }
 
         code {
-            background: var(--bg-code);
-            padding: 2px 6px;
+            background: #f5f5f5;
+            padding: 2px 5px;
             border-radius: 3px;
-            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
-            font-size: 0.9em;
-        }
-
-        pre {
-            background: var(--bg-code);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 16px;
-            overflow-x: auto;
-            margin: 16px 0;
+            font-family: "SF Mono", Monaco, Consolas, monospace;
+            font-size: 14px;
         }
 
         pre code {
@@ -232,131 +46,83 @@
             padding: 0;
         }
 
-        ul, ol {
-            margin: 16px 0;
-            padding-left: 32px;
-        }
-
-        li {
-            margin: 8px 0;
-        }
-
-        hr {
-            border: none;
-            border-top: 1px solid var(--border-color);
-            margin: 24px 0;
-        }
-
         table {
             width: 100%;
             border-collapse: collapse;
-            margin: 16px 0;
+            margin: 20px 0;
         }
 
         th, td {
-            border: 1px solid var(--border-color);
+            border: 1px solid #ddd;
             padding: 8px 12px;
             text-align: left;
         }
 
         th {
-            background: var(--bg-secondary);
+            background: #f5f5f5;
             font-weight: 600;
         }
 
-        .chapter-nav {
-            display: flex;
-            justify-content: space-between;
-            margin: 40px 0;
-            padding: 20px 0;
-            border-top: 1px solid var(--border-color);
+        ul, ol {
+            margin: 10px 0;
+            padding-left: 30px;
         }
 
-        .chapter-nav a {
-            color: var(--accent-color);
+        li {
+            margin: 5px 0;
+        }
+
+        a {
+            color: #0066cc;
             text-decoration: none;
-            padding: 10px 20px;
-            border: 1px solid var(--accent-color);
-            border-radius: 6px;
-            transition: all 0.2s;
         }
 
-        .chapter-nav a:hover {
-            background: var(--accent-color);
-            color: white;
+        a:hover {
+            text-decoration: underline;
+        }
+
+        strong {
+            font-weight: 600;
+        }
+
+        .nav {
+            margin: 40px 0;
+            padding: 15px 0;
+            border-top: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .nav a {
+            margin-right: 20px;
         }
 
         @media print {
-            .sidebar, .sidebar-toggle, .theme-toggle, .progress-bar {
-                display: none;
-            }
-            main {
-                margin-left: 0;
-                margin-top: 0;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-            .sidebar.show {
-                transform: translateX(0);
-            }
-            main {
-                margin-left: 0;
-                padding: 20px;
-            }
+            body { margin: 0; padding: 20px; }
+            .nav { display: none; }
         }
     </style>
 </head>
 <body>
-    <div class="progress-bar"></div>
+    <div class="nav">
+        <a href="index.html">← 返回主页</a>
+    </div>
 
-    <header>
-        <div class="header-title">图的遍历与连通性</div>
-        <div class="header-controls">
-            <button class="theme-toggle" onclick="toggleTheme()" title="切换主题">🌓</button>
-        </div>
-    </header>
-
-    <nav class="sidebar" id="sidebar">
-        <h3>目录</h3>
-        <ul class="toc">
-    <li><a href="#什么时候用">什么时候用</a></li>
-    <li><a href="#核心模板">核心模板</a></li>
-    <li><a href="#例题演示">例题演示</a></li>
-    <li><a href="#常见陷阱">常见陷阱</a></li>
-    <li><a href="#适用场景总结">适用场景总结</a></li>
-</ul>
-    </nav>
-
-    <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
-
-    <main>
-        <h1>图的遍历与连通性</h1>
-
-        <h2 id="什么时候用">什么时候用</h2>
+    <h1>图的遍历与连通性</h1>
+<h2>什么时候用</h2>
 <p>看到以下特征优先考虑图的遍历：</p>
 <ul>
 <li><strong>连通性判断</strong>：判断两点是否连通</li>
-<ul>
 <li><strong>路径存在性</strong>：是否存在从 A 到 B 的路径</li>
-<ul>
 <li><strong>所有可达节点</strong>：从某点出发能到达哪些节点</li>
-<ul>
 <li><strong>环检测</strong>：有向图/无向图是否有环</li>
-<ul>
 <li><strong>二分图判定</strong>：能否将节点分成两组，组内无边</li>
-<ul>
 <li><strong>强连通分量</strong>：有向图中互相可达的节点集合</li>
-<ul>
 <li>题目中出现"图"、"网络"、"依赖关系"等字眼</li>
+</ul>
 <p>核心思路：<strong>DFS 用于深度探索和路径问题，BFS 用于层次遍历和最短路径</strong>。</p>
-<h2 id="核心模板">核心模板</h2>
-<h3 id="dfs-遍历邻接表">DFS 遍历（邻接表）</h3>
-<pre><code class="language-cpp">
-vector&lt;vector&lt;int&gt;&gt; graph;
+<h2>核心模板</h2>
+<h3>DFS 遍历（邻接表）</h3>
+<pre><code>vector&lt;vector&lt;int&gt;&gt; graph;
 vector&lt;bool&gt; visited;
 
 void dfs(int u) {
@@ -367,11 +133,9 @@ void dfs(int u) {
             dfs(v);
         }
     }
-}
-</code></pre>
-<h3 id="bfs-遍历">BFS 遍历</h3>
-<pre><code class="language-cpp">
-void bfs(int start) {
+}</code></pre>
+<h3>BFS 遍历</h3>
+<pre><code>void bfs(int start) {
     queue&lt;int&gt; q;
     vector&lt;bool&gt; visited(n, false);
     
@@ -389,11 +153,9 @@ void bfs(int start) {
             }
         }
     }
-}
-</code></pre>
-<h3 id="无向图环检测dfs">无向图环检测（DFS）</h3>
-<pre><code class="language-cpp">
-bool hasCycleDFS(int u, int parent) {
+}</code></pre>
+<h3>无向图环检测（DFS）</h3>
+<pre><code>bool hasCycleDFS(int u, int parent) {
     visited[u] = true;
     
     for (int v : graph[u]) {
@@ -405,11 +167,9 @@ bool hasCycleDFS(int u, int parent) {
     }
     
     return false;
-}
-</code></pre>
-<h3 id="有向图环检测拓扑排序">有向图环检测（拓扑排序）</h3>
-<pre><code class="language-cpp">
-bool hasCycleTopo(int n, vector&lt;vector&lt;int&gt;&gt;&amp; graph) {
+}</code></pre>
+<h3>有向图环检测（拓扑排序）</h3>
+<pre><code>bool hasCycleTopo(int n, vector&lt;vector&lt;int&gt;&gt;&amp; graph) {
     vector&lt;int&gt; inDegree(n, 0);
     
     for (int u = 0; u &lt; n; ++u) {
@@ -437,11 +197,9 @@ bool hasCycleTopo(int n, vector&lt;vector&lt;int&gt;&gt;&amp; graph) {
     }
     
     return count != n;  // 不能访问所有节点说明有环
-}
-</code></pre>
-<h3 id="二分图判定染色法">二分图判定（染色法）</h3>
-<pre><code class="language-cpp">
-bool isBipartite(vector&lt;vector&lt;int&gt;&gt;&amp; graph) {
+}</code></pre>
+<h3>二分图判定（染色法）</h3>
+<pre><code>bool isBipartite(vector&lt;vector&lt;int&gt;&gt;&amp; graph) {
     int n = graph.size();
     vector&lt;int&gt; color(n, -1);
     
@@ -468,14 +226,12 @@ bool isBipartite(vector&lt;vector&lt;int&gt;&gt;&amp; graph) {
     }
     
     return true;
-}
-</code></pre>
-<h2 id="例题演示">例题演示</h2>
-<h3 id="例题-1所有可达节点">例题 1：所有可达节点</h3>
+}</code></pre>
+<h2>例题演示</h2>
+<h3>例题 1：所有可达节点</h3>
 <p><strong>题目</strong>：给定有向图和起点，返回从起点可达的所有节点。</p>
 <p><strong>思路</strong>：DFS 或 BFS 遍历，记录访问过的节点。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 void dfs(int u, vector&lt;vector&lt;int&gt;&gt;&amp; graph, vector&lt;bool&gt;&amp; visited) {
@@ -524,20 +280,18 @@ int main() {
     }
     
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：时间 <code>O(V + E)</code>，空间 <code>O(V)</code></p>
 <p><strong>易错点</strong>：</p>
 <ul>
 <li>DFS 要先标记再递归，避免重复访问</li>
-<ul>
 <li>有向图和无向图建图方式不同</li>
-<hr>
-<h3 id="例题-2无向图中的环">例题 2：无向图中的环</h3>
+</ul>
+<p>---</p>
+<h3>例题 2：无向图中的环</h3>
 <p><strong>题目</strong>：判断无向图是否有环。</p>
 <p><strong>思路</strong>：DFS，记录父节点，如果访问到非父节点的已访问节点则有环。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 bool dfs(int u, int parent, vector&lt;vector&lt;int&gt;&gt;&amp; graph, vector&lt;bool&gt;&amp; visited) {
@@ -589,20 +343,18 @@ int main() {
     cout &lt;&lt; (hasCycle(n, edges) ? &quot;YES&quot; : &quot;NO&quot;) &lt;&lt; &quot;\n&quot;;
     
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：时间 <code>O(V + E)</code>，空间 <code>O(V)</code></p>
 <p><strong>易错点</strong>：</p>
 <ul>
 <li>无向图需要记录父节点，避免回到父节点被误判为环</li>
-<ul>
 <li>图可能不连通，要遍历所有未访问的节点</li>
-<hr>
-<h3 id="例题-3有向图中的环">例题 3：有向图中的环</h3>
+</ul>
+<p>---</p>
+<h3>例题 3：有向图中的环</h3>
 <p><strong>题目</strong>：判断有向图是否有环。</p>
 <p><strong>思路</strong>：DFS + 三色标记（白色未访问，灰色访问中，黑色已完成）。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 bool dfs(int u, vector&lt;vector&lt;int&gt;&gt;&amp; graph, vector&lt;int&gt;&amp; color) {
@@ -654,22 +406,19 @@ int main() {
     cout &lt;&lt; (hasCycle(n, edges) ? &quot;YES&quot; : &quot;NO&quot;) &lt;&lt; &quot;\n&quot;;
     
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：时间 <code>O(V + E)</code>，空间 <code>O(V)</code></p>
 <p><strong>易错点</strong>：</p>
 <ul>
 <li>有向图环检测用三色标记，不能只用 visited</li>
-<ul>
 <li>灰色节点表示在当前 DFS 路径上</li>
-<ul>
 <li>访问到灰色节点说明有环</li>
-<hr>
-<h3 id="例题-4二分图判定">例题 4：二分图判定</h3>
+</ul>
+<p>---</p>
+<h3>例题 4：二分图判定</h3>
 <p><strong>题目</strong>：判断图是否是二分图（能否用两种颜色染色，相邻节点颜色不同）。</p>
 <p><strong>思路</strong>：BFS/DFS 染色，如果相邻节点颜色相同则不是二分图。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 bool bfs(int start, vector&lt;vector&lt;int&gt;&gt;&amp; graph, vector&lt;int&gt;&amp; color) {
@@ -727,22 +476,19 @@ int main() {
     cout &lt;&lt; (isBipartite(n, edges) ? &quot;YES&quot; : &quot;NO&quot;) &lt;&lt; &quot;\n&quot;;
     
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：时间 <code>O(V + E)</code>，空间 <code>O(V)</code></p>
 <p><strong>易错点</strong>：</p>
 <ul>
 <li>图可能不连通，要遍历所有未染色的节点</li>
-<ul>
 <li>用 -1 表示未染色，0 和 1 表示两种颜色</li>
-<ul>
 <li>有奇数环的图一定不是二分图</li>
-<hr>
-<h3 id="例题-5克隆图">例题 5：克隆图</h3>
+</ul>
+<p>---</p>
+<h3>例题 5：克隆图</h3>
 <p><strong>题目</strong>：深拷贝无向连通图。</p>
 <p><strong>思路</strong>：DFS/BFS 遍历，用哈希表存储原节点到新节点的映射。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 class Node {
@@ -808,22 +554,19 @@ int main() {
     cout &lt;&lt; &quot;Cloned graph with root value: &quot; &lt;&lt; cloned-&gt;val &lt;&lt; &quot;\n&quot;;
     
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：时间 <code>O(V + E)</code>，空间 <code>O(V)</code></p>
 <p><strong>易错点</strong>：</p>
 <ul>
 <li>要先创建新节点再递归，避免无限递归</li>
-<ul>
 <li>用哈希表记录原节点和新节点的对应关系</li>
-<ul>
 <li>如果已经克隆过，直接返回对应的新节点</li>
-<hr>
-<h3 id="例题-6课程表有向图环检测">例题 6：课程表（有向图环检测）</h3>
+</ul>
+<p>---</p>
+<h3>例题 6：课程表（有向图环检测）</h3>
 <p><strong>题目</strong>：n 门课程，给定先修关系，判断是否能完成所有课程。</p>
 <p><strong>思路</strong>：建立有向图，判断是否有环。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 bool dfs(int u, vector&lt;vector&lt;int&gt;&gt;&amp; graph, vector&lt;int&gt;&amp; color) {
@@ -870,20 +613,18 @@ int main() {
     cout &lt;&lt; (canFinish(n, prerequisites) ? &quot;YES&quot; : &quot;NO&quot;) &lt;&lt; &quot;\n&quot;;
     
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：时间 <code>O(V + E)</code>，空间 <code>O(V)</code></p>
 <p><strong>易错点</strong>：</p>
 <ul>
 <li>建图时注意方向：pre[1] 是 pre[0] 的前置</li>
-<ul>
 <li>有环则不能完成所有课程</li>
-<hr>
-<h3 id="例题-7连通分量计数">例题 7：连通分量计数</h3>
+</ul>
+<p>---</p>
+<h3>例题 7：连通分量计数</h3>
 <p><strong>题目</strong>：计算无向图中连通分量的数量。</p>
 <p><strong>思路</strong>：DFS/BFS，每次从未访问节点开始遍历，计数加一。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 void dfs(int u, vector&lt;vector&lt;int&gt;&gt;&amp; graph, vector&lt;bool&gt;&amp; visited) {
@@ -929,20 +670,18 @@ int main() {
     cout &lt;&lt; countComponents(n, edges) &lt;&lt; &quot;\n&quot;;
     
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：时间 <code>O(V + E)</code>，空间 <code>O(V)</code></p>
 <p><strong>易错点</strong>：</p>
 <ul>
 <li>每次 DFS 从一个未访问节点开始，就是一个新的连通分量</li>
-<ul>
 <li>也可以用并查集解决</li>
-<hr>
-<h3 id="例题-8所有路径有向无环图">例题 8：所有路径（有向无环图）</h3>
+</ul>
+<p>---</p>
+<h3>例题 8：所有路径（有向无环图）</h3>
 <p><strong>题目</strong>：给定有向无环图，找出从起点到终点的所有路径。</p>
 <p><strong>思路</strong>：DFS + 回溯，记录当前路径。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 void dfs(int u, int target, vector&lt;vector&lt;int&gt;&gt;&amp; graph, 
@@ -993,213 +732,106 @@ int main() {
     }
     
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：时间 <code>O(2^V × V)</code>，最坏情况指数级</p>
 <p><strong>易错点</strong>：</p>
 <ul>
 <li>DAG 不需要 visited，因为无环</li>
-<ul>
 <li>要回溯（pop_back），保证路径正确</li>
-<ul>
 <li>每个节点都可能被访问多次（在不同路径中）</li>
-<hr>
-<h2 id="常见陷阱">常见陷阱</h2>
+</ul>
+<p>---</p>
+<h2>常见陷阱</h2>
 <ol>
 <li><strong>图的表示</strong>：</li>
-<ul>
-<li>邻接表：<code>vector<vector<int>></code>，适合稀疏图</li>
-<ul>
-<li>邻接矩阵：<code>vector<vector<int>></code>，适合密集图</li>
-<ul>
-<li>边列表：<code>vector<pair<int,int>></code>，建图前需要转换</li>
+</ol>
+<p>   - 邻接表：<code>vector<vector<int>></code>，适合稀疏图</p>
+<p>   - 邻接矩阵：<code>vector<vector<int>></code>，适合密集图</p>
+<p>   - 边列表：<code>vector<pair<int,int>></code>，建图前需要转换</p>
 <ol>
 <li><strong>有向图 vs 无向图</strong>：</li>
-<ul>
-<li>无向图建图：两个方向都要加边</li>
-<ul>
-<li>有向图环检测：用三色标记</li>
-<ul>
-<li>无向图环检测：记录父节点</li>
+</ol>
+<p>   - 无向图建图：两个方向都要加边</p>
+<p>   - 有向图环检测：用三色标记</p>
+<p>   - 无向图环检测：记录父节点</p>
 <ol>
 <li><strong>连通性</strong>：</li>
-<ul>
-<li>图可能不连通，要遍历所有未访问节点</li>
-<ul>
-<li>连通分量计数：每次 DFS 开始计数加一</li>
+</ol>
+<p>   - 图可能不连通，要遍历所有未访问节点</p>
+<p>   - 连通分量计数：每次 DFS 开始计数加一</p>
 <ol>
 <li><strong>visited 时机</strong>：</li>
-<ul>
-<li>DFS：进入时标记</li>
-<ul>
-<li>BFS：入队时标记</li>
-<ul>
-<li>回溯：需要撤销标记</li>
+</ol>
+<p>   - DFS：进入时标记</p>
+<p>   - BFS：入队时标记</p>
+<p>   - 回溯：需要撤销标记</p>
 <ol>
 <li><strong>环检测</strong>：</li>
-<ul>
-<li>有向图：三色标记（白灰黑）</li>
-<ul>
-<li>无向图：记录父节点</li>
-<ul>
-<li>也可以用拓扑排序判断有向图环</li>
-<h2 id="适用场景总结">适用场景总结</h2>
+</ol>
+<p>   - 有向图：三色标记（白灰黑）</p>
+<p>   - 无向图：记录父节点</p>
+<p>   - 也可以用拓扑排序判断有向图环</p>
+<h2>适用场景总结</h2>
 <table>
-<thead>
-<tr>
+<thead><tr>
 <th>问题类型</th>
 <th>算法</th>
 <th>时间复杂度</th>
-</tr>
-</thead>
+</tr></thead>
 <tbody>
-<table>
-<thead>
 <tr>
-<th>---------</th>
-<th>------</th>
-<th>-----------</th>
+<td>连通性判断</td>
+<td>DFS/BFS</td>
+<td>O(V + E)</td>
 </tr>
-</thead>
-<tbody>
-<table>
-<thead>
 <tr>
-<th>连通性判断</th>
-<th>DFS/BFS</th>
-<th>O(V + E)</th>
+<td>所有可达节点</td>
+<td>DFS/BFS</td>
+<td>O(V + E)</td>
 </tr>
-</thead>
-<tbody>
-<table>
-<thead>
 <tr>
-<th>所有可达节点</th>
-<th>DFS/BFS</th>
-<th>O(V + E)</th>
+<td>无向图环检测</td>
+<td>DFS + 父节点</td>
+<td>O(V + E)</td>
 </tr>
-</thead>
-<tbody>
-<table>
-<thead>
 <tr>
-<th>无向图环检测</th>
-<th>DFS + 父节点</th>
-<th>O(V + E)</th>
+<td>有向图环检测</td>
+<td>DFS + 三色</td>
+<td>O(V + E)</td>
 </tr>
-</thead>
-<tbody>
-<table>
-<thead>
 <tr>
-<th>有向图环检测</th>
-<th>DFS + 三色</th>
-<th>O(V + E)</th>
+<td>二分图判定</td>
+<td>BFS/DFS 染色</td>
+<td>O(V + E)</td>
 </tr>
-</thead>
-<tbody>
-<table>
-<thead>
 <tr>
-<th>二分图判定</th>
-<th>BFS/DFS 染色</th>
-<th>O(V + E)</th>
+<td>连通分量计数</td>
+<td>DFS/BFS/并查集</td>
+<td>O(V + E)</td>
 </tr>
-</thead>
-<tbody>
-<table>
-<thead>
 <tr>
-<th>连通分量计数</th>
-<th>DFS/BFS/并查集</th>
-<th>O(V + E)</th>
+<td>克隆图</td>
+<td>DFS + 哈希表</td>
+<td>O(V + E)</td>
 </tr>
-</thead>
-<tbody>
-<table>
-<thead>
 <tr>
-<th>克隆图</th>
-<th>DFS + 哈希表</th>
-<th>O(V + E)</th>
+<td>所有路径</td>
+<td>DFS + 回溯</td>
+<td>指数级</td>
 </tr>
-</thead>
-<tbody>
-<table>
-<thead>
-<tr>
-<th>所有路径</th>
-<th>DFS + 回溯</th>
-<th>指数级</th>
-</tr>
-</thead>
-<tbody>
+</tbody>
+</table>
 <p><strong>核心技巧</strong>：</p>
 <ul>
 <li>DFS 适合路径问题、环检测、连通性</li>
-<ul>
 <li>BFS 适合层次遍历、最短路径</li>
-<ul>
 <li>三色标记是有向图环检测的标准方法</li>
-<ul>
 <li>染色法是二分图判定的标准方法</li>
-<ul>
 <li>图可能不连通，要考虑多个起点</li>
+</ul>
 
-        <div class="chapter-nav">
-    <a href="10-union-find.html" class="prev-chapter">← 并查集</a>
-    <a href="12-shortest-path.html" class="next-chapter">最短路径 →</a>
-</div>
-    </main>
-
-    <script>
-        // 主题切换
-        function toggleTheme() {
-            document.body.classList.toggle('dark-mode');
-            localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
-        }
-
-        // 加载保存的主题
-        if (localStorage.getItem('theme') === 'dark') {
-            document.body.classList.add('dark-mode');
-        }
-
-        // 侧边栏切换
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('collapsed');
-        }
-
-        // 进度条
-        window.addEventListener('scroll', () => {
-            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            const scrolled = (winScroll / height) * 100;
-            document.documentElement.style.setProperty('--scroll-progress', scrolled + '%');
-        });
-
-        // 目录高亮
-        const sections = document.querySelectorAll('h2[id]');
-        const tocLinks = document.querySelectorAll('.toc a');
-
-        window.addEventListener('scroll', () => {
-            let current = '';
-            sections.forEach(section => {
-                const sectionTop = section.offsetTop;
-                if (scrollY >= sectionTop - 100) {
-                    current = section.getAttribute('id');
-                }
-            });
-
-            tocLinks.forEach(link => {
-                link.classList.remove('active');
-                if (link.getAttribute('href') === '#' + current) {
-                    link.classList.add('active');
-                }
-            });
-        });
-
-        // 代码高亮
-        hljs.highlightAll();
-    </script>
+    <div class="nav">
+        <a href="10-union-find.html">← 10 并查集</a> | <a href="12-shortest-path.html">12 最短路径 →</a>
+    </div>
 </body>
 </html>

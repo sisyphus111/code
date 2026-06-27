@@ -3,221 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>算法竞赛学习文档 - 主页</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-<style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --bg-primary: #ffffff;
-            --bg-secondary: #f8f9fa;
-            --bg-code: #f6f8fa;
-            --text-primary: #24292f;
-            --text-secondary: #57606a;
-            --border-color: #d0d7de;
-            --accent-color: #0969da;
-            --accent-hover: #0550ae;
-            --sidebar-width: 280px;
-            --header-height: 60px;
-        }
-
-        body.dark-mode {
-            --bg-primary: #0d1117;
-            --bg-secondary: #161b22;
-            --bg-code: #161b22;
-            --text-primary: #c9d1d9;
-            --text-secondary: #8b949e;
-            --border-color: #30363d;
-            --accent-color: #58a6ff;
-            --accent-hover: #79c0ff;
-        }
-
+    <title>主页 - C++算法竞赛</title>
+    <style>
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
-            line-height: 1.6;
-            color: var(--text-primary);
-            background-color: var(--bg-primary);
-            transition: background-color 0.3s, color 0.3s;
-        }
-
-        .progress-bar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--accent-color) 0%, var(--accent-color) var(--scroll-progress, 0%), transparent var(--scroll-progress, 0%));
-            z-index: 1001;
-        }
-
-        header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: var(--header-height);
-            background: var(--bg-secondary);
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 20px;
-            z-index: 1000;
-        }
-
-        .header-title {
-            font-size: 20px;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .header-controls {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-        }
-
-        .theme-toggle {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 24px;
-            padding: 5px;
-            transition: transform 0.2s;
-        }
-
-        .theme-toggle:hover {
-            transform: scale(1.1);
-        }
-
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: var(--header-height);
-            bottom: 0;
-            width: var(--sidebar-width);
-            background: var(--bg-secondary);
-            border-right: 1px solid var(--border-color);
-            overflow-y: auto;
-            padding: 20px;
-            transition: transform 0.3s;
-        }
-
-        .sidebar.collapsed {
-            transform: translateX(-100%);
-        }
-
-        .sidebar-toggle {
-            position: fixed;
-            left: var(--sidebar-width);
-            top: calc(var(--header-height) + 20px);
-            background: var(--accent-color);
-            color: white;
-            border: none;
-            border-radius: 0 4px 4px 0;
-            padding: 10px 8px;
-            cursor: pointer;
-            z-index: 999;
-            transition: left 0.3s;
-        }
-
-        .sidebar.collapsed + .sidebar-toggle {
-            left: 0;
-        }
-
-        .sidebar h3 {
-            font-size: 14px;
-            font-weight: 600;
-            text-transform: uppercase;
-            color: var(--text-secondary);
-            margin-bottom: 10px;
-        }
-
-        .toc {
-            list-style: none;
-        }
-
-        .toc li {
-            margin: 5px 0;
-        }
-
-        .toc a {
-            color: var(--text-primary);
-            text-decoration: none;
-            display: block;
-            padding: 6px 10px;
-            border-radius: 6px;
-            transition: background 0.2s;
-        }
-
-        .toc a:hover {
-            background: var(--bg-primary);
-        }
-
-        .toc a.active {
-            background: var(--accent-color);
-            color: white;
-        }
-
-        main {
-            margin-left: var(--sidebar-width);
-            margin-top: var(--header-height);
-            padding: 40px;
             max-width: 900px;
-            transition: margin-left 0.3s;
+            margin: 40px auto;
+            padding: 0 20px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            font-size: 16px;
+            line-height: 1.6;
+            color: #333;
         }
 
-        .sidebar.collapsed ~ main {
-            margin-left: 0;
-        }
+        h1 { font-size: 32px; margin: 40px 0 20px; border-bottom: 2px solid #333; padding-bottom: 10px; }
+        h2 { font-size: 24px; margin: 30px 0 15px; }
+        h3 { font-size: 20px; margin: 20px 0 10px; }
+        h4 { font-size: 18px; margin: 20px 0 10px; }
 
-        h1 {
-            font-size: 32px;
-            margin-bottom: 10px;
-            color: var(--text-primary);
-        }
+        p { margin: 10px 0; }
 
-        h2 {
-            font-size: 24px;
-            margin-top: 40px;
-            margin-bottom: 16px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid var(--border-color);
-            color: var(--text-primary);
-        }
-
-        h3 {
-            font-size: 20px;
-            margin-top: 24px;
-            margin-bottom: 12px;
-            color: var(--text-primary);
-        }
-
-        p {
-            margin: 16px 0;
-            color: var(--text-primary);
+        pre {
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            padding: 15px;
+            overflow-x: auto;
+            font-size: 14px;
+            line-height: 1.4;
+            margin: 15px 0;
         }
 
         code {
-            background: var(--bg-code);
-            padding: 2px 6px;
+            background: #f5f5f5;
+            padding: 2px 5px;
             border-radius: 3px;
-            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
-            font-size: 0.9em;
-        }
-
-        pre {
-            background: var(--bg-code);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 16px;
-            overflow-x: auto;
-            margin: 16px 0;
+            font-family: "SF Mono", Monaco, Consolas, monospace;
+            font-size: 14px;
         }
 
         pre code {
@@ -225,444 +46,117 @@
             padding: 0;
         }
 
-        ul, ol {
-            margin: 16px 0;
-            padding-left: 32px;
-        }
-
-        li {
-            margin: 8px 0;
-        }
-
-        .tip {
-            background: #dff6dd;
-            border-left: 4px solid #1a7f37;
-            padding: 12px 16px;
-            border-radius: 6px;
-            margin: 16px 0;
-        }
-
-        body.dark-mode .tip {
-            background: #1a3e2b;
-            border-left-color: #2ea043;
-        }
-
-        .warning {
-            background: #fff8c5;
-            border-left: 4px solid #d29922;
-            padding: 12px 16px;
-            border-radius: 6px;
-            margin: 16px 0;
-        }
-
-        body.dark-mode .warning {
-            background: #3d2e00;
-            border-left-color: #d29922;
-        }
-
-        .info {
-            background: #ddf4ff;
-            border-left: 4px solid #0969da;
-            padding: 12px 16px;
-            border-radius: 6px;
-            margin: 16px 0;
-        }
-
-        body.dark-mode .info {
-            background: #0c2d6b;
-            border-left-color: #58a6ff;
-        }
-
         table {
             width: 100%;
             border-collapse: collapse;
-            margin: 16px 0;
+            margin: 20px 0;
         }
 
         th, td {
-            border: 1px solid var(--border-color);
+            border: 1px solid #ddd;
             padding: 8px 12px;
             text-align: left;
         }
 
         th {
-            background: var(--bg-secondary);
+            background: #f5f5f5;
             font-weight: 600;
+        }
+
+        ul, ol {
+            margin: 10px 0;
+            padding-left: 30px;
+        }
+
+        li {
+            margin: 5px 0;
+        }
+
+        a {
+            color: #0066cc;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        strong {
+            font-weight: 600;
+        }
+
+        .nav {
+            margin: 40px 0;
+            padding: 15px 0;
+            border-top: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .nav a {
+            margin-right: 20px;
         }
 
         @media print {
-            .sidebar, .sidebar-toggle, .theme-toggle, .progress-bar {
-                display: none;
-            }
-            main {
-                margin-left: 0;
-                margin-top: 0;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-            .sidebar.show {
-                transform: translateX(0);
-            }
-            main {
-                margin-left: 0;
-                padding: 20px;
-            }
-        }
-    </style>
-    <style>
-        .card-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin: 30px 0;
-        }
-        
-        .card {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 24px;
-            transition: transform 0.2s, box-shadow 0.2s;
-            cursor: pointer;
-        }
-        
-        .card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-            border-color: var(--accent-color);
-        }
-        
-        .card-title {
-            font-size: 20px;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 12px;
-        }
-        
-        .card-description {
-            color: var(--text-secondary);
-            font-size: 14px;
-            line-height: 1.6;
-        }
-        
-        .card-icon {
-            font-size: 32px;
-            margin-bottom: 12px;
-        }
-        
-        .section-title {
-            font-size: 24px;
-            font-weight: 600;
-            margin: 40px 0 20px 0;
-            color: var(--text-primary);
-            border-bottom: 2px solid var(--accent-color);
-            padding-bottom: 8px;
-        }
-        
-        .hero {
-            background: linear-gradient(135deg, var(--accent-color), var(--accent-hover));
-            color: white;
-            padding: 60px 40px;
-            border-radius: 12px;
-            margin-bottom: 40px;
-            text-align: center;
-        }
-        
-        .hero h1 {
-            font-size: 36px;
-            margin-bottom: 16px;
-            color: white;
-        }
-        
-        .hero p {
-            font-size: 18px;
-            opacity: 0.95;
+            body { margin: 0; padding: 20px; }
+            .nav { display: none; }
         }
     </style>
 </head>
 <body>
-    <div class="progress-bar"></div>
+    <div class="nav">
+        <a href="index.html">← 返回主页</a>
+    </div>
+
+    <h1>C++ 算法竞赛学习文档</h1>
+
+    <p>面向研究生夏令营机试、保研机考的系统性学习材料。</p>
+
+    <h2>核心章节</h2>
+    <ol>
+        <li><a href="01-simulation.html">01 模拟与枚举</a></li>
+        <li><a href="02-hash-and-counting.html">02 哈希表与计数</a></li>
+        <li><a href="03-two-pointers-sliding-window.html">03 双指针与滑动窗口</a></li>
+        <li><a href="04-prefix-sum-difference.html">04 前缀和与差分</a></li>
+        <li><a href="05-binary-search.html">05 二分查找与二分答案</a></li>
+        <li><a href="06-stack-queue-monotonic.html">06 栈、队列与单调结构</a></li>
+        <li><a href="07-heap-greedy.html">07 堆与贪心</a></li>
+        <li><a href="08-dfs-backtrack.html">08 DFS与回溯</a></li>
+        <li><a href="09-bfs-grid.html">09 BFS与网格问题</a></li>
+        <li><a href="10-union-find.html">10 并查集</a></li>
+        <li><a href="11-graph-traversal.html">11 图的遍历与连通性</a></li>
+        <li><a href="12-shortest-path.html">12 最短路径</a></li>
+        <li><a href="13-topological-sort.html">13 拓扑排序与DAG</a></li>
+        <li><a href="14-dynamic-programming.html">14 动态规划</a></li>
+        <li><a href="15-tree.html">15 树</a></li>
+        <li><a href="16-advanced-data-structures.html">16 高级数据结构</a></li>
+        <li><a href="17-math-number-theory.html">17 数学与数论</a></li>
+        <li><a href="18-bit-manipulation.html">18 位运算</a></li>
+    </ol>
+
+    <h2>附录</h2>
+    <ul>
+        <li><a href="io-handling.html">输入输出处理</a></li>
+        <li><a href="cpp-stl.html">C++ STL使用</a></li>
+        <li><a href="templates.html">算法模板库</a></li>
+    </ul>
+
+    <h2>使用建议</h2>
+    <p><strong>学习路径：</strong></p>
+    <ol>
+        <li>先看附录（输入输出、STL）了解基础</li>
+        <li>按章节顺序学习（01→18）</li>
+        <li>重点突破动态规划（第14章）</li>
+        <li>考前复习使用算法模板库</li>
+    </ol>
+
+    <p><strong>练习方法：</strong></p>
+    <ul>
+        <li>每个例题自己敲一遍代码</li>
+        <li>限时训练：2-3小时完成3-4题</li>
+        <li>总结每个题型的识别特征</li>
+        <li>反复练习不熟练的模板</li>
+    </ul>
+
     
-    <header>
-        <div class="header-title">算法竞赛学习文档</div>
-        <div class="header-controls">
-            <button class="theme-toggle" onclick="toggleTheme()" title="切换主题">🌓</button>
-        </div>
-    </header>
-
-    <nav class="sidebar" id="sidebar">
-        <h3>快速导航</h3>
-        <ul class="toc">
-            <li><a href="#special">特辑文档</a></li>
-            <li><a href="#topics">题型分类</a></li>
-            <li><a href="#resources">学习资源</a></li>
-        </ul>
-    </nav>
-
-    <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
-
-    <main>
-        <div class="hero">
-            <h1>C++ 算法竞赛学习文档</h1>
-            <p>面向研究生夏令营机试、保研机考的系统性学习材料</p>
-        </div>
-
-        <h2 id="special" class="section-title">特辑文档</h2>
-        <div class="card-grid">
-            <div class="card" onclick="window.location.href='special-exam-environment.html'">
-                <div class="card-icon">💻</div>
-                <div class="card-title">机考环境全流程</div>
-                <div class="card-description">
-                    IDE配置、在线OJ平台介绍、调试技巧、时间分配策略、常见环境问题排查
-                </div>
-            </div>
-            
-            <div class="card" onclick="window.location.href='special-io-mastery.html'">
-                <div class="card-icon">📥</div>
-                <div class="card-title">输入输出专精</div>
-                <div class="card-description">
-                    ACM模式 vs LeetCode模式、读到EOF、多组输入、输出格式陷阱、快速IO技巧
-                </div>
-            </div>
-            
-            <div class="card" onclick="window.location.href='special-stl-advanced.html'">
-                <div class="card-icon">🔧</div>
-                <div class="card-title">C++ STL 深度使用</div>
-                <div class="card-description">
-                    容器性能对比、常见误区、高级用法、STL算法库、内存与性能优化
-                </div>
-            </div>
-            
-            <div class="card" onclick="window.location.href='special-debug-techniques.html'">
-                <div class="card-icon">🐛</div>
-                <div class="card-title">调试与对拍技巧</div>
-                <div class="card-description">
-                    打印调试、二分调试法、对拍脚本编写、随机数据生成、边界用例构造
-                </div>
-            </div>
-        </div>
-
-        <h2 id="topics" class="section-title">题型分类学习</h2>
-        
-        <h3>基础数据结构与技巧</h3>
-        <div class="card-grid">
-            <div class="card" onclick="window.location.href='01-simulation.html'">
-                <div class="card-icon">🎯</div>
-                <div class="card-title">01 - 模拟与枚举</div>
-                <div class="card-description">按题意模拟、暴力枚举、技巧优化</div>
-            </div>
-            
-            <div class="card" onclick="window.location.href='02-hash-and-counting.html'">
-                <div class="card-icon">🔑</div>
-                <div class="card-title">02 - 哈希表与计数</div>
-                <div class="card-description">哈希表应用、频率统计、快速查找</div>
-            </div>
-            
-            <div class="card" onclick="window.location.href='03-two-pointers-sliding-window.html'">
-                <div class="card-icon">👉</div>
-                <div class="card-title">03 - 双指针与滑动窗口</div>
-                <div class="card-description">对撞指针、快慢指针、固定/可变窗口</div>
-            </div>
-            
-            <div class="card" onclick="window.location.href='04-prefix-sum-difference.html'">
-                <div class="card-icon">➕</div>
-                <div class="card-title">04 - 前缀和与差分</div>
-                <div class="card-description">区间求和、差分数组、二维前缀和</div>
-            </div>
-            
-            <div class="card" onclick="window.location.href='05-binary-search.html'">
-                <div class="card-icon">🔍</div>
-                <div class="card-title">05 - 二分查找与二分答案</div>
-                <div class="card-description">二分查找、二分答案、三分查找</div>
-            </div>
-            
-            <div class="card" onclick="window.location.href='06-stack-queue-monotonic.html'">
-                <div class="card-icon">📚</div>
-                <div class="card-title">06 - 栈、队列与单调结构</div>
-                <div class="card-description">栈、队列、单调栈、单调队列</div>
-            </div>
-            
-            <div class="card" onclick="window.location.href='07-heap-greedy.html'">
-                <div class="card-icon">🎲</div>
-                <div class="card-title">07 - 堆与贪心</div>
-                <div class="card-description">优先队列、贪心策略、区间问题</div>
-            </div>
-        </div>
-
-        <h3>搜索与图论</h3>
-        <div class="card-grid">
-            <div class="card" onclick="window.location.href='08-dfs-backtrack.html'">
-                <div class="card-icon">🌲</div>
-                <div class="card-title">08 - DFS 与回溯</div>
-                <div class="card-description">深度优先搜索、回溯算法、剪枝优化</div>
-            </div>
-            
-            <div class="card" onclick="window.location.href='09-bfs-grid.html'">
-                <div class="card-icon">🗺️</div>
-                <div class="card-title">09 - BFS 与网格问题</div>
-                <div class="card-description">广度优先搜索、网格遍历、多源BFS</div>
-            </div>
-            
-            <div class="card" onclick="window.location.href='10-union-find.html'">
-                <div class="card-icon">🔗</div>
-                <div class="card-title">10 - 并查集</div>
-                <div class="card-description">路径压缩、按秩合并、连通性问题</div>
-            </div>
-            
-            <div class="card" onclick="window.location.href='11-graph-traversal.html'">
-                <div class="card-icon">🕸️</div>
-                <div class="card-title">11 - 图的遍历与连通性</div>
-                <div class="card-description">图的表示、DFS/BFS遍历、强连通分量</div>
-            </div>
-            
-            <div class="card" onclick="window.location.href='12-shortest-path.html'">
-                <div class="card-icon">🛤️</div>
-                <div class="card-title">12 - 最短路径</div>
-                <div class="card-description">Dijkstra、Bellman-Ford、Floyd</div>
-            </div>
-            
-            <div class="card" onclick="window.location.href='13-topological-sort.html'">
-                <div class="card-icon">📊</div>
-                <div class="card-title">13 - 拓扑排序与 DAG</div>
-                <div class="card-description">拓扑排序、有向无环图、依赖关系</div>
-            </div>
-        </div>
-
-        <h3>动态规划、树与高级结构</h3>
-        <div class="card-grid">
-            <div class="card" onclick="window.location.href='14-dynamic-programming.html'">
-                <div class="card-icon">🧮</div>
-                <div class="card-title">14 - 动态规划</div>
-                <div class="card-description">线性DP、背包DP、区间DP、状态压缩DP</div>
-            </div>
-            
-            <div class="card" onclick="window.location.href='15-tree.html'">
-                <div class="card-icon">🌳</div>
-                <div class="card-title">15 - 树</div>
-                <div class="card-description">二叉树、树的遍历、LCA、树形DP</div>
-            </div>
-            
-            <div class="card" onclick="window.location.href='16-advanced-data-structures.html'">
-                <div class="card-icon">⚙️</div>
-                <div class="card-title">16 - 高级数据结构</div>
-                <div class="card-description">线段树、树状数组、字典树</div>
-            </div>
-            
-            <div class="card" onclick="window.location.href='17-math-number-theory.html'">
-                <div class="card-icon">🔢</div>
-                <div class="card-title">17 - 数学与数论</div>
-                <div class="card-description">GCD/LCM、质数、快速幂、组合数学</div>
-            </div>
-            
-            <div class="card" onclick="window.location.href='18-bit-manipulation.html'">
-                <div class="card-icon">💾</div>
-                <div class="card-title">18 - 位运算</div>
-                <div class="card-description">位运算技巧、状态压缩、异或性质</div>
-            </div>
-        </div>
-
-        <h2 id="resources" class="section-title">学习资源</h2>
-        <div class="card-grid">
-            <div class="card" onclick="window.location.href='leetcode-hot100-index.html'">
-                <div class="card-icon">🔥</div>
-                <div class="card-title">LeetCode Hot 100 索引</div>
-                <div class="card-description">
-                    精选100道高频算法题，按难度和类型分类，映射到对应章节，支持筛选和搜索
-                </div>
-            </div>
-            
-            <div class="card" onclick="window.location.href='templates.html'">
-                <div class="card-icon">📋</div>
-                <div class="card-title">算法模板库</div>
-                <div class="card-description">
-                    所有常用算法模板汇总，考前快速复习必备
-                </div>
-            </div>
-            
-            <div class="card" onclick="window.location.href='cpp-stl.html'">
-                <div class="card-icon">📚</div>
-                <div class="card-title">C++ STL 使用指南</div>
-                <div class="card-description">
-                    标准库容器、算法、常用函数速查
-                </div>
-            </div>
-            
-            <div class="card" onclick="window.location.href='io-handling.html'">
-                <div class="card-icon">⌨️</div>
-                <div class="card-title">输入输出处理</div>
-                <div class="card-description">
-                    ACM/OI模式输入输出详解
-                </div>
-            </div>
-        </div>
-
-        <div class="tip" style="margin-top: 40px;">
-            <strong>学习建议：</strong>
-            <ol>
-                <li>先阅读<strong>特辑文档</strong>，了解机考环境和基础知识</li>
-                <li>按顺序学习<strong>基础部分</strong>（01-07），打好基础</li>
-                <li>根据兴趣选择<strong>搜索与图论</strong>（08-13）</li>
-                <li>重点攻克<strong>动态规划</strong>（14）</li>
-                <li>补充<strong>树和数学</strong>内容（15-18）</li>
-                <li>使用<strong>LeetCode Hot 100索引</strong>进行实战练习</li>
-                <li>考前复习使用<strong>模板库</strong></li>
-            </ol>
-        </div>
-
-    </main>
-
-<script>
-        // 主题切换
-        function toggleTheme() {
-            document.body.classList.toggle('dark-mode');
-            localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
-        }
-
-        // 加载保存的主题
-        if (localStorage.getItem('theme') === 'dark') {
-            document.body.classList.add('dark-mode');
-        }
-
-        // 侧边栏切换
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('collapsed');
-        }
-
-        // 进度条
-        window.addEventListener('scroll', () => {
-            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            const scrolled = (winScroll / height) * 100;
-            document.documentElement.style.setProperty('--scroll-progress', scrolled + '%');
-        });
-
-        // 目录高亮
-        const sections = document.querySelectorAll('h2[id]');
-        const tocLinks = document.querySelectorAll('.toc a');
-
-        window.addEventListener('scroll', () => {
-            let current = '';
-            sections.forEach(section => {
-                const sectionTop = section.offsetTop;
-                if (scrollY >= sectionTop - 100) {
-                    current = section.getAttribute('id');
-                }
-            });
-
-            tocLinks.forEach(link => {
-                link.classList.remove('active');
-                if (link.getAttribute('href') === '#' + current) {
-                    link.classList.add('active');
-                }
-            });
-        });
-
-        // 代码高亮
-        hljs.highlightAll();
-    </script>
 </body>
 </html>

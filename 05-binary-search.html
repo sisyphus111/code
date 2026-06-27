@@ -3,228 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>二分查找与二分答案 - 算法竞赛速成</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <title>05 二分查找与二分答案 - C++算法竞赛</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --bg-primary: #ffffff;
-            --bg-secondary: #f8f9fa;
-            --bg-code: #f6f8fa;
-            --text-primary: #24292f;
-            --text-secondary: #57606a;
-            --border-color: #d0d7de;
-            --accent-color: #0969da;
-            --accent-hover: #0550ae;
-            --sidebar-width: 280px;
-            --header-height: 60px;
-        }
-
-        body.dark-mode {
-            --bg-primary: #0d1117;
-            --bg-secondary: #161b22;
-            --bg-code: #161b22;
-            --text-primary: #c9d1d9;
-            --text-secondary: #8b949e;
-            --border-color: #30363d;
-            --accent-color: #58a6ff;
-            --accent-hover: #79c0ff;
-        }
-
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
-            line-height: 1.6;
-            color: var(--text-primary);
-            background-color: var(--bg-primary);
-            transition: background-color 0.3s, color 0.3s;
-        }
-
-        .progress-bar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--accent-color) 0%, var(--accent-color) var(--scroll-progress, 0%), transparent var(--scroll-progress, 0%));
-            z-index: 1001;
-        }
-
-        header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: var(--header-height);
-            background: var(--bg-secondary);
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 20px;
-            z-index: 1000;
-        }
-
-        .header-title {
-            font-size: 20px;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .header-controls {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-        }
-
-        .theme-toggle {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 24px;
-            padding: 5px;
-            transition: transform 0.2s;
-        }
-
-        .theme-toggle:hover {
-            transform: scale(1.1);
-        }
-
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: var(--header-height);
-            bottom: 0;
-            width: var(--sidebar-width);
-            background: var(--bg-secondary);
-            border-right: 1px solid var(--border-color);
-            overflow-y: auto;
-            padding: 20px;
-            transition: transform 0.3s;
-        }
-
-        .sidebar.collapsed {
-            transform: translateX(-100%);
-        }
-
-        .sidebar-toggle {
-            position: fixed;
-            left: var(--sidebar-width);
-            top: calc(var(--header-height) + 20px);
-            background: var(--accent-color);
-            color: white;
-            border: none;
-            border-radius: 0 4px 4px 0;
-            padding: 10px 8px;
-            cursor: pointer;
-            z-index: 999;
-            transition: left 0.3s;
-        }
-
-        .sidebar.collapsed + .sidebar-toggle {
-            left: 0;
-        }
-
-        .sidebar h3 {
-            font-size: 14px;
-            font-weight: 600;
-            text-transform: uppercase;
-            color: var(--text-secondary);
-            margin-bottom: 10px;
-        }
-
-        .toc {
-            list-style: none;
-        }
-
-        .toc li {
-            margin: 5px 0;
-        }
-
-        .toc a {
-            color: var(--text-primary);
-            text-decoration: none;
-            display: block;
-            padding: 6px 10px;
-            border-radius: 6px;
-            transition: background 0.2s;
-        }
-
-        .toc a:hover {
-            background: var(--bg-primary);
-        }
-
-        .toc a.active {
-            background: var(--accent-color);
-            color: white;
-        }
-
-        main {
-            margin-left: var(--sidebar-width);
-            margin-top: var(--header-height);
-            padding: 40px;
             max-width: 900px;
-            transition: margin-left 0.3s;
+            margin: 40px auto;
+            padding: 0 20px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            font-size: 16px;
+            line-height: 1.6;
+            color: #333;
         }
 
-        .sidebar.collapsed ~ main {
-            margin-left: 0;
-        }
+        h1 { font-size: 32px; margin: 40px 0 20px; border-bottom: 2px solid #333; padding-bottom: 10px; }
+        h2 { font-size: 24px; margin: 30px 0 15px; }
+        h3 { font-size: 20px; margin: 20px 0 10px; }
+        h4 { font-size: 18px; margin: 20px 0 10px; }
 
-        h1 {
-            font-size: 32px;
-            margin-bottom: 10px;
-            color: var(--text-primary);
-        }
+        p { margin: 10px 0; }
 
-        h2 {
-            font-size: 24px;
-            margin-top: 40px;
-            margin-bottom: 16px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid var(--border-color);
-            color: var(--text-primary);
-        }
-
-        h3 {
-            font-size: 20px;
-            margin-top: 24px;
-            margin-bottom: 12px;
-            color: var(--text-primary);
-        }
-
-        h4 {
-            font-size: 18px;
-            margin-top: 20px;
-            margin-bottom: 10px;
-            color: var(--text-primary);
-        }
-
-        p {
-            margin: 16px 0;
-            color: var(--text-primary);
+        pre {
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            padding: 15px;
+            overflow-x: auto;
+            font-size: 14px;
+            line-height: 1.4;
+            margin: 15px 0;
         }
 
         code {
-            background: var(--bg-code);
-            padding: 2px 6px;
+            background: #f5f5f5;
+            padding: 2px 5px;
             border-radius: 3px;
-            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
-            font-size: 0.9em;
-        }
-
-        pre {
-            background: var(--bg-code);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 16px;
-            overflow-x: auto;
-            margin: 16px 0;
+            font-family: "SF Mono", Monaco, Consolas, monospace;
+            font-size: 14px;
         }
 
         pre code {
@@ -232,130 +46,81 @@
             padding: 0;
         }
 
-        ul, ol {
-            margin: 16px 0;
-            padding-left: 32px;
-        }
-
-        li {
-            margin: 8px 0;
-        }
-
-        hr {
-            border: none;
-            border-top: 1px solid var(--border-color);
-            margin: 24px 0;
-        }
-
         table {
             width: 100%;
             border-collapse: collapse;
-            margin: 16px 0;
+            margin: 20px 0;
         }
 
         th, td {
-            border: 1px solid var(--border-color);
+            border: 1px solid #ddd;
             padding: 8px 12px;
             text-align: left;
         }
 
         th {
-            background: var(--bg-secondary);
+            background: #f5f5f5;
             font-weight: 600;
         }
 
-        .chapter-nav {
-            display: flex;
-            justify-content: space-between;
-            margin: 40px 0;
-            padding: 20px 0;
-            border-top: 1px solid var(--border-color);
+        ul, ol {
+            margin: 10px 0;
+            padding-left: 30px;
         }
 
-        .chapter-nav a {
-            color: var(--accent-color);
+        li {
+            margin: 5px 0;
+        }
+
+        a {
+            color: #0066cc;
             text-decoration: none;
-            padding: 10px 20px;
-            border: 1px solid var(--accent-color);
-            border-radius: 6px;
-            transition: all 0.2s;
         }
 
-        .chapter-nav a:hover {
-            background: var(--accent-color);
-            color: white;
+        a:hover {
+            text-decoration: underline;
+        }
+
+        strong {
+            font-weight: 600;
+        }
+
+        .nav {
+            margin: 40px 0;
+            padding: 15px 0;
+            border-top: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .nav a {
+            margin-right: 20px;
         }
 
         @media print {
-            .sidebar, .sidebar-toggle, .theme-toggle, .progress-bar {
-                display: none;
-            }
-            main {
-                margin-left: 0;
-                margin-top: 0;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-            .sidebar.show {
-                transform: translateX(0);
-            }
-            main {
-                margin-left: 0;
-                padding: 20px;
-            }
+            body { margin: 0; padding: 20px; }
+            .nav { display: none; }
         }
     </style>
 </head>
 <body>
-    <div class="progress-bar"></div>
+    <div class="nav">
+        <a href="index.html">← 返回主页</a>
+    </div>
 
-    <header>
-        <div class="header-title">二分查找与二分答案</div>
-        <div class="header-controls">
-            <button class="theme-toggle" onclick="toggleTheme()" title="切换主题">🌓</button>
-        </div>
-    </header>
-
-    <nav class="sidebar" id="sidebar">
-        <h3>目录</h3>
-        <ul class="toc">
-    <li><a href="#什么时候用">什么时候用</a></li>
-    <li><a href="#二分查找模板">二分查找模板</a></li>
-    <li><a href="#二分答案模板">二分答案模板</a></li>
-    <li><a href="#例题演示">例题演示</a></li>
-    <li><a href="#浮点二分">浮点二分</a></li>
-    <li><a href="#常见陷阱">常见陷阱</a></li>
-    <li><a href="#二分答案适用场景">二分答案适用场景</a></li>
-    <li><a href="#识别二分答案的技巧">识别二分答案的技巧</a></li>
-</ul>
-    </nav>
-
-    <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
-
-    <main>
-        <h1>二分查找与二分答案</h1>
-
-        <h2 id="什么时候用">什么时候用</h2>
+    <h1>二分查找与二分答案</h1>
+<h2>什么时候用</h2>
 <p>看到以下特征优先考虑二分：</p>
 <ul>
 <li><strong>有序数组</strong>查找元素</li>
-<ul>
 <li>"最小化最大值" 或 "最大化最小值"</li>
-<ul>
 <li>"能否在 x 时间内完成"</li>
-<ul>
 <li>数据范围很大（≤10⁹）但答案范围可枚举</li>
-<ul>
 <li>分配、切割、运输类问题</li>
+</ul>
 <p>核心思路：<strong>将 O(n) 的线性查找优化为 O(log n)</strong>。</p>
-<h2 id="二分查找模板">二分查找模板</h2>
-<h3 id="查找第一个--x-的位置">查找第一个 ≥ x 的位置</h3>
-<pre><code class="language-cpp">
-int lower_bound_manual(const vector&lt;int&gt;&amp; arr, int x) {
+<h2>二分查找模板</h2>
+<h3>查找第一个 ≥ x 的位置</h3>
+<pre><code>int lower_bound_manual(const vector&lt;int&gt;&amp; arr, int x) {
     int l = 0, r = arr.size(); // 左闭右开 [l, r)
     while (l &lt; r) {
         int mid = l + (r - l) / 2;
@@ -366,11 +131,9 @@ int lower_bound_manual(const vector&lt;int&gt;&amp; arr, int x) {
         }
     }
     return l;
-}
-</code></pre>
-<h3 id="查找最后一个--x-的位置">查找最后一个 ≤ x 的位置</h3>
-<pre><code class="language-cpp">
-int upper_bound_manual(const vector&lt;int&gt;&amp; arr, int x) {
+}</code></pre>
+<h3>查找最后一个 ≤ x 的位置</h3>
+<pre><code>int upper_bound_manual(const vector&lt;int&gt;&amp; arr, int x) {
     int l = 0, r = arr.size();
     while (l &lt; r) {
         int mid = l + (r - l) / 2;
@@ -381,23 +144,19 @@ int upper_bound_manual(const vector&lt;int&gt;&amp; arr, int x) {
         }
     }
     return l - 1;
-}
-</code></pre>
-<h3 id="stl-二分">STL 二分</h3>
-<pre><code class="language-cpp">
-// 第一个 &gt;= x
+}</code></pre>
+<h3>STL 二分</h3>
+<pre><code>// 第一个 &gt;= x
 auto it = lower_bound(arr.begin(), arr.end(), x);
 
 // 第一个 &gt; x
 auto it = upper_bound(arr.begin(), arr.end(), x);
 
 // 是否存在
-bool exists = binary_search(arr.begin(), arr.end(), x);
-</code></pre>
-<h2 id="二分答案模板">二分答案模板</h2>
-<h3 id="找最小可行值">找最小可行值</h3>
-<pre><code class="language-cpp">
-bool check(long long x) {
+bool exists = binary_search(arr.begin(), arr.end(), x);</code></pre>
+<h2>二分答案模板</h2>
+<h3>找最小可行值</h3>
+<pre><code>bool check(long long x) {
     // 判断 x 是否可行
     return true;
 }
@@ -412,11 +171,9 @@ long long binary_answer_min(long long l, long long r) {
         }
     }
     return l;
-}
-</code></pre>
-<h3 id="找最大可行值">找最大可行值</h3>
-<pre><code class="language-cpp">
-long long binary_answer_max(long long l, long long r) {
+}</code></pre>
+<h3>找最大可行值</h3>
+<pre><code>long long binary_answer_max(long long l, long long r) {
     while (l &lt; r) {
         long long mid = l + (r - l + 1) / 2; // 注意 +1
         if (check(mid)) {
@@ -426,14 +183,12 @@ long long binary_answer_max(long long l, long long r) {
         }
     }
     return l;
-}
-</code></pre>
+}</code></pre>
 <p><strong>关键差异</strong>：求最大值时 <code>mid</code> 要加 1，否则 <code>l = r - 1</code> 时会死循环。</p>
-<h2 id="例题演示">例题演示</h2>
-<h3 id="例题-1搜索插入位置">例题 1：搜索插入位置</h3>
+<h2>例题演示</h2>
+<h3>例题 1：搜索插入位置</h3>
 <p><strong>题目</strong>：LeetCode 35 - 有序数组中查找目标值，如果不存在则返回插入位置。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 int search_insert(vector&lt;int&gt;&amp; nums, int target) {
@@ -458,14 +213,12 @@ int main() {
     }
     cout &lt;&lt; search_insert(nums, target) &lt;&lt; &quot;\n&quot;;
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：O(log n)</p>
-<hr>
-<h3 id="例题-2在排序数组中查找元素的第一个和最后一个位置">例题 2：在排序数组中查找元素的第一个和最后一个位置</h3>
+<p>---</p>
+<h3>例题 2：在排序数组中查找元素的第一个和最后一个位置</h3>
 <p><strong>题目</strong>：LeetCode 34 - 找出目标值的起始和结束位置。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 vector&lt;int&gt; search_range(vector&lt;int&gt;&amp; nums, int target) {
@@ -509,14 +262,12 @@ int main() {
     cout &lt;&lt; result[0] &lt;&lt; &quot; &quot; &lt;&lt; result[1] &lt;&lt; &quot;\n&quot;;
     
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：O(log n)</p>
-<hr>
-<h3 id="例题-3x-的平方根">例题 3：x 的平方根</h3>
+<p>---</p>
+<h3>例题 3：x 的平方根</h3>
 <p><strong>题目</strong>：LeetCode 69 - 计算并返回 x 的平方根（取整）。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 int my_sqrt(int x) {
@@ -540,16 +291,14 @@ int main() {
     cin &gt;&gt; x;
     cout &lt;&lt; my_sqrt(x) &lt;&lt; &quot;\n&quot;;
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：O(log n)</p>
 <p><strong>易错点</strong>：<code>mid * mid</code> 可能溢出，用 <code>long long</code></p>
-<hr>
-<h3 id="例题-4分割数组的最大值二分答案">例题 4：分割数组的最大值（二分答案）</h3>
+<p>---</p>
+<h3>例题 4：分割数组的最大值（二分答案）</h3>
 <p><strong>题目</strong>：LeetCode 410 - 将数组分成 m 个非空连续子数组，使得这 m 个子数组各自和的最大值最小。</p>
 <p><strong>思路</strong>：二分答案。答案范围是 [max(nums), sum(nums)]。check(x) 判断能否在每段和 ≤ x 的条件下分成 ≤ m 段。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 bool can_split(vector&lt;int&gt;&amp; nums, int m, long long max_sum) {
@@ -596,15 +345,13 @@ int main() {
     cout &lt;&lt; split_array(nums, m) &lt;&lt; &quot;\n&quot;;
     
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：O(n log S)，S 为数组和</p>
-<hr>
-<h3 id="例题-5爱吃香蕉的珂珂">例题 5：爱吃香蕉的珂珂</h3>
+<p>---</p>
+<h3>例题 5：爱吃香蕉的珂珂</h3>
 <p><strong>题目</strong>：LeetCode 875 - 有 n 堆香蕉，每堆 piles[i] 根。珂珂每小时吃 k 根（一堆吃完才吃下一堆），h 小时内吃完所有香蕉，求最小的 k。</p>
 <p><strong>思路</strong>：二分答案 k，范围 [1, max(piles)]。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 bool can_finish(vector&lt;int&gt;&amp; piles, int h, int k) {
@@ -642,14 +389,12 @@ int main() {
     cout &lt;&lt; min_eating_speed(piles, h) &lt;&lt; &quot;\n&quot;;
     
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：O(n log M)，M 为最大堆数</p>
-<hr>
-<h3 id="例题-6在-d-天内送达包裹的能力">例题 6：在 D 天内送达包裹的能力</h3>
+<p>---</p>
+<h3>例题 6：在 D 天内送达包裹的能力</h3>
 <p><strong>题目</strong>：LeetCode 1011 - 传送带上有包裹，第 i 个包裹重量 weights[i]。每天按顺序装载包裹，船的载重量至少为多少才能在 D 天内送达所有包裹？</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 bool can_ship(vector&lt;int&gt;&amp; weights, int days, int capacity) {
@@ -695,14 +440,12 @@ int main() {
     cout &lt;&lt; ship_within_days(weights, days) &lt;&lt; &quot;\n&quot;;
     
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：O(n log S)</p>
-<hr>
-<h3 id="例题-7寻找旋转排序数组中的最小值">例题 7：寻找旋转排序数组中的最小值</h3>
+<p>---</p>
+<h3>例题 7：寻找旋转排序数组中的最小值</h3>
 <p><strong>题目</strong>：LeetCode 153 - 旋转后的有序数组，找最小值。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 int find_min(vector&lt;int&gt;&amp; nums) {
@@ -734,14 +477,12 @@ int main() {
     cout &lt;&lt; find_min(nums) &lt;&lt; &quot;\n&quot;;
     
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：O(log n)</p>
-<hr>
-<h3 id="例题-8搜索旋转排序数组">例题 8：搜索旋转排序数组</h3>
+<p>---</p>
+<h3>例题 8：搜索旋转排序数组</h3>
 <p><strong>题目</strong>：LeetCode 33 - 旋转后的有序数组中查找目标值。</p>
-<pre><code class="language-cpp">
-#include &lt;bits/stdc++.h&gt;
+<pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 int search(vector&lt;int&gt;&amp; nums, int target) {
@@ -784,14 +525,12 @@ int main() {
     cout &lt;&lt; search(nums, target) &lt;&lt; &quot;\n&quot;;
     
     return 0;
-}
-</code></pre>
+}</code></pre>
 <p><strong>复杂度</strong>：O(log n)</p>
-<hr>
-<h2 id="浮点二分">浮点二分</h2>
+<p>---</p>
+<h2>浮点二分</h2>
 <p>用于求解方程、精度要求的问题。</p>
-<pre><code class="language-cpp">
-double binary_search_float(double l, double r, double eps = 1e-9) {
+<pre><code>double binary_search_float(double l, double r, double eps = 1e-9) {
     for (int iter = 0; iter &lt; 100; ++iter) { // 固定迭代次数更稳
         double mid = (l + r) / 2;
         if (check(mid)) {
@@ -801,135 +540,55 @@ double binary_search_float(double l, double r, double eps = 1e-9) {
         }
     }
     return l;
-}
-</code></pre>
-<h2 id="常见陷阱">常见陷阱</h2>
+}</code></pre>
+<h2>常见陷阱</h2>
 <ol>
 <li><strong>整数溢出</strong>：<code>(l + r) / 2</code> 可能溢出，用 <code>l + (r - l) / 2</code></li>
-<ol>
 <li><strong>死循环</strong>：求最大值时忘记 <code>mid = l + (r - l + 1) / 2</code></li>
-<ol>
 <li><strong>边界混淆</strong>：</li>
-<ul>
-<li><code>while (l < r)</code> 配 <code>[l, r)</code> 或 <code>[l, r]</code></li>
-<ul>
-<li><code>while (l <= r)</code> 配 <code>[l, r]</code></li>
-<ul>
-<li>统一使用一种模板</li>
+</ol>
+<p>   - <code>while (l < r)</code> 配 <code>[l, r)</code> 或 <code>[l, r]</code></p>
+<p>   - <code>while (l <= r)</code> 配 <code>[l, r]</code></p>
+<p>   - 统一使用一种模板</p>
 <ol>
 <li><strong>check 函数单调性</strong>：必须保证答案越大/越小，条件越容易/越难满足</li>
-<ol>
 <li><strong>答案范围</strong>：左边界要能通过 check，右边界要保证答案在内</li>
-<h2 id="二分答案适用场景">二分答案适用场景</h2>
+</ol>
+<h2>二分答案适用场景</h2>
 <table>
-<thead>
-<tr>
+<thead><tr>
 <th>题型</th>
 <th>特征</th>
 <th>模板</th>
-</tr>
-</thead>
+</tr></thead>
 <tbody>
-<table>
-<thead>
 <tr>
-<th>------</th>
-<th>------</th>
-<th>------</th>
+<td>最小化最大值</td>
+<td>分配、切割、运输</td>
+<td>求最小可行值</td>
 </tr>
-</thead>
-<tbody>
-<table>
-<thead>
 <tr>
-<th>最小化最大值</th>
-<th>分配、切割、运输</th>
-<th>求最小可行值</th>
+<td>最大化最小值</td>
+<td>间距、分组</td>
+<td>求最大可行值</td>
 </tr>
-</thead>
-<tbody>
-<table>
-<thead>
 <tr>
-<th>最大化最小值</th>
-<th>间距、分组</th>
-<th>求最大可行值</th>
+<td>能否完成</td>
+<td>时间限制、容量限制</td>
+<td>判定性二分</td>
 </tr>
-</thead>
-<tbody>
-<table>
-<thead>
-<tr>
-<th>能否完成</th>
-<th>时间限制、容量限制</th>
-<th>判定性二分</th>
-</tr>
-</thead>
-<tbody>
-<h2 id="识别二分答案的技巧">识别二分答案的技巧</h2>
+</tbody>
+</table>
+<h2>识别二分答案的技巧</h2>
 <ol>
 <li>题目出现"最小化最大"或"最大化最小"</li>
-<ol>
 <li>直接求答案很难，但判断某个值是否可行很容易</li>
-<ol>
 <li>答案具有单调性：如果 x 可行，那么 x+1 也可行（或相反）</li>
-<ol>
 <li>答案范围很大但可以枚举</li>
+</ol>
 
-        <div class="chapter-nav">
-    <a href="04-prefix-sum-difference.html" class="prev-chapter">← 前缀和与差分</a>
-    <a href="06-stack-queue-monotonic.html" class="next-chapter">栈队列与单调性 →</a>
-</div>
-    </main>
-
-    <script>
-        // 主题切换
-        function toggleTheme() {
-            document.body.classList.toggle('dark-mode');
-            localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
-        }
-
-        // 加载保存的主题
-        if (localStorage.getItem('theme') === 'dark') {
-            document.body.classList.add('dark-mode');
-        }
-
-        // 侧边栏切换
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('collapsed');
-        }
-
-        // 进度条
-        window.addEventListener('scroll', () => {
-            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            const scrolled = (winScroll / height) * 100;
-            document.documentElement.style.setProperty('--scroll-progress', scrolled + '%');
-        });
-
-        // 目录高亮
-        const sections = document.querySelectorAll('h2[id]');
-        const tocLinks = document.querySelectorAll('.toc a');
-
-        window.addEventListener('scroll', () => {
-            let current = '';
-            sections.forEach(section => {
-                const sectionTop = section.offsetTop;
-                if (scrollY >= sectionTop - 100) {
-                    current = section.getAttribute('id');
-                }
-            });
-
-            tocLinks.forEach(link => {
-                link.classList.remove('active');
-                if (link.getAttribute('href') === '#' + current) {
-                    link.classList.add('active');
-                }
-            });
-        });
-
-        // 代码高亮
-        hljs.highlightAll();
-    </script>
+    <div class="nav">
+        <a href="04-prefix-sum-difference.html">← 04 前缀和与差分</a> | <a href="06-stack-queue-monotonic.html">06 栈、队列与单调结构 →</a>
+    </div>
 </body>
 </html>
