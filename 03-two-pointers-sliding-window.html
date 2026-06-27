@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>双指针与滑动窗口 - 算法竞赛速成</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8f9fa;
+            --bg-code: #f6f8fa;
+            --text-primary: #24292f;
+            --text-secondary: #57606a;
+            --border-color: #d0d7de;
+            --accent-color: #0969da;
+            --accent-hover: #0550ae;
+            --sidebar-width: 280px;
+            --header-height: 60px;
+        }
+
+        body.dark-mode {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-code: #161b22;
+            --text-primary: #c9d1d9;
+            --text-secondary: #8b949e;
+            --border-color: #30363d;
+            --accent-color: #58a6ff;
+            --accent-hover: #79c0ff;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background-color: var(--bg-primary);
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-color) 0%, var(--accent-color) var(--scroll-progress, 0%), transparent var(--scroll-progress, 0%));
+            z-index: 1001;
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 1000;
+        }
+
+        .header-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 24px;
+            padding: 5px;
+            transition: transform 0.2s;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: var(--header-height);
+            bottom: 0;
+            width: var(--sidebar-width);
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border-color);
+            overflow-y: auto;
+            padding: 20px;
+            transition: transform 0.3s;
+        }
+
+        .sidebar.collapsed {
+            transform: translateX(-100%);
+        }
+
+        .sidebar-toggle {
+            position: fixed;
+            left: var(--sidebar-width);
+            top: calc(var(--header-height) + 20px);
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 0 4px 4px 0;
+            padding: 10px 8px;
+            cursor: pointer;
+            z-index: 999;
+            transition: left 0.3s;
+        }
+
+        .sidebar.collapsed + .sidebar-toggle {
+            left: 0;
+        }
+
+        .sidebar h3 {
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+        }
+
+        .toc {
+            list-style: none;
+        }
+
+        .toc li {
+            margin: 5px 0;
+        }
+
+        .toc a {
+            color: var(--text-primary);
+            text-decoration: none;
+            display: block;
+            padding: 6px 10px;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+
+        .toc a:hover {
+            background: var(--bg-primary);
+        }
+
+        .toc a.active {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        main {
+            margin-left: var(--sidebar-width);
+            margin-top: var(--header-height);
+            padding: 40px;
+            max-width: 900px;
+            transition: margin-left 0.3s;
+        }
+
+        .sidebar.collapsed ~ main {
+            margin-left: 0;
+        }
+
+        h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+        }
+
+        h2 {
+            font-size: 24px;
+            margin-top: 40px;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+
+        h3 {
+            font-size: 20px;
+            margin-top: 24px;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        h4 {
+            font-size: 18px;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+        }
+
+        p {
+            margin: 16px 0;
+            color: var(--text-primary);
+        }
+
+        code {
+            background: var(--bg-code);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
+            font-size: 0.9em;
+        }
+
+        pre {
+            background: var(--bg-code);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 16px;
+            overflow-x: auto;
+            margin: 16px 0;
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+        }
+
+        ul, ol {
+            margin: 16px 0;
+            padding-left: 32px;
+        }
+
+        li {
+            margin: 8px 0;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid var(--border-color);
+            margin: 24px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+        }
+
+        th, td {
+            border: 1px solid var(--border-color);
+            padding: 8px 12px;
+            text-align: left;
+        }
+
+        th {
+            background: var(--bg-secondary);
+            font-weight: 600;
+        }
+
+        .chapter-nav {
+            display: flex;
+            justify-content: space-between;
+            margin: 40px 0;
+            padding: 20px 0;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .chapter-nav a {
+            color: var(--accent-color);
+            text-decoration: none;
+            padding: 10px 20px;
+            border: 1px solid var(--accent-color);
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .chapter-nav a:hover {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        @media print {
+            .sidebar, .sidebar-toggle, .theme-toggle, .progress-bar {
+                display: none;
+            }
+            main {
+                margin-left: 0;
+                margin-top: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            main {
+                margin-left: 0;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar"></div>
+
+    <header>
+        <div class="header-title">双指针与滑动窗口</div>
+        <div class="header-controls">
+            <button class="theme-toggle" onclick="toggleTheme()" title="切换主题">🌓</button>
+        </div>
+    </header>
+
+    <nav class="sidebar" id="sidebar">
+        <h3>目录</h3>
+        <ul class="toc">
+    <li><a href="#什么时候用">什么时候用</a></li>
+    <li><a href="#双指针分类">双指针分类</a></li>
+    <li><a href="#例题演示">例题演示</a></li>
+    <li><a href="#滑动窗口模板">滑动窗口模板</a></li>
+    <li><a href="#常见陷阱">常见陷阱</a></li>
+    <li><a href="#适用场景总结">适用场景总结</a></li>
+</ul>
+    </nav>
+
+    <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+
+    <main>
+        <h1>双指针与滑动窗口</h1>
+
+        <h2 id="什么时候用">什么时候用</h2>
+<p>看到以下特征优先考虑双指针：</p>
+<ul>
+<li><strong>连续子数组/子串</strong>问题</li>
+<ul>
+<li><strong>有序数组</strong>的两数之和、三数之和</li>
+<ul>
+<li>最长/最短满足某条件的区间</li>
+<ul>
+<li>去重、原地修改数组</li>
+<ul>
+<li>链表相关：快慢指针、相交、环检测</li>
+<p>核心思路：<strong>用 O(n) 或 O(n²) 替代 O(n²) 或 O(n³) 的暴力枚举</strong>。</p>
+<h2 id="双指针分类">双指针分类</h2>
+<h3 id="对撞指针">对撞指针</h3>
+<p>两个指针从两端向中间移动，常用于<strong>有序数组</strong>。</p>
+<pre><code class="language-cpp">
+int left = 0, right = n - 1;
+while (left &lt; right) {
+    if (满足条件) {
+        // 记录答案
+        left++; // 或 right--
+    } else if (需要增大) {
+        left++;
+    } else {
+        right--;
+    }
+}
+</code></pre>
+<h3 id="快慢指针">快慢指针</h3>
+<p>两个指针同向移动，速度不同，常用于<strong>链表</strong>和<strong>原地修改</strong>。</p>
+<pre><code class="language-cpp">
+int slow = 0;
+for (int fast = 0; fast &lt; n; ++fast) {
+    if (满足保留条件) {
+        arr[slow++] = arr[fast];
+    }
+}
+// slow 是新数组长度
+</code></pre>
+<h3 id="滑动窗口">滑动窗口</h3>
+<p>两个指针维护一个动态区间，常用于<strong>连续子数组/子串</strong>。</p>
+<pre><code class="language-cpp">
+int left = 0;
+for (int right = 0; right &lt; n; ++right) {
+    // 扩展右边界，加入 arr[right]
+    window_add(arr[right]);
+    
+    // 收缩左边界直到满足条件
+    while (窗口不满足条件) {
+        window_remove(arr[left]);
+        left++;
+    }
+    
+    // 更新答案
+    ans = max(ans, right - left + 1);
+}
+</code></pre>
+<h2 id="例题演示">例题演示</h2>
+<h3 id="例题-1两数之和-ii有序数组">例题 1：两数之和 II（有序数组）</h3>
+<p><strong>题目</strong>：LeetCode 167 - 给定<strong>有序数组</strong>和目标值，找出两个数的索引使得它们相加等于目标值。</p>
+<p><strong>思路</strong>：对撞指针，如果和太小则左指针右移，太大则右指针左移。</p>
+<pre><code class="language-cpp">
+#include &lt;bits/stdc++.h&gt;
+using namespace std;
+
+vector&lt;int&gt; two_sum(vector&lt;int&gt;&amp; nums, int target) {
+    int left = 0, right = nums.size() - 1;
+    
+    while (left &lt; right) {
+        int sum = nums[left] + nums[right];
+        if (sum == target) {
+            return {left + 1, right + 1}; // 1-indexed
+        } else if (sum &lt; target) {
+            left++;
+        } else {
+            right--;
+        }
+    }
+    
+    return {};
+}
+
+int main() {
+    int n, target;
+    cin &gt;&gt; n &gt;&gt; target;
+    vector&lt;int&gt; nums(n);
+    for (int i = 0; i &lt; n; ++i) {
+        cin &gt;&gt; nums[i];
+    }
+    
+    auto res = two_sum(nums, target);
+    cout &lt;&lt; res[0] &lt;&lt; &quot; &quot; &lt;&lt; res[1] &lt;&lt; &quot;\n&quot;;
+    
+    return 0;
+}
+</code></pre>
+<p><strong>复杂度</strong>：时间 O(n)，空间 O(1)</p>
+<p><strong>关键点</strong>：利用有序性，和太小/太大决定移动方向</p>
+<hr>
+<h3 id="例题-2三数之和">例题 2：三数之和</h3>
+<p><strong>题目</strong>：LeetCode 15 - 找出数组中所有和为 0 的不重复三元组。</p>
+<p><strong>思路</strong>：先排序，固定第一个数，对剩余部分用对撞指针找两数之和。</p>
+<pre><code class="language-cpp">
+#include &lt;bits/stdc++.h&gt;
+using namespace std;
+
+vector&lt;vector&lt;int&gt;&gt; three_sum(vector&lt;int&gt;&amp; nums) {
+    vector&lt;vector&lt;int&gt;&gt; result;
+    int n = nums.size();
+    if (n &lt; 3) return result;
+    
+    sort(nums.begin(), nums.end());
+    
+    for (int i = 0; i &lt; n - 2; ++i) {
+        // 跳过重复的第一个数
+        if (i &gt; 0 &amp;&amp; nums[i] == nums[i - 1]) continue;
+        
+        // 剪枝：最小的三个数之和 &gt; 0
+        if (nums[i] + nums[i + 1] + nums[i + 2] &gt; 0) break;
+        
+        // 剪枝：当前数 + 最大的两个数 &lt; 0
+        if (nums[i] + nums[n - 2] + nums[n - 1] &lt; 0) continue;
+        
+        int target = -nums[i];
+        int left = i + 1, right = n - 1;
+        
+        while (left &lt; right) {
+            int sum = nums[left] + nums[right];
+            if (sum == target) {
+                result.push_back({nums[i], nums[left], nums[right]});
+                
+                // 跳过重复
+                while (left &lt; right &amp;&amp; nums[left] == nums[left + 1]) left++;
+                while (left &lt; right &amp;&amp; nums[right] == nums[right - 1]) right--;
+                
+                left++;
+                right--;
+            } else if (sum &lt; target) {
+                left++;
+            } else {
+                right--;
+            }
+        }
+    }
+    
+    return result;
+}
+
+int main() {
+    int n;
+    cin &gt;&gt; n;
+    vector&lt;int&gt; nums(n);
+    for (int i = 0; i &lt; n; ++i) {
+        cin &gt;&gt; nums[i];
+    }
+    
+    auto result = three_sum(nums);
+    
+    cout &lt;&lt; result.size() &lt;&lt; &quot;\n&quot;;
+    for (const auto&amp; triplet : result) {
+        cout &lt;&lt; triplet[0] &lt;&lt; &quot; &quot; &lt;&lt; triplet[1] &lt;&lt; &quot; &quot; &lt;&lt; triplet[2] &lt;&lt; &quot;\n&quot;;
+    }
+    
+    return 0;
+}
+</code></pre>
+<p><strong>复杂度</strong>：时间 O(n²)，空间 O(1)（不计结果）</p>
+<p><strong>易错点</strong>：</p>
+<ul>
+<li>去重要在正确位置：<code>i > 0</code> 而不是 <code>i > 1</code></li>
+<ul>
+<li>找到结果后两个指针都要移动</li>
+<hr>
+<h3 id="例题-3盛水最多的容器">例题 3：盛水最多的容器</h3>
+<p><strong>题目</strong>：LeetCode 11 - 给定数组表示高度，找两条线与 x 轴构成的容器能盛最多的水。</p>
+<p><strong>思路</strong>：对撞指针，每次移动较短的那一边（移动长的不可能更优）。</p>
+<pre><code class="language-cpp">
+#include &lt;bits/stdc++.h&gt;
+using namespace std;
+
+int max_area(vector&lt;int&gt;&amp; height) {
+    int left = 0, right = height.size() - 1;
+    int max_water = 0;
+    
+    while (left &lt; right) {
+        int h = min(height[left], height[right]);
+        int w = right - left;
+        max_water = max(max_water, h * w);
+        
+        // 移动较短的一边
+        if (height[left] &lt; height[right]) {
+            left++;
+        } else {
+            right--;
+        }
+    }
+    
+    return max_water;
+}
+
+int main() {
+    int n;
+    cin &gt;&gt; n;
+    vector&lt;int&gt; height(n);
+    for (int i = 0; i &lt; n; ++i) {
+        cin &gt;&gt; height[i];
+    }
+    
+    cout &lt;&lt; max_area(height) &lt;&lt; &quot;\n&quot;;
+    
+    return 0;
+}
+</code></pre>
+<p><strong>复杂度</strong>：时间 O(n)，空间 O(1)</p>
+<p><strong>证明</strong>：移动长边只会让宽度减小且高度不增，一定更差</p>
+<hr>
+<h3 id="例题-4删除有序数组中的重复项">例题 4：删除有序数组中的重复项</h3>
+<p><strong>题目</strong>：LeetCode 26 - 原地删除有序数组中的重复项，返回新长度。</p>
+<p><strong>思路</strong>：快慢指针，<code>slow</code> 指向不重复部分的末尾。</p>
+<pre><code class="language-cpp">
+#include &lt;bits/stdc++.h&gt;
+using namespace std;
+
+int remove_duplicates(vector&lt;int&gt;&amp; nums) {
+    if (nums.empty()) return 0;
+    
+    int slow = 0;
+    for (int fast = 1; fast &lt; (int)nums.size(); ++fast) {
+        if (nums[fast] != nums[slow]) {
+            slow++;
+            nums[slow] = nums[fast];
+        }
+    }
+    
+    return slow + 1;
+}
+
+int main() {
+    int n;
+    cin &gt;&gt; n;
+    vector&lt;int&gt; nums(n);
+    for (int i = 0; i &lt; n; ++i) {
+        cin &gt;&gt; nums[i];
+    }
+    
+    int len = remove_duplicates(nums);
+    
+    cout &lt;&lt; len &lt;&lt; &quot;\n&quot;;
+    for (int i = 0; i &lt; len; ++i) {
+        cout &lt;&lt; nums[i] &lt;&lt; &quot; \n&quot;[i == len - 1];
+    }
+    
+    return 0;
+}
+</code></pre>
+<p><strong>复杂度</strong>：时间 O(n)，空间 O(1)</p>
+<hr>
+<h3 id="例题-5长度最小的子数组滑动窗口">例题 5：长度最小的子数组（滑动窗口）</h3>
+<p><strong>题目</strong>：LeetCode 209 - 找出数组中和 ≥ target 的最短连续子数组。</p>
+<p><strong>思路</strong>：滑动窗口，右指针扩展累加和，当满足条件时收缩左指针。</p>
+<pre><code class="language-cpp">
+#include &lt;bits/stdc++.h&gt;
+using namespace std;
+
+int min_subarray_len(int target, vector&lt;int&gt;&amp; nums) {
+    int n = nums.size();
+    int left = 0, sum = 0;
+    int min_len = INT_MAX;
+    
+    for (int right = 0; right &lt; n; ++right) {
+        sum += nums[right];
+        
+        // 当满足条件时尽量收缩
+        while (sum &gt;= target) {
+            min_len = min(min_len, right - left + 1);
+            sum -= nums[left];
+            left++;
+        }
+    }
+    
+    return min_len == INT_MAX ? 0 : min_len;
+}
+
+int main() {
+    int n, target;
+    cin &gt;&gt; n &gt;&gt; target;
+    vector&lt;int&gt; nums(n);
+    for (int i = 0; i &lt; n; ++i) {
+        cin &gt;&gt; nums[i];
+    }
+    
+    cout &lt;&lt; min_subarray_len(target, nums) &lt;&lt; &quot;\n&quot;;
+    
+    return 0;
+}
+</code></pre>
+<p><strong>复杂度</strong>：时间 O(n)，空间 O(1)</p>
+<p><strong>关键点</strong>：每个元素最多被访问两次（一次加入，一次移出）</p>
+<hr>
+<h3 id="例题-6无重复字符的最长子串">例题 6：无重复字符的最长子串</h3>
+<p><strong>题目</strong>：LeetCode 3 - 找出字符串中无重复字符的最长子串长度。</p>
+<p><strong>思路</strong>：滑动窗口 + 哈希表记录字符最后出现位置。</p>
+<pre><code class="language-cpp">
+#include &lt;bits/stdc++.h&gt;
+using namespace std;
+
+int length_of_longest_substring(string s) {
+    unordered_map&lt;char, int&gt; last_pos; // 字符 -&gt; 最后出现位置
+    int max_len = 0;
+    int left = 0;
+    
+    for (int right = 0; right &lt; (int)s.size(); ++right) {
+        char c = s[right];
+        
+        // 如果字符重复，更新左边界
+        if (last_pos.count(c) &amp;&amp; last_pos[c] &gt;= left) {
+            left = last_pos[c] + 1;
+        }
+        
+        last_pos[c] = right;
+        max_len = max(max_len, right - left + 1);
+    }
+    
+    return max_len;
+}
+
+int main() {
+    string s;
+    cin &gt;&gt; s;
+    cout &lt;&lt; length_of_longest_substring(s) &lt;&lt; &quot;\n&quot;;
+    return 0;
+}
+</code></pre>
+<p><strong>复杂度</strong>：时间 O(n)，空间 O(字符集大小)</p>
+<p><strong>另一种写法</strong>（用集合 + while 收缩）：</p>
+<pre><code class="language-cpp">
+int length_of_longest_substring(string s) {
+    unordered_set&lt;char&gt; window;
+    int max_len = 0;
+    int left = 0;
+    
+    for (int right = 0; right &lt; (int)s.size(); ++right) {
+        while (window.count(s[right])) {
+            window.erase(s[left]);
+            left++;
+        }
+        window.insert(s[right]);
+        max_len = max(max_len, right - left + 1);
+    }
+    
+    return max_len;
+}
+</code></pre>
+<hr>
+<h3 id="例题-7字符串的排列滑动窗口--计数">例题 7：字符串的排列（滑动窗口 + 计数）</h3>
+<p><strong>题目</strong>：LeetCode 567 - 判断 s2 是否包含 s1 的排列。</p>
+<p><strong>思路</strong>：固定长度的滑动窗口，维护字符频次。</p>
+<pre><code class="language-cpp">
+#include &lt;bits/stdc++.h&gt;
+using namespace std;
+
+bool check_inclusion(string s1, string s2) {
+    if (s1.size() &gt; s2.size()) return false;
+    
+    int cnt1[26] = {0}, cnt2[26] = {0};
+    
+    // 统计 s1 的字符频次
+    for (char c : s1) {
+        cnt1[c - 'a']++;
+    }
+    
+    int k = s1.size();
+    
+    // 初始化窗口
+    for (int i = 0; i &lt; k; ++i) {
+        cnt2[s2[i] - 'a']++;
+    }
+    
+    if (memcmp(cnt1, cnt2, sizeof(cnt1)) == 0) return true;
+    
+    // 滑动窗口
+    for (int i = k; i &lt; (int)s2.size(); ++i) {
+        cnt2[s2[i] - 'a']++;           // 加入右边
+        cnt2[s2[i - k] - 'a']--;       // 移出左边
+        
+        if (memcmp(cnt1, cnt2, sizeof(cnt1)) == 0) return true;
+    }
+    
+    return false;
+}
+
+int main() {
+    string s1, s2;
+    cin &gt;&gt; s1 &gt;&gt; s2;
+    cout &lt;&lt; (check_inclusion(s1, s2) ? &quot;YES&quot; : &quot;NO&quot;) &lt;&lt; &quot;\n&quot;;
+    return 0;
+}
+</code></pre>
+<p><strong>复杂度</strong>：时间 O(n)，空间 O(1)</p>
+<p><strong>优化</strong>：用一个变量记录匹配字符种类数，避免每次比较整个数组</p>
+<hr>
+<h3 id="例题-8最小覆盖子串">例题 8：最小覆盖子串</h3>
+<p><strong>题目</strong>：LeetCode 76 - 找出 s 中包含 t 所有字符的最小子串。</p>
+<p><strong>思路</strong>：滑动窗口 + 计数，维护窗口内字符频次。</p>
+<pre><code class="language-cpp">
+#include &lt;bits/stdc++.h&gt;
+using namespace std;
+
+string min_window(string s, string t) {
+    if (s.empty() || t.empty()) return &quot;&quot;;
+    
+    unordered_map&lt;char, int&gt; need, window;
+    for (char c : t) need[c]++;
+    
+    int left = 0, right = 0;
+    int valid = 0; // 已满足的字符种类数
+    int start = 0, min_len = INT_MAX;
+    
+    while (right &lt; (int)s.size()) {
+        char c = s[right];
+        right++;
+        
+        // 扩展窗口
+        if (need.count(c)) {
+            window[c]++;
+            if (window[c] == need[c]) {
+                valid++;
+            }
+        }
+        
+        // 收缩窗口
+        while (valid == (int)need.size()) {
+            // 更新答案
+            if (right - left &lt; min_len) {
+                start = left;
+                min_len = right - left;
+            }
+            
+            char d = s[left];
+            left++;
+            
+            if (need.count(d)) {
+                if (window[d] == need[d]) {
+                    valid--;
+                }
+                window[d]--;
+            }
+        }
+    }
+    
+    return min_len == INT_MAX ? &quot;&quot; : s.substr(start, min_len);
+}
+
+int main() {
+    string s, t;
+    cin &gt;&gt; s &gt;&gt; t;
+    cout &lt;&lt; min_window(s, t) &lt;&lt; &quot;\n&quot;;
+    return 0;
+}
+</code></pre>
+<p><strong>复杂度</strong>：时间 O(n + m)，空间 O(字符集大小)</p>
+<p><strong>关键点</strong>：用 <code>valid</code> 变量优化判断，避免每次遍历 need</p>
+<hr>
+<h2 id="滑动窗口模板">滑动窗口模板</h2>
+<h3 id="最长满足条件窗口">最长满足条件窗口</h3>
+<pre><code class="language-cpp">
+int left = 0, ans = 0;
+for (int right = 0; right &lt; n; ++right) {
+    // 加入 arr[right]
+    window_add(arr[right]);
+    
+    // 收缩直到满足条件
+    while (窗口不满足条件) {
+        window_remove(arr[left]);
+        left++;
+    }
+    
+    ans = max(ans, right - left + 1);
+}
+</code></pre>
+<h3 id="最短满足条件窗口">最短满足条件窗口</h3>
+<pre><code class="language-cpp">
+int left = 0, ans = INT_MAX;
+for (int right = 0; right &lt; n; ++right) {
+    // 加入 arr[right]
+    window_add(arr[right]);
+    
+    // 收缩直到不满足条件
+    while (窗口满足条件) {
+        ans = min(ans, right - left + 1);
+        window_remove(arr[left]);
+        left++;
+    }
+}
+</code></pre>
+<h2 id="常见陷阱">常见陷阱</h2>
+<ol>
+<li><strong>边界条件</strong>：空数组、单元素、全部相同</li>
+<ol>
+<li><strong>重复处理</strong>：三数之和的去重逻辑要写对</li>
+<ol>
+<li><strong>指针移动时机</strong>：先更新答案还是先移动指针</li>
+<ol>
+<li><strong>窗口状态维护</strong>：加入/移出元素时要同步更新状态</li>
+<ol>
+<li><strong>整数溢出</strong>：对撞指针求和时注意溢出</li>
+<h2 id="适用场景总结">适用场景总结</h2>
+<table>
+<thead>
+<tr>
+<th>模式</th>
+<th>适用场景</th>
+<th>复杂度</th>
+</tr>
+</thead>
+<tbody>
+<table>
+<thead>
+<tr>
+<th>------</th>
+<th>----------</th>
+<th>--------</th>
+</tr>
+</thead>
+<tbody>
+<table>
+<thead>
+<tr>
+<th>对撞指针</th>
+<th>有序数组、两数之和、三数之和、容器问题</th>
+<th>O(n) 或 O(n²)</th>
+</tr>
+</thead>
+<tbody>
+<table>
+<thead>
+<tr>
+<th>快慢指针</th>
+<th>链表环检测、原地去重、数组分区</th>
+<th>O(n)</th>
+</tr>
+</thead>
+<tbody>
+<table>
+<thead>
+<tr>
+<th>滑动窗口</th>
+<th>连续子数组/子串、最长/最短满足条件</th>
+<th>O(n)</th>
+</tr>
+</thead>
+<tbody>
+
+        <div class="chapter-nav">
+    <a href="02-hash-and-counting.html" class="prev-chapter">← 哈希表与计数</a>
+    <a href="04-prefix-sum-difference.html" class="next-chapter">前缀和与差分 →</a>
+</div>
+    </main>
+
+    <script>
+        // 主题切换
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+        }
+
+        // 加载保存的主题
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+        }
+
+        // 侧边栏切换
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('collapsed');
+        }
+
+        // 进度条
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.documentElement.style.setProperty('--scroll-progress', scrolled + '%');
+        });
+
+        // 目录高亮
+        const sections = document.querySelectorAll('h2[id]');
+        const tocLinks = document.querySelectorAll('.toc a');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (scrollY >= sectionTop - 100) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            tocLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        // 代码高亮
+        hljs.highlightAll();
+    </script>
+</body>
+</html>

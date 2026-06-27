@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数学与数论 - 算法竞赛速成</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8f9fa;
+            --bg-code: #f6f8fa;
+            --text-primary: #24292f;
+            --text-secondary: #57606a;
+            --border-color: #d0d7de;
+            --accent-color: #0969da;
+            --accent-hover: #0550ae;
+            --sidebar-width: 280px;
+            --header-height: 60px;
+        }
+
+        body.dark-mode {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-code: #161b22;
+            --text-primary: #c9d1d9;
+            --text-secondary: #8b949e;
+            --border-color: #30363d;
+            --accent-color: #58a6ff;
+            --accent-hover: #79c0ff;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background-color: var(--bg-primary);
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-color) 0%, var(--accent-color) var(--scroll-progress, 0%), transparent var(--scroll-progress, 0%));
+            z-index: 1001;
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 1000;
+        }
+
+        .header-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 24px;
+            padding: 5px;
+            transition: transform 0.2s;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: var(--header-height);
+            bottom: 0;
+            width: var(--sidebar-width);
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border-color);
+            overflow-y: auto;
+            padding: 20px;
+            transition: transform 0.3s;
+        }
+
+        .sidebar.collapsed {
+            transform: translateX(-100%);
+        }
+
+        .sidebar-toggle {
+            position: fixed;
+            left: var(--sidebar-width);
+            top: calc(var(--header-height) + 20px);
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 0 4px 4px 0;
+            padding: 10px 8px;
+            cursor: pointer;
+            z-index: 999;
+            transition: left 0.3s;
+        }
+
+        .sidebar.collapsed + .sidebar-toggle {
+            left: 0;
+        }
+
+        .sidebar h3 {
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+        }
+
+        .toc {
+            list-style: none;
+        }
+
+        .toc li {
+            margin: 5px 0;
+        }
+
+        .toc a {
+            color: var(--text-primary);
+            text-decoration: none;
+            display: block;
+            padding: 6px 10px;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+
+        .toc a:hover {
+            background: var(--bg-primary);
+        }
+
+        .toc a.active {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        main {
+            margin-left: var(--sidebar-width);
+            margin-top: var(--header-height);
+            padding: 40px;
+            max-width: 900px;
+            transition: margin-left 0.3s;
+        }
+
+        .sidebar.collapsed ~ main {
+            margin-left: 0;
+        }
+
+        h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+        }
+
+        h2 {
+            font-size: 24px;
+            margin-top: 40px;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+
+        h3 {
+            font-size: 20px;
+            margin-top: 24px;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        h4 {
+            font-size: 18px;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+        }
+
+        p {
+            margin: 16px 0;
+            color: var(--text-primary);
+        }
+
+        code {
+            background: var(--bg-code);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
+            font-size: 0.9em;
+        }
+
+        pre {
+            background: var(--bg-code);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 16px;
+            overflow-x: auto;
+            margin: 16px 0;
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+        }
+
+        ul, ol {
+            margin: 16px 0;
+            padding-left: 32px;
+        }
+
+        li {
+            margin: 8px 0;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid var(--border-color);
+            margin: 24px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+        }
+
+        th, td {
+            border: 1px solid var(--border-color);
+            padding: 8px 12px;
+            text-align: left;
+        }
+
+        th {
+            background: var(--bg-secondary);
+            font-weight: 600;
+        }
+
+        .chapter-nav {
+            display: flex;
+            justify-content: space-between;
+            margin: 40px 0;
+            padding: 20px 0;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .chapter-nav a {
+            color: var(--accent-color);
+            text-decoration: none;
+            padding: 10px 20px;
+            border: 1px solid var(--accent-color);
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .chapter-nav a:hover {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        @media print {
+            .sidebar, .sidebar-toggle, .theme-toggle, .progress-bar {
+                display: none;
+            }
+            main {
+                margin-left: 0;
+                margin-top: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            main {
+                margin-left: 0;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar"></div>
+
+    <header>
+        <div class="header-title">数学与数论</div>
+        <div class="header-controls">
+            <button class="theme-toggle" onclick="toggleTheme()" title="切换主题">🌓</button>
+        </div>
+    </header>
+
+    <nav class="sidebar" id="sidebar">
+        <h3>目录</h3>
+        <ul class="toc">
+    <li><a href="#什么时候用">什么时候用</a></li>
+    <li><a href="#核心要点">核心要点</a></li>
+    <li><a href="#例题演示">例题演示</a></li>
+    <li><a href="#常见陷阱">常见陷阱</a></li>
+    <li><a href="#常用公式">常用公式</a></li>
+    <li><a href="#模运算技巧">模运算技巧</a></li>
+    <li><a href="#适用场景总结">适用场景总结</a></li>
+</ul>
+    </nav>
+
+    <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+
+    <main>
+        <h1>数学与数论</h1>
+
+        <h2 id="什么时候用">什么时候用</h2>
+<p>看到以下特征优先考虑数学与数论：</p>
+<ul>
+<li>最大公约数（GCD）、最小公倍数（LCM）</li>
+<ul>
+<li>质数判断、质因数分解、筛法</li>
+<ul>
+<li>快速幂、矩阵快速幂</li>
+<ul>
+<li>组合数、排列数、阶乘</li>
+<ul>
+<li>模运算、逆元</li>
+<ul>
+<li>欧拉函数、费马小定理</li>
+<ul>
+<li>数位 DP、进制转换</li>
+<p>核心思路：<strong>利用数学性质和公式优化计算</strong>。</p>
+<h2 id="核心要点">核心要点</h2>
+<ol>
+<li><strong>GCD 用辗转相除法</strong>：<code>gcd(a, b) = gcd(b, a % b)</code></li>
+<ol>
+<li><strong>质数判断</strong>：试除法 <code>O(√n)</code>，筛法 <code>O(n log log n)</code></li>
+<ol>
+<li><strong>快速幂</strong>：<code>O(log n)</code> 计算 <code>a^b</code></li>
+<ol>
+<li><strong>组合数</strong>：预处理阶乘和逆元</li>
+<ol>
+<li><strong>模运算</strong>：加减乘取模，除法用逆元</li>
+<ol>
+<li><strong>费马小定理</strong>：<code>a^(p-1) ≡ 1 (mod p)</code>，p 为质数</li>
+<h2 id="例题演示">例题演示</h2>
+<h3 id="例题-1最大公约数-gcd-与最小公倍数-lcm">例题 1：最大公约数 GCD 与最小公倍数 LCM</h3>
+<p><strong>题目</strong>：给定两个数，求 GCD 和 LCM。</p>
+<p><strong>思路</strong>：辗转相除法求 GCD，<code>LCM = a * b / GCD</code>。</p>
+<pre><code class="language-cpp">
+#include &lt;bits/stdc++.h&gt;
+using namespace std;
+
+int gcd(int a, int b) {
+    return b == 0 ? a : gcd(b, a % b);
+}
+
+long long lcm(int a, int b) {
+    return (long long)a * b / gcd(a, b);
+}
+
+int main() {
+    int a, b;
+    cin &gt;&gt; a &gt;&gt; b;
+    
+    cout &lt;&lt; &quot;GCD: &quot; &lt;&lt; gcd(a, b) &lt;&lt; &quot;\n&quot;;
+    cout &lt;&lt; &quot;LCM: &quot; &lt;&lt; lcm(a, b) &lt;&lt; &quot;\n&quot;;
+    
+    return 0;
+}
+</code></pre>
+<p><strong>C++ 内置函数</strong>：</p>
+<ul>
+<li><code>__gcd(a, b)</code> - GCC 内置</li>
+<ul>
+<li><code>gcd(a, b)</code> - C++17 <code><numeric></code> 中</li>
+<p><strong>复杂度</strong>：<code>O(log min(a, b))</code></p>
+<p><strong>易错点</strong>：计算 LCM 时先除后乘，避免溢出</p>
+<hr>
+<h3 id="例题-2质数判断">例题 2：质数判断</h3>
+<p><strong>题目</strong>：判断 n 是否为质数。</p>
+<p><strong>思路</strong>：试除法，只需要检查到 <code>√n</code>。</p>
+<pre><code class="language-cpp">
+#include &lt;bits/stdc++.h&gt;
+using namespace std;
+
+bool is_prime(int n) {
+    if (n &lt; 2) return false;
+    if (n == 2) return true;
+    if (n % 2 == 0) return false;
+    
+    for (int i = 3; i * i &lt;= n; i += 2) {
+        if (n % i == 0) return false;
+    }
+    
+    return true;
+}
+
+int main() {
+    int n;
+    cin &gt;&gt; n;
+    cout &lt;&lt; (is_prime(n) ? &quot;YES&quot; : &quot;NO&quot;) &lt;&lt; &quot;\n&quot;;
+    return 0;
+}
+</code></pre>
+<p><strong>复杂度</strong>：<code>O(√n)</code></p>
+<p><strong>优化</strong>：只检查奇数，跳过偶数</p>
+<hr>
+<h3 id="例题-3埃氏筛法---求-n-以内所有质数">例题 3：埃氏筛法 - 求 n 以内所有质数</h3>
+<p><strong>题目</strong>：求 1 到 n 的所有质数。</p>
+<p><strong>思路</strong>：Sieve of Eratosthenes，标记质数的倍数。</p>
+<pre><code class="language-cpp">
+#include &lt;bits/stdc++.h&gt;
+using namespace std;
+
+vector&lt;int&gt; sieve_of_eratosthenes(int n) {
+    vector&lt;bool&gt; is_prime(n + 1, true);
+    is_prime[0] = is_prime[1] = false;
+    
+    for (int i = 2; i * i &lt;= n; ++i) {
+        if (is_prime[i]) {
+            for (int j = i * i; j &lt;= n; j += i) {
+                is_prime[j] = false;
+            }
+        }
+    }
+    
+    vector&lt;int&gt; primes;
+    for (int i = 2; i &lt;= n; ++i) {
+        if (is_prime[i]) {
+            primes.push_back(i);
+        }
+    }
+    
+    return primes;
+}
+
+int main() {
+    int n;
+    cin &gt;&gt; n;
+    
+    auto primes = sieve_of_eratosthenes(n);
+    
+    cout &lt;&lt; &quot;质数个数: &quot; &lt;&lt; primes.size() &lt;&lt; &quot;\n&quot;;
+    for (int p : primes) {
+        cout &lt;&lt; p &lt;&lt; &quot; &quot;;
+    }
+    cout &lt;&lt; &quot;\n&quot;;
+    
+    return 0;
+}
+</code></pre>
+<p><strong>复杂度</strong>：<code>O(n log log n)</code></p>
+<p><strong>易错点</strong>：从 <code>i * i</code> 开始标记，因为更小的倍数已经被标记过</p>
+<hr>
+<h3 id="例题-4质因数分解">例题 4：质因数分解</h3>
+<p><strong>题目</strong>：将 n 分解为质因数。</p>
+<p><strong>思路</strong>：从 2 开始试除，记录每个质因数的个数。</p>
+<pre><code class="language-cpp">
+#include &lt;bits/stdc++.h&gt;
+using namespace std;
+
+map&lt;int, int&gt; prime_factorization(int n) {
+    map&lt;int, int&gt; factors;
+    
+    for (int i = 2; i * i &lt;= n; ++i) {
+        while (n % i == 0) {
+            factors[i]++;
+            n /= i;
+        }
+    }
+    
+    if (n &gt; 1) {
+        factors[n]++;
+    }
+    
+    return factors;
+}
+
+int main() {
+    int n;
+    cin &gt;&gt; n;
+    
+    auto factors = prime_factorization(n);
+    
+    cout &lt;&lt; n &lt;&lt; &quot; = &quot;;
+    bool first = true;
+    for (auto [p, cnt] : factors) {
+        if (!first) cout &lt;&lt; &quot; * &quot;;
+        cout &lt;&lt; p;
+        if (cnt &gt; 1) cout &lt;&lt; &quot;^&quot; &lt;&lt; cnt;
+        first = false;
+    }
+    cout &lt;&lt; &quot;\n&quot;;
+    
+    return 0;
+}
+</code></pre>
+<p><strong>复杂度</strong>：<code>O(√n)</code></p>
+<p><strong>易错点</strong>：最后要检查 <code>n > 1</code>，剩余的 n 本身是质数</p>
+<hr>
+<h3 id="例题-5快速幂">例题 5：快速幂</h3>
+<p><strong>题目</strong>：计算 <code>a^b mod m</code>。</p>
+<p><strong>思路</strong>：二进制拆分，<code>a^b = a^(b/2) * a^(b/2) * a^(b%2)</code>。</p>
+<pre><code class="language-cpp">
+#include &lt;bits/stdc++.h&gt;
+using namespace std;
+
+long long fast_pow(long long a, long long b, long long mod) {
+    long long res = 1;
+    a %= mod;
+    
+    while (b &gt; 0) {
+        if (b &amp; 1) {
+            res = res * a % mod;
+        }
+        a = a * a % mod;
+        b &gt;&gt;= 1;
+    }
+    
+    return res;
+}
+
+int main() {
+    long long a, b, mod;
+    cin &gt;&gt; a &gt;&gt; b &gt;&gt; mod;
+    
+    cout &lt;&lt; fast_pow(a, b, mod) &lt;&lt; &quot;\n&quot;;
+    return 0;
+}
+</code></pre>
+<p><strong>复杂度</strong>：<code>O(log b)</code></p>
+<p><strong>易错点</strong>：</p>
+<ul>
+<li>每次乘法后都要取模</li>
+<ul>
+<li><code>a</code> 也要先取模</li>
+<hr>
+<h3 id="例题-6组合数-cn-m">例题 6：组合数 C(n, m)</h3>
+<p><strong>题目</strong>：计算组合数 <code>C(n, m) = n! / (m! * (n-m)!)</code>。</p>
+<p><strong>思路 1：预处理阶乘（n 较小时）</strong></p>
+<pre><code class="language-cpp">
+#include &lt;bits/stdc++.h&gt;
+using namespace std;
+
+const int MAXN = 1e6 + 5;
+const int MOD = 1e9 + 7;
+
+long long fact[MAXN], inv_fact[MAXN];
+
+long long fast_pow(long long a, long long b, long long mod) {
+    long long res = 1;
+    a %= mod;
+    while (b &gt; 0) {
+        if (b &amp; 1) res = res * a % mod;
+        a = a * a % mod;
+        b &gt;&gt;= 1;
+    }
+    return res;
+}
+
+void init() {
+    fact[0] = 1;
+    for (int i = 1; i &lt; MAXN; ++i) {
+        fact[i] = fact[i - 1] * i % MOD;
+    }
+    
+    inv_fact[MAXN - 1] = fast_pow(fact[MAXN - 1], MOD - 2, MOD);
+    for (int i = MAXN - 2; i &gt;= 0; --i) {
+        inv_fact[i] = inv_fact[i + 1] * (i + 1) % MOD;
+    }
+}
+
+long long comb(int n, int m) {
+    if (m &lt; 0 || m &gt; n) return 0;
+    return fact[n] * inv_fact[m] % MOD * inv_fact[n - m] % MOD;
+}
+
+int main() {
+    init();
+    
+    int n, m;
+    cin &gt;&gt; n &gt;&gt; m;
+    
+    cout &lt;&lt; comb(n, m) &lt;&lt; &quot;\n&quot;;
+    return 0;
+}
+</code></pre>
+<p><strong>思路 2：递推（小范围）</strong></p>
+<pre><code class="language-cpp">
+long long comb_recursive(int n, int m) {
+    if (m == 0 || m == n) return 1;
+    
+    vector&lt;vector&lt;long long&gt;&gt; C(n + 1, vector&lt;long long&gt;(m + 1, 0));
+    
+    for (int i = 0; i &lt;= n; ++i) {
+        C[i][0] = 1;
+        for (int j = 1; j &lt;= min(i, m); ++j) {
+            C[i][j] = (C[i - 1][j - 1] + C[i - 1][j]) % MOD;
+        }
+    }
+    
+    return C[n][m];
+}
+</code></pre>
+<p><strong>复杂度</strong>：</p>
+<ul>
+<li>预处理：<code>O(n)</code>，查询 <code>O(1)</code></li>
+<ul>
+<li>递推：<code>O(nm)</code></li>
+<p><strong>易错点</strong>：除法要用逆元，逆元用费马小定理：<code>a^(-1) = a^(p-2) mod p</code></p>
+<hr>
+<h3 id="例题-7欧拉函数-φn">例题 7：欧拉函数 φ(n)</h3>
+<p><strong>题目</strong>：求小于等于 n 且与 n 互质的数的个数。</p>
+<p><strong>思路</strong>：<code>φ(n) = n * ∏(1 - 1/p)</code>，p 为 n 的质因数。</p>
+<pre><code class="language-cpp">
+#include &lt;bits/stdc++.h&gt;
+using namespace std;
+
+int euler_phi(int n) {
+    int res = n;
+    
+    for (int i = 2; i * i &lt;= n; ++i) {
+        if (n % i == 0) {
+            res = res / i * (i - 1);
+            while (n % i == 0) {
+                n /= i;
+            }
+        }
+    }
+    
+    if (n &gt; 1) {
+        res = res / n * (n - 1);
+    }
+    
+    return res;
+}
+
+int main() {
+    int n;
+    cin &gt;&gt; n;
+    cout &lt;&lt; euler_phi(n) &lt;&lt; &quot;\n&quot;;
+    return 0;
+}
+</code></pre>
+<p><strong>批量计算（筛法）</strong>：</p>
+<pre><code class="language-cpp">
+vector&lt;int&gt; euler_phi_sieve(int n) {
+    vector&lt;int&gt; phi(n + 1);
+    for (int i = 0; i &lt;= n; ++i) phi[i] = i;
+    
+    for (int i = 2; i &lt;= n; ++i) {
+        if (phi[i] == i) {  // i 是质数
+            for (int j = i; j &lt;= n; j += i) {
+                phi[j] = phi[j] / i * (i - 1);
+            }
+        }
+    }
+    
+    return phi;
+}
+</code></pre>
+<p><strong>复杂度</strong>：单次 <code>O(√n)</code>，筛法 <code>O(n log log n)</code></p>
+<hr>
+<h3 id="例题-8扩展欧几里得算法">例题 8：扩展欧几里得算法</h3>
+<p><strong>题目</strong>：求解 <code>ax + by = gcd(a, b)</code>，求 x 和 y。</p>
+<p><strong>思路</strong>：递归求解。</p>
+<pre><code class="language-cpp">
+#include &lt;bits/stdc++.h&gt;
+using namespace std;
+
+int exgcd(int a, int b, int&amp; x, int&amp; y) {
+    if (b == 0) {
+        x = 1;
+        y = 0;
+        return a;
+    }
+    
+    int d = exgcd(b, a % b, y, x);
+    y -= a / b * x;
+    return d;
+}
+
+int main() {
+    int a, b;
+    cin &gt;&gt; a &gt;&gt; b;
+    
+    int x, y;
+    int d = exgcd(a, b, x, y);
+    
+    cout &lt;&lt; &quot;gcd(&quot; &lt;&lt; a &lt;&lt; &quot;, &quot; &lt;&lt; b &lt;&lt; &quot;) = &quot; &lt;&lt; d &lt;&lt; &quot;\n&quot;;
+    cout &lt;&lt; a &lt;&lt; &quot; * &quot; &lt;&lt; x &lt;&lt; &quot; + &quot; &lt;&lt; b &lt;&lt; &quot; * &quot; &lt;&lt; y &lt;&lt; &quot; = &quot; &lt;&lt; d &lt;&lt; &quot;\n&quot;;
+    
+    return 0;
+}
+</code></pre>
+<p><strong>应用</strong>：求逆元、线性同余方程</p>
+<p><strong>复杂度</strong>：<code>O(log min(a, b))</code></p>
+<hr>
+<h2 id="常见陷阱">常见陷阱</h2>
+<ol>
+<li><strong>整数溢出</strong>：</li>
+<ul>
+<li><code>a * b</code> 可能溢出，先除后乘：<code>a / gcd(a, b) * b</code></li>
+<ul>
+<li>快速幂中每次都要取模</li>
+<ol>
+<li><strong>除法取模</strong>：不能直接除，要用逆元</li>
+<ol>
+<li><strong>质数判断</strong>：不要忘记 2 是质数</li>
+<ol>
+<li><strong>筛法优化</strong>：从 <code>i * i</code> 开始标记</li>
+<ol>
+<li><strong>组合数溢出</strong>：大数要取模，用逆元</li>
+<ol>
+<li><strong>欧拉函数</strong>：<code>φ(1) = 1</code></li>
+<ol>
+<li><strong>模运算</strong>：</li>
+<ul>
+<li><code>(a + b) % m = (a % m + b % m) % m</code></li>
+<ul>
+<li><code>(a * b) % m = (a % m * b % m) % m</code></li>
+<ul>
+<li><code>(a - b) % m = ((a % m - b % m) + m) % m</code></li>
+<h2 id="常用公式">常用公式</h2>
+<h3 id="gcd-性质">GCD 性质</h3>
+<ul>
+<li><code>gcd(a, b) = gcd(b, a % b)</code></li>
+<ul>
+<li><code>gcd(a, b) * lcm(a, b) = a * b</code></li>
+<ul>
+<li><code>gcd(ka, kb) = k * gcd(a, b)</code></li>
+<h3 id="组合数性质">组合数性质</h3>
+<ul>
+<li><code>C(n, m) = C(n-1, m-1) + C(n-1, m)</code></li>
+<ul>
+<li><code>C(n, m) = C(n, n-m)</code></li>
+<ul>
+<li><code>C(n, 0) = C(n, n) = 1</code></li>
+<h3 id="欧拉函数性质">欧拉函数性质</h3>
+<ul>
+<li><code>φ(1) = 1</code></li>
+<ul>
+<li><code>φ(p) = p - 1</code>（p 为质数）</li>
+<ul>
+<li><code>φ(p^k) = p^k - p^(k-1)</code></li>
+<ul>
+<li>若 <code>gcd(a, b) = 1</code>，则 <code>φ(ab) = φ(a) * φ(b)</code></li>
+<h3 id="费马小定理">费马小定理</h3>
+<ul>
+<li>若 p 为质数，<code>a^(p-1) ≡ 1 (mod p)</code></li>
+<ul>
+<li>逆元：<code>a^(-1) ≡ a^(p-2) (mod p)</code></li>
+<h2 id="模运算技巧">模运算技巧</h2>
+<pre><code class="language-cpp">
+// 加法
+int add(int a, int b, int mod) {
+    return (a + b) % mod;
+}
+
+// 减法
+int sub(int a, int b, int mod) {
+    return ((a - b) % mod + mod) % mod;
+}
+
+// 乘法
+long long mul(long long a, long long b, long long mod) {
+    return (a * b) % mod;
+}
+
+// 除法（需要逆元）
+long long div(long long a, long long b, long long mod) {
+    return a * fast_pow(b, mod - 2, mod) % mod;
+}
+</code></pre>
+<h2 id="适用场景总结">适用场景总结</h2>
+<ul>
+<li><strong>GCD/LCM</strong>：公约数、公倍数问题</li>
+<ul>
+<li><strong>质数判断</strong>：素数相关问题</li>
+<ul>
+<li><strong>筛法</strong>：批量求质数、欧拉函数</li>
+<ul>
+<li><strong>快速幂</strong>：大指数幂运算、矩阵快速幂</li>
+<ul>
+<li><strong>组合数</strong>：排列组合、概率计算</li>
+<ul>
+<li><strong>欧拉函数</strong>：互质数个数、欧拉定理</li>
+<ul>
+<li><strong>扩展欧几里得</strong>：求逆元、线性同余方程</li>
+<ul>
+<li><strong>费马小定理</strong>：逆元、欧拉定理</li>
+
+        <div class="chapter-nav">
+    <a href="16-advanced-data-structures.html" class="prev-chapter">← 高级数据结构</a>
+    <a href="18-bit-manipulation.html" class="next-chapter">位运算 →</a>
+</div>
+    </main>
+
+    <script>
+        // 主题切换
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+        }
+
+        // 加载保存的主题
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+        }
+
+        // 侧边栏切换
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('collapsed');
+        }
+
+        // 进度条
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.documentElement.style.setProperty('--scroll-progress', scrolled + '%');
+        });
+
+        // 目录高亮
+        const sections = document.querySelectorAll('h2[id]');
+        const tocLinks = document.querySelectorAll('.toc a');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (scrollY >= sectionTop - 100) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            tocLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        // 代码高亮
+        hljs.highlightAll();
+    </script>
+</body>
+</html>

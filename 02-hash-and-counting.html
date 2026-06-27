@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>哈希表与计数 - 算法竞赛速成</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8f9fa;
+            --bg-code: #f6f8fa;
+            --text-primary: #24292f;
+            --text-secondary: #57606a;
+            --border-color: #d0d7de;
+            --accent-color: #0969da;
+            --accent-hover: #0550ae;
+            --sidebar-width: 280px;
+            --header-height: 60px;
+        }
+
+        body.dark-mode {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-code: #161b22;
+            --text-primary: #c9d1d9;
+            --text-secondary: #8b949e;
+            --border-color: #30363d;
+            --accent-color: #58a6ff;
+            --accent-hover: #79c0ff;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background-color: var(--bg-primary);
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-color) 0%, var(--accent-color) var(--scroll-progress, 0%), transparent var(--scroll-progress, 0%));
+            z-index: 1001;
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 1000;
+        }
+
+        .header-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 24px;
+            padding: 5px;
+            transition: transform 0.2s;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: var(--header-height);
+            bottom: 0;
+            width: var(--sidebar-width);
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border-color);
+            overflow-y: auto;
+            padding: 20px;
+            transition: transform 0.3s;
+        }
+
+        .sidebar.collapsed {
+            transform: translateX(-100%);
+        }
+
+        .sidebar-toggle {
+            position: fixed;
+            left: var(--sidebar-width);
+            top: calc(var(--header-height) + 20px);
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 0 4px 4px 0;
+            padding: 10px 8px;
+            cursor: pointer;
+            z-index: 999;
+            transition: left 0.3s;
+        }
+
+        .sidebar.collapsed + .sidebar-toggle {
+            left: 0;
+        }
+
+        .sidebar h3 {
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+        }
+
+        .toc {
+            list-style: none;
+        }
+
+        .toc li {
+            margin: 5px 0;
+        }
+
+        .toc a {
+            color: var(--text-primary);
+            text-decoration: none;
+            display: block;
+            padding: 6px 10px;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+
+        .toc a:hover {
+            background: var(--bg-primary);
+        }
+
+        .toc a.active {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        main {
+            margin-left: var(--sidebar-width);
+            margin-top: var(--header-height);
+            padding: 40px;
+            max-width: 900px;
+            transition: margin-left 0.3s;
+        }
+
+        .sidebar.collapsed ~ main {
+            margin-left: 0;
+        }
+
+        h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+        }
+
+        h2 {
+            font-size: 24px;
+            margin-top: 40px;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+
+        h3 {
+            font-size: 20px;
+            margin-top: 24px;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        h4 {
+            font-size: 18px;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+        }
+
+        p {
+            margin: 16px 0;
+            color: var(--text-primary);
+        }
+
+        code {
+            background: var(--bg-code);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
+            font-size: 0.9em;
+        }
+
+        pre {
+            background: var(--bg-code);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 16px;
+            overflow-x: auto;
+            margin: 16px 0;
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+        }
+
+        ul, ol {
+            margin: 16px 0;
+            padding-left: 32px;
+        }
+
+        li {
+            margin: 8px 0;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid var(--border-color);
+            margin: 24px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+        }
+
+        th, td {
+            border: 1px solid var(--border-color);
+            padding: 8px 12px;
+            text-align: left;
+        }
+
+        th {
+            background: var(--bg-secondary);
+            font-weight: 600;
+        }
+
+        .chapter-nav {
+            display: flex;
+            justify-content: space-between;
+            margin: 40px 0;
+            padding: 20px 0;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .chapter-nav a {
+            color: var(--accent-color);
+            text-decoration: none;
+            padding: 10px 20px;
+            border: 1px solid var(--accent-color);
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .chapter-nav a:hover {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        @media print {
+            .sidebar, .sidebar-toggle, .theme-toggle, .progress-bar {
+                display: none;
+            }
+            main {
+                margin-left: 0;
+                margin-top: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            main {
+                margin-left: 0;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar"></div>
+
+    <header>
+        <div class="header-title">哈希表与计数</div>
+        <div class="header-controls">
+            <button class="theme-toggle" onclick="toggleTheme()" title="切换主题">🌓</button>
+        </div>
+    </header>
+
+    <nav class="sidebar" id="sidebar">
+        <h3>目录</h3>
+        <ul class="toc">
+    <li><a href="#什么时候用">什么时候用</a></li>
+    <li><a href="#容器选择">容器选择</a></li>
+    <li><a href="#核心模板">核心模板</a></li>
+    <li><a href="#例题演示">例题演示</a></li>
+    <li><a href="#常见陷阱">常见陷阱</a></li>
+    <li><a href="#优化技巧">优化技巧</a></li>
+</ul>
+    </nav>
+
+    <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+
+    <main>
+        <h1>哈希表与计数</h1>
+
+        <h2 id="什么时候用">什么时候用</h2>
+<p>看到以下特征优先考虑哈希：</p>
+<ul>
+<li>统计频次、出现次数</li>
+<ul>
+<li>判断元素是否存在</li>
+<ul>
+<li>去重</li>
+<ul>
+<li>两数之和、多数之和</li>
+<ul>
+<li>字符串/数组的分组、映射</li>
+<ul>
+<li>编号映射：将字符串、坐标等映射到整数 ID</li>
+<p>核心思路：<strong>用 O(1) 的查找替代 O(n) 的遍历</strong>。</p>
+<h2 id="容器选择">容器选择</h2>
+<table>
+<thead>
+<tr>
+<th>容器</th>
+<th>复杂度</th>
+<th>有序性</th>
+<th>使用场景</th>
+</tr>
+</thead>
+<tbody>
+<table>
+<thead>
+<tr>
+<th>------</th>
+<th>--------</th>
+<th>--------</th>
+<th>----------</th>
+</tr>
+</thead>
+<tbody>
+<table>
+<thead>
+<tr>
+<th>`unordered_map`</th>
+<th>平均 O(1)</th>
+<th>无序</th>
+<th>频次统计、快速查找</th>
+</tr>
+</thead>
+<tbody>
+<table>
+<thead>
+<tr>
+<th>`map`</th>
+<th>O(log n)</th>
+<th>按 key 有序</th>
+<th>需要有序遍历、找前驱后继</th>
+</tr>
+</thead>
+<tbody>
+<table>
+<thead>
+<tr>
+<th>`unordered_set`</th>
+<th>平均 O(1)</th>
+<th>无序</th>
+<th>去重、判断存在</th>
+</tr>
+</thead>
+<tbody>
+<table>
+<thead>
+<tr>
+<th>`set`</th>
+<th>O(log n)</th>
+<th>有序</th>
+<th>有序去重、动态维护有序集合</th>
+</tr>
+</thead>
+<tbody>
+<h2 id="核心模板">核心模板</h2>
+<h3 id="频次统计">频次统计</h3>
+<pre><code class="language-cpp">
+unordered_map&lt;int, int&gt; cnt;
+for (int x : arr) {
+    cnt[x]++;
+}
+
+// 找出现次数最多的元素
+int max_cnt = 0, most_frequent = -1;
+for (auto [val, freq] : cnt) {
+    if (freq &gt; max_cnt) {
+        max_cnt = freq;
+        most_frequent = val;
+    }
+}
+</code></pre>
+<h3 id="判断存在避免插入">判断存在（避免插入）</h3>
+<pre><code class="language-cpp">
+unordered_map&lt;int, int&gt; mp;
+
+// 错误：会插入默认值 0
+if (mp[x] &gt; 0) { ... }
+
+// 正确：不插入
+if (mp.count(x)) { ... }
+if (mp.find(x) != mp.end()) { ... }
+</code></pre>
+<h3 id="编号映射">编号映射</h3>
+<pre><code class="language-cpp">
+unordered_map&lt;string, int&gt; id;
+
+int get_id(const string&amp; s) {
+    if (!id.count(s)) {
+        id[s] = id.size();
+    }
+    return id[s];
+}
+</code></pre>
+<h2 id="例题演示">例题演示</h2>
+<h3 id="例题-1两数之和">例题 1：两数之和</h3>
+<p><strong>题目</strong>：LeetCode 1 - 给定数组和目标值，找出两个数的索引使得它们相加等于目标值。</p>
+<p><strong>思路</strong>：遍历数组，对于每个 <code>nums[i]</code>，查找 <code>target - nums[i]</code> 是否在哈希表中。</p>
+<pre><code class="language-cpp">
+#include &lt;bits/stdc++.h&gt;
+using namespace std;
+
+vector&lt;int&gt; two_sum(vector&lt;int&gt;&amp; nums, int target) {
+    unordered_map&lt;int, int&gt; mp; // value -&gt; index
+    
+    for (int i = 0; i &lt; (int)nums.size(); ++i) {
+        int complement = target - nums[i];
+        if (mp.count(complement)) {
+            return {mp[complement], i};
+        }
+        mp[nums[i]] = i;
+    }
+    
+    return {};
+}
+
+int main() {
+    int n, target;
+    cin &gt;&gt; n &gt;&gt; target;
+    vector&lt;int&gt; nums(n);
+    for (int i = 0; i &lt; n; ++i) {
+        cin &gt;&gt; nums[i];
+    }
+    
+    auto res = two_sum(nums, target);
+    if (res.empty()) {
+        cout &lt;&lt; &quot;No solution\n&quot;;
+    } else {
+        cout &lt;&lt; res[0] &lt;&lt; &quot; &quot; &lt;&lt; res[1] &lt;&lt; &quot;\n&quot;;
+    }
+    
+    return 0;
+}
+</code></pre>
+<p><strong>复杂度</strong>：时间 O(n)，空间 O(n)</p>
+<p><strong>易错点</strong>：</p>
+<ul>
+<li>要返回索引而不是值</li>
+<ul>
+<li>注意同一个元素不能使用两次</li>
+<hr>
+<h3 id="例题-2字母异位词分组">例题 2：字母异位词分组</h3>
+<p><strong>题目</strong>：LeetCode 49 - 给定字符串数组，将字母异位词分组。</p>
+<p><strong>思路</strong>：字母异位词排序后相同，用排序后的字符串作为哈希表的 key。</p>
+<pre><code class="language-cpp">
+#include &lt;bits/stdc++.h&gt;
+using namespace std;
+
+vector&lt;vector&lt;string&gt;&gt; group_anagrams(vector&lt;string&gt;&amp; strs) {
+    unordered_map&lt;string, vector&lt;string&gt;&gt; mp;
+    
+    for (const string&amp; s : strs) {
+        string key = s;
+        sort(key.begin(), key.end());
+        mp[key].push_back(s);
+    }
+    
+    vector&lt;vector&lt;string&gt;&gt; result;
+    for (auto&amp; [key, group] : mp) {
+        result.push_back(move(group));
+    }
+    
+    return result;
+}
+
+int main() {
+    int n;
+    cin &gt;&gt; n;
+    vector&lt;string&gt; strs(n);
+    for (int i = 0; i &lt; n; ++i) {
+        cin &gt;&gt; strs[i];
+    }
+    
+    auto groups = group_anagrams(strs);
+    
+    for (const auto&amp; group : groups) {
+        for (const auto&amp; s : group) {
+            cout &lt;&lt; s &lt;&lt; &quot; &quot;;
+        }
+        cout &lt;&lt; &quot;\n&quot;;
+    }
+    
+    return 0;
+}
+</code></pre>
+<p><strong>复杂度</strong>：时间 O(n·k log k)，k 为字符串平均长度</p>
+<p><strong>另一种 key 生成方式</strong>（更快，O(n·k)）：</p>
+<pre><code class="language-cpp">
+string get_key(const string&amp; s) {
+    int cnt[26] = {0};
+    for (char c : s) {
+        cnt[c - 'a']++;
+    }
+    string key;
+    for (int i = 0; i &lt; 26; ++i) {
+        if (cnt[i] &gt; 0) {
+            key += char('a' + i);
+            key += to_string(cnt[i]);
+        }
+    }
+    return key;
+}
+</code></pre>
+<hr>
+<h3 id="例题-3最长连续序列">例题 3：最长连续序列</h3>
+<p><strong>题目</strong>：LeetCode 128 - 给定无序数组，找出最长连续序列的长度。要求 O(n) 时间。</p>
+<p><strong>思路</strong>：用哈希集合存储所有数字，对于每个数字 x，如果 x-1 不存在（即 x 是序列起点），则向右扩展计数。</p>
+<pre><code class="language-cpp">
+#include &lt;bits/stdc++.h&gt;
+using namespace std;
+
+int longest_consecutive(vector&lt;int&gt;&amp; nums) {
+    unordered_set&lt;int&gt; st(nums.begin(), nums.end());
+    
+    int max_len = 0;
+    for (int num : st) {
+        // 只从序列起点开始计数
+        if (!st.count(num - 1)) {
+            int current = num;
+            int len = 1;
+            
+            while (st.count(current + 1)) {
+                current++;
+                len++;
+            }
+            
+            max_len = max(max_len, len);
+        }
+    }
+    
+    return max_len;
+}
+
+int main() {
+    int n;
+    cin &gt;&gt; n;
+    vector&lt;int&gt; nums(n);
+    for (int i = 0; i &lt; n; ++i) {
+        cin &gt;&gt; nums[i];
+    }
+    
+    cout &lt;&lt; longest_consecutive(nums) &lt;&lt; &quot;\n&quot;;
+    
+    return 0;
+}
+</code></pre>
+<p><strong>复杂度</strong>：时间 O(n)，空间 O(n)</p>
+<p><strong>关键点</strong>：通过 <code>if (!st.count(num - 1))</code> 确保每个序列只被遍历一次</p>
+<hr>
+<h3 id="例题-4和为-k-的子数组数量">例题 4：和为 K 的子数组数量</h3>
+<p><strong>题目</strong>：LeetCode 560 - 给定整数数组和整数 k，找出和为 k 的连续子数组个数。</p>
+<p><strong>思路</strong>：前缀和 + 哈希表。<code>presum[j] - presum[i] = k</code> 等价于 <code>presum[i] = presum[j] - k</code>。</p>
+<pre><code class="language-cpp">
+#include &lt;bits/stdc++.h&gt;
+using namespace std;
+
+int subarray_sum(vector&lt;int&gt;&amp; nums, int k) {
+    unordered_map&lt;int, int&gt; mp; // presum -&gt; count
+    mp[0] = 1; // 空前缀
+    
+    int presum = 0, count = 0;
+    for (int num : nums) {
+        presum += num;
+        
+        // 找有多少个 j 使得 presum[j] = presum - k
+        if (mp.count(presum - k)) {
+            count += mp[presum - k];
+        }
+        
+        mp[presum]++;
+    }
+    
+    return count;
+}
+
+int main() {
+    int n, k;
+    cin &gt;&gt; n &gt;&gt; k;
+    vector&lt;int&gt; nums(n);
+    for (int i = 0; i &lt; n; ++i) {
+        cin &gt;&gt; nums[i];
+    }
+    
+    cout &lt;&lt; subarray_sum(nums, k) &lt;&lt; &quot;\n&quot;;
+    
+    return 0;
+}
+</code></pre>
+<p><strong>复杂度</strong>：时间 O(n)，空间 O(n)</p>
+<p><strong>易错点</strong>：初始化 <code>mp[0] = 1</code> 表示和本身等于 k 的情况</p>
+<hr>
+<h3 id="例题-5四数相加-ii">例题 5：四数相加 II</h3>
+<p><strong>题目</strong>：LeetCode 454 - 给定四个数组，找出满足 A[i] + B[j] + C[k] + D[l] = 0 的元组数量。</p>
+<p><strong>思路</strong>：将问题拆成两半。用哈希表存储 A+B 的所有可能和，然后枚举 C+D 查找 -(C[k]+D[l]) 的出现次数。</p>
+<pre><code class="language-cpp">
+#include &lt;bits/stdc++.h&gt;
+using namespace std;
+
+int four_sum_count(vector&lt;int&gt;&amp; A, vector&lt;int&gt;&amp; B, 
+                   vector&lt;int&gt;&amp; C, vector&lt;int&gt;&amp; D) {
+    unordered_map&lt;int, int&gt; mp; // sum -&gt; count
+    
+    // 统计 A[i] + B[j] 的所有可能
+    for (int a : A) {
+        for (int b : B) {
+            mp[a + b]++;
+        }
+    }
+    
+    int count = 0;
+    // 枚举 C[k] + D[l]，查找 -(c + d)
+    for (int c : C) {
+        for (int d : D) {
+            int target = -(c + d);
+            if (mp.count(target)) {
+                count += mp[target];
+            }
+        }
+    }
+    
+    return count;
+}
+
+int main() {
+    int n;
+    cin &gt;&gt; n;
+    
+    vector&lt;int&gt; A(n), B(n), C(n), D(n);
+    for (int i = 0; i &lt; n; ++i) cin &gt;&gt; A[i];
+    for (int i = 0; i &lt; n; ++i) cin &gt;&gt; B[i];
+    for (int i = 0; i &lt; n; ++i) cin &gt;&gt; C[i];
+    for (int i = 0; i &lt; n; ++i) cin &gt;&gt; D[i];
+    
+    cout &lt;&lt; four_sum_count(A, B, C, D) &lt;&lt; &quot;\n&quot;;
+    
+    return 0;
+}
+</code></pre>
+<p><strong>复杂度</strong>：时间 O(n²)，空间 O(n²)</p>
+<p><strong>关键思想</strong>：四层循环 O(n⁴) → 分组哈希 O(n²)</p>
+<hr>
+<h3 id="例题-6第一个只出现一次的字符">例题 6：第一个只出现一次的字符</h3>
+<p><strong>题目</strong>：找出字符串中第一个只出现一次的字符。</p>
+<pre><code class="language-cpp">
+#include &lt;bits/stdc++.h&gt;
+using namespace std;
+
+char first_unique_char(const string&amp; s) {
+    unordered_map&lt;char, int&gt; cnt;
+    for (char c : s) {
+        cnt[c]++;
+    }
+    
+    for (char c : s) {
+        if (cnt[c] == 1) {
+            return c;
+        }
+    }
+    
+    return '\0'; // 没有
+}
+
+int main() {
+    string s;
+    cin &gt;&gt; s;
+    
+    char result = first_unique_char(s);
+    if (result == '\0') {
+        cout &lt;&lt; &quot;None\n&quot;;
+    } else {
+        cout &lt;&lt; result &lt;&lt; &quot;\n&quot;;
+    }
+    
+    return 0;
+}
+</code></pre>
+<p><strong>复杂度</strong>：时间 O(n)，空间 O(字符集大小)</p>
+<hr>
+<h2 id="常见陷阱">常见陷阱</h2>
+<ol>
+<li><strong><code>mp[key]</code> 会插入默认值</strong>：判断存在性用 <code>count</code> 或 <code>find</code></li>
+<ol>
+<li><strong>哈希冲突</strong>：竞赛中一般不会刻意卡哈希，但极端情况下 <code>unordered_map</code> 会退化到 O(n)</li>
+<ol>
+<li><strong>自定义 key</strong>：</li>
+<ul>
+<li><code>pair<int, int></code> 在 C++11 后可直接作为 key</li>
+<ul>
+<li>自定义结构体需要定义 <code>hash</code> 和 <code>==</code></li>
+<ol>
+<li><strong>迭代器失效</strong>：遍历过程中修改 map/set 可能导致迭代器失效</li>
+<ol>
+<li><strong>数据范围</strong>：如果 key 是整数且范围小（如 ≤10⁶），用数组更快</li>
+<h2 id="优化技巧">优化技巧</h2>
+<h3 id="用数组替代哈希表">用数组替代哈希表</h3>
+<p>当 key 范围小且连续时：</p>
+<pre><code class="language-cpp">
+// 字符统计
+int cnt[26] = {0};
+for (char c : s) {
+    cnt[c - 'a']++;
+}
+
+// 整数范围 [0, 1e6)
+int cnt[1000005] = {0};
+</code></pre>
+<h3 id="离线处理坐标离散化">离线处理：坐标离散化</h3>
+<p>当坐标值域大但数量少时：</p>
+<pre><code class="language-cpp">
+vector&lt;int&gt; vals = coords; // 复制一份
+sort(vals.begin(), vals.end());
+vals.erase(unique(vals.begin(), vals.end()), vals.end());
+
+// 映射到 [0, vals.size())
+for (int&amp; x : coords) {
+    x = lower_bound(vals.begin(), vals.end(), x) - vals.begin();
+}
+</code></pre>
+
+        <div class="chapter-nav">
+    <a href="01-simulation.html" class="prev-chapter">← 模拟与枚举</a>
+    <a href="03-two-pointers-sliding-window.html" class="next-chapter">双指针与滑动窗口 →</a>
+</div>
+    </main>
+
+    <script>
+        // 主题切换
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+        }
+
+        // 加载保存的主题
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+        }
+
+        // 侧边栏切换
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('collapsed');
+        }
+
+        // 进度条
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.documentElement.style.setProperty('--scroll-progress', scrolled + '%');
+        });
+
+        // 目录高亮
+        const sections = document.querySelectorAll('h2[id]');
+        const tocLinks = document.querySelectorAll('.toc a');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (scrollY >= sectionTop - 100) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            tocLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        // 代码高亮
+        hljs.highlightAll();
+    </script>
+</body>
+</html>

@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>堆与贪心 - 算法竞赛速成</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8f9fa;
+            --bg-code: #f6f8fa;
+            --text-primary: #24292f;
+            --text-secondary: #57606a;
+            --border-color: #d0d7de;
+            --accent-color: #0969da;
+            --accent-hover: #0550ae;
+            --sidebar-width: 280px;
+            --header-height: 60px;
+        }
+
+        body.dark-mode {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-code: #161b22;
+            --text-primary: #c9d1d9;
+            --text-secondary: #8b949e;
+            --border-color: #30363d;
+            --accent-color: #58a6ff;
+            --accent-hover: #79c0ff;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background-color: var(--bg-primary);
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-color) 0%, var(--accent-color) var(--scroll-progress, 0%), transparent var(--scroll-progress, 0%));
+            z-index: 1001;
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 1000;
+        }
+
+        .header-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 24px;
+            padding: 5px;
+            transition: transform 0.2s;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: var(--header-height);
+            bottom: 0;
+            width: var(--sidebar-width);
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border-color);
+            overflow-y: auto;
+            padding: 20px;
+            transition: transform 0.3s;
+        }
+
+        .sidebar.collapsed {
+            transform: translateX(-100%);
+        }
+
+        .sidebar-toggle {
+            position: fixed;
+            left: var(--sidebar-width);
+            top: calc(var(--header-height) + 20px);
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 0 4px 4px 0;
+            padding: 10px 8px;
+            cursor: pointer;
+            z-index: 999;
+            transition: left 0.3s;
+        }
+
+        .sidebar.collapsed + .sidebar-toggle {
+            left: 0;
+        }
+
+        .sidebar h3 {
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+        }
+
+        .toc {
+            list-style: none;
+        }
+
+        .toc li {
+            margin: 5px 0;
+        }
+
+        .toc a {
+            color: var(--text-primary);
+            text-decoration: none;
+            display: block;
+            padding: 6px 10px;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+
+        .toc a:hover {
+            background: var(--bg-primary);
+        }
+
+        .toc a.active {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        main {
+            margin-left: var(--sidebar-width);
+            margin-top: var(--header-height);
+            padding: 40px;
+            max-width: 900px;
+            transition: margin-left 0.3s;
+        }
+
+        .sidebar.collapsed ~ main {
+            margin-left: 0;
+        }
+
+        h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+        }
+
+        h2 {
+            font-size: 24px;
+            margin-top: 40px;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+
+        h3 {
+            font-size: 20px;
+            margin-top: 24px;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        h4 {
+            font-size: 18px;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+        }
+
+        p {
+            margin: 16px 0;
+            color: var(--text-primary);
+        }
+
+        code {
+            background: var(--bg-code);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
+            font-size: 0.9em;
+        }
+
+        pre {
+            background: var(--bg-code);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 16px;
+            overflow-x: auto;
+            margin: 16px 0;
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+        }
+
+        ul, ol {
+            margin: 16px 0;
+            padding-left: 32px;
+        }
+
+        li {
+            margin: 8px 0;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid var(--border-color);
+            margin: 24px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+        }
+
+        th, td {
+            border: 1px solid var(--border-color);
+            padding: 8px 12px;
+            text-align: left;
+        }
+
+        th {
+            background: var(--bg-secondary);
+            font-weight: 600;
+        }
+
+        .chapter-nav {
+            display: flex;
+            justify-content: space-between;
+            margin: 40px 0;
+            padding: 20px 0;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .chapter-nav a {
+            color: var(--accent-color);
+            text-decoration: none;
+            padding: 10px 20px;
+            border: 1px solid var(--accent-color);
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .chapter-nav a:hover {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        @media print {
+            .sidebar, .sidebar-toggle, .theme-toggle, .progress-bar {
+                display: none;
+            }
+            main {
+                margin-left: 0;
+                margin-top: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            main {
+                margin-left: 0;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar"></div>
+
+    <header>
+        <div class="header-title">堆与贪心</div>
+        <div class="header-controls">
+            <button class="theme-toggle" onclick="toggleTheme()" title="切换主题">🌓</button>
+        </div>
+    </header>
+
+    <nav class="sidebar" id="sidebar">
+        <h3>目录</h3>
+        <ul class="toc">
+    <li><a href="#什么时候用">什么时候用</a></li>
+    <li><a href="#核心模板">核心模板</a></li>
+    <li><a href="#例题演示">例题演示</a></li>
+    <li><a href="#常见陷阱">常见陷阱</a></li>
+    <li><a href="#适用场景总结">适用场景总结</a></li>
+</ul>
+    </nav>
+
+    <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+
+    <main>
+        <h1>堆与贪心</h1>
+
+        <h2 id="什么时候用">什么时候用</h2>
+<p>看到以下特征优先考虑堆和贪心：</p>
+<ul>
+<li><strong>动态维护最值</strong>：第 K 大/小元素、中位数</li>
+<ul>
+<li><strong>多路归并</strong>：合并 K 个有序链表/数组</li>
+<ul>
+<li><strong>任务调度</strong>：最少会议室、CPU 任务安排</li>
+<ul>
+<li><strong>哈夫曼编码</strong>：合并代价最小</li>
+<ul>
+<li><strong>区间问题</strong>：区间覆盖、区间调度</li>
+<ul>
+<li>题目中出现"最多"、"最少"、"最优"等字眼，且局部最优能推出全局最优</li>
+<p>核心思路：<strong>贪心选择当前最优解，堆高效维护动态最值</strong>。</p>
+<h2 id="核心模板">核心模板</h2>
+<h3 id="优先队列大根堆">优先队列（大根堆）</h3>
+<pre><code class="language-cpp">
+priority_queue&lt;int&gt; maxHeap;           // 大根堆
+priority_queue&lt;int, vector&lt;int&gt;, greater&lt;int&gt;&gt; minHeap;  // 小根堆
+
+maxHeap.push(x);
+int top = maxHeap.top();
+maxHeap.pop();
+</code></pre>
+<h3 id="自定义比较">自定义比较</h3>
+<pre><code class="language-cpp">
+struct Node {
+    int val, idx;
+    bool operator&lt;(const Node&amp; o) const {
+        return val &gt; o.val;  // 注意：小根堆要用 &gt;
+    }
+};
+
+priority_queue&lt;Node&gt; pq;
+</code></pre>
+<h3 id="贪心区间调度模板">贪心区间调度模板</h3>
+<pre><code class="language-cpp">
+// 按结束时间排序
+sort(intervals.begin(), intervals.end(), [](auto&amp; a, auto&amp; b) {
+    return a[1] &lt; b[1];
+});
+
+int count = 0, end = INT_MIN;
+for (auto&amp; interval : intervals) {
+    if (interval[0] &gt;= end) {
+        count++;
+        end = interval[1];
+    }
+}
+</code></pre>
+<h2 id="例题演示">例题演示</h2>
+<h3 id="例题-1数据流中的第-k-大元素">例题 1：数据流中的第 K 大元素</h3>
+<p><strong>题目</strong>：设计一个类，支持添加元素和查询当前第 K 大元素。</p>
+<p><strong>思路</strong>：维护大小为 K 的小根堆，堆顶就是第 K 大。</p>
+<pre><code class="language-cpp">
+#include &lt;bits/stdc++.h&gt;
+using namespace std;
+
+class KthLargest {
+private:
+    priority_queue&lt;int, vector&lt;int&gt;, greater&lt;int&gt;&gt; minHeap;
+    int k;
+    
+public:
+    KthLargest(int k, vector&lt;int&gt;&amp; nums) : k(k) {
+        for (int num : nums) {
+            add(num);
+        }
+    }
+    
+    int add(int val) {
+        minHeap.push(val);
+        if (minHeap.size() &gt; k) {
+            minHeap.pop();
+        }
+        return minHeap.top();
+    }
+};
+
+int main() {
+    int k, n;
+    cin &gt;&gt; k &gt;&gt; n;
+    
+    vector&lt;int&gt; nums(n);
+    for (int i = 0; i &lt; n; ++i) {
+        cin &gt;&gt; nums[i];
+    }
+    
+    KthLargest kthLargest(k, nums);
+    
+    int m;
+    cin &gt;&gt; m;
+    for (int i = 0; i &lt; m; ++i) {
+        int val;
+        cin &gt;&gt; val;
+        cout &lt;&lt; kthLargest.add(val) &lt;&lt; &quot;\n&quot;;
+    }
+    
+    return 0;
+}
+</code></pre>
+<p><strong>复杂度</strong>：每次 add 操作 <code>O(log k)</code></p>
+<p><strong>易错点</strong>：</p>
+<ul>
+<li>堆大小超过 K 时要弹出最小的</li>
+<ul>
+<li>堆顶是第 K 大，不是最大</li>
+<hr>
+<h3 id="例题-2合并-k-个有序链表">例题 2：合并 K 个有序链表</h3>
+<p><strong>题目</strong>：给定 K 个有序链表，合并成一个有序链表。</p>
+<p><strong>思路</strong>：用小根堆维护 K 个链表的当前节点，每次取最小的。</p>
+<pre><code class="language-cpp">
+#include &lt;bits/stdc++.h&gt;
+using namespace std;
+
+struct ListNode {
+    int val;
+    ListNode* next;
+    ListNode(int x) : val(x), next(nullptr) {}
+};
+
+struct Compare {
+    bool operator()(ListNode* a, ListNode* b) {
+        return a-&gt;val &gt; b-&gt;val;  // 小根堆
+    }
+};
+
+ListNode* mergeKLists(vector&lt;ListNode*&gt;&amp; lists) {
+    priority_queue&lt;ListNode*, vector&lt;ListNode*&gt;, Compare&gt; pq;
+    
+    // 将每个链表的头节点加入堆
+    for (ListNode* head : lists) {
+        if (head) pq.push(head);
+    }
+    
+    ListNode dummy(0);
+    ListNode* tail = &amp;dummy;
+    
+    while (!pq.empty()) {
+        ListNode* node = pq.top();
+        pq.pop();
+        
+        tail-&gt;next = node;
+        tail = tail-&gt;next;
+        
+        if (node-&gt;next) {
+            pq.push(node-&gt;next);
+        }
+    }
+    
+    return dummy.next;
+}
+
+int main() {
+    int k;
+    cin &gt;&gt; k;
+    
+    vector&lt;ListNode*&gt; lists(k);
+    for (int i = 0; i &lt; k; ++i) {
+        int n;
+        cin &gt;&gt; n;
+        
+        ListNode dummy(0);
+        ListNode* tail = &amp;dummy;
+        
+        for (int j = 0; j &lt; n; ++j) {
+            int val;
+            cin &gt;&gt; val;
+            tail-&gt;next = new ListNode(val);
+            tail = tail-&gt;next;
+        }
+        
+        lists[i] = dummy.next;
+    }
+    
+    ListNode* result = mergeKLists(lists);
+    
+    while (result) {
+        cout &lt;&lt; result-&gt;val &lt;&lt; &quot; &quot;;
+        result = result-&gt;next;
+    }
+    cout &lt;&lt; &quot;\n&quot;;
+    
+    return 0;
+}
+</code></pre>
+<p><strong>复杂度</strong>：时间 <code>O(N log k)</code>，N 是总节点数，k 是链表数</p>
+<p><strong>易错点</strong>：</p>
+<ul>
+<li>堆中存储指针，比较时用节点的值</li>
+<ul>
+<li>取出节点后，如果有 next 要加入堆</li>
+<hr>
+<h3 id="例题-3会议室-ii最少会议室数量">例题 3：会议室 II（最少会议室数量）</h3>
+<p><strong>题目</strong>：给定会议时间区间，求最少需要多少个会议室。</p>
+<p><strong>思路</strong>：按开始时间排序，用小根堆维护每个会议室的结束时间。</p>
+<pre><code class="language-cpp">
+#include &lt;bits/stdc++.h&gt;
+using namespace std;
+
+int minMeetingRooms(vector&lt;vector&lt;int&gt;&gt;&amp; intervals) {
+    if (intervals.empty()) return 0;
+    
+    // 按开始时间排序
+    sort(intervals.begin(), intervals.end());
+    
+    // 小根堆，存储每个会议室的结束时间
+    priority_queue&lt;int, vector&lt;int&gt;, greater&lt;int&gt;&gt; pq;
+    
+    for (auto&amp; interval : intervals) {
+        int start = interval[0], end = interval[1];
+        
+        // 如果最早结束的会议室已经结束，可以复用
+        if (!pq.empty() &amp;&amp; pq.top() &lt;= start) {
+            pq.pop();
+        }
+        
+        pq.push(end);
+    }
+    
+    return pq.size();
+}
+
+int main() {
+    int n;
+    cin &gt;&gt; n;
+    
+    vector&lt;vector&lt;int&gt;&gt; intervals(n, vector&lt;int&gt;(2));
+    for (int i = 0; i &lt; n; ++i) {
+        cin &gt;&gt; intervals[i][0] &gt;&gt; intervals[i][1];
+    }
+    
+    cout &lt;&lt; minMeetingRooms(intervals) &lt;&lt; &quot;\n&quot;;
+    
+    return 0;
+}
+</code></pre>
+<p><strong>复杂度</strong>：时间 <code>O(n log n)</code></p>
+<p><strong>易错点</strong>：</p>
+<ul>
+<li>按开始时间排序，而不是结束时间</li>
+<ul>
+<li>能复用会议室时要先 pop 再 push</li>
+<hr>
+<h3 id="例题-4哈夫曼编码最小合并代价">例题 4：哈夫曼编码（最小合并代价）</h3>
+<p><strong>题目</strong>：给定 n 个数，每次可以选两个数合并，代价是两数之和，求最小总代价。</p>
+<p><strong>思路</strong>：贪心，每次选最小的两个合并。</p>
+<pre><code class="language-cpp">
+#include &lt;bits/stdc++.h&gt;
+using namespace std;
+
+long long minCost(vector&lt;int&gt;&amp; nums) {
+    priority_queue&lt;long long, vector&lt;long long&gt;, greater&lt;long long&gt;&gt; pq;
+    
+    for (int num : nums) {
+        pq.push(num);
+    }
+    
+    long long totalCost = 0;
+    
+    while (pq.size() &gt; 1) {
+        long long first = pq.top(); pq.pop();
+        long long second = pq.top(); pq.pop();
+        
+        long long cost = first + second;
+        totalCost += cost;
+        
+        pq.push(cost);
+    }
+    
+    return totalCost;
+}
+
+int main() {
+    int n;
+    cin &gt;&gt; n;
+    
+    vector&lt;int&gt; nums(n);
+    for (int i = 0; i &lt; n; ++i) {
+        cin &gt;&gt; nums[i];
+    }
+    
+    cout &lt;&lt; minCost(nums) &lt;&lt; &quot;\n&quot;;
+    
+    return 0;
+}
+</code></pre>
+<p><strong>复杂度</strong>：时间 <code>O(n log n)</code></p>
+<p><strong>易错点</strong>：</p>
+<ul>
+<li>用 long long 防止溢出</li>
+<ul>
+<li>合并后的结果要放回堆中</li>
+<hr>
+<h3 id="例题-5无重叠区间最多保留多少区间">例题 5：无重叠区间（最多保留多少区间）</h3>
+<p><strong>题目</strong>：给定区间集合，移除最少的区间使得剩余区间不重叠。</p>
+<p><strong>思路</strong>：按结束时间排序，贪心选择结束最早的。</p>
+<pre><code class="language-cpp">
+#include &lt;bits/stdc++.h&gt;
+using namespace std;
+
+int eraseOverlapIntervals(vector&lt;vector&lt;int&gt;&gt;&amp; intervals) {
+    if (intervals.empty()) return 0;
+    
+    // 按结束时间排序
+    sort(intervals.begin(), intervals.end(), [](auto&amp; a, auto&amp; b) {
+        return a[1] &lt; b[1];
+    });
+    
+    int count = 1;  // 至少保留第一个
+    int end = intervals[0][1];
+    
+    for (int i = 1; i &lt; intervals.size(); ++i) {
+        if (intervals[i][0] &gt;= end) {
+            count++;
+            end = intervals[i][1];
+        }
+    }
+    
+    return intervals.size() - count;
+}
+
+int main() {
+    int n;
+    cin &gt;&gt; n;
+    
+    vector&lt;vector&lt;int&gt;&gt; intervals(n, vector&lt;int&gt;(2));
+    for (int i = 0; i &lt; n; ++i) {
+        cin &gt;&gt; intervals[i][0] &gt;&gt; intervals[i][1];
+    }
+    
+    cout &lt;&lt; eraseOverlapIntervals(intervals) &lt;&lt; &quot;\n&quot;;
+    
+    return 0;
+}
+</code></pre>
+<p><strong>复杂度</strong>：时间 <code>O(n log n)</code></p>
+<p><strong>易错点</strong>：</p>
+<ul>
+<li>必须按结束时间排序，不能按开始时间</li>
+<ul>
+<li>判断不重叠：<code>start >= end</code>，注意等号</li>
+<hr>
+<h3 id="例题-6跳跃游戏-ii最少跳跃次数">例题 6：跳跃游戏 II（最少跳跃次数）</h3>
+<p><strong>题目</strong>：给定数组，每个位置的值表示最大跳跃距离，求到达最后位置的最少跳跃次数。</p>
+<p><strong>思路</strong>：贪心，每次在当前能到达的范围内选择能跳得最远的位置。</p>
+<pre><code class="language-cpp">
+#include &lt;bits/stdc++.h&gt;
+using namespace std;
+
+int jump(vector&lt;int&gt;&amp; nums) {
+    int n = nums.size();
+    int jumps = 0;
+    int currentEnd = 0;
+    int farthest = 0;
+    
+    for (int i = 0; i &lt; n - 1; ++i) {
+        farthest = max(farthest, i + nums[i]);
+        
+        if (i == currentEnd) {
+            jumps++;
+            currentEnd = farthest;
+            
+            if (currentEnd &gt;= n - 1) break;
+        }
+    }
+    
+    return jumps;
+}
+
+int main() {
+    int n;
+    cin &gt;&gt; n;
+    
+    vector&lt;int&gt; nums(n);
+    for (int i = 0; i &lt; n; ++i) {
+        cin &gt;&gt; nums[i];
+    }
+    
+    cout &lt;&lt; jump(nums) &lt;&lt; &quot;\n&quot;;
+    
+    return 0;
+}
+</code></pre>
+<p><strong>复杂度</strong>：时间 <code>O(n)</code></p>
+<p><strong>易错点</strong>：</p>
+<ul>
+<li>循环到 n-1 而不是 n，因为已经在最后不需要跳</li>
+<ul>
+<li>每次到达 currentEnd 才跳跃</li>
+<hr>
+<h3 id="例题-7数据流的中位数">例题 7：数据流的中位数</h3>
+<p><strong>题目</strong>：设计数据结构，支持添加数字和查询当前中位数。</p>
+<p><strong>思路</strong>：用两个堆，大根堆存较小的一半，小根堆存较大的一半。</p>
+<pre><code class="language-cpp">
+#include &lt;bits/stdc++.h&gt;
+using namespace std;
+
+class MedianFinder {
+private:
+    priority_queue&lt;int&gt; maxHeap;  // 存较小的一半
+    priority_queue&lt;int, vector&lt;int&gt;, greater&lt;int&gt;&gt; minHeap;  // 存较大的一半
+    
+public:
+    void addNum(int num) {
+        if (maxHeap.empty() || num &lt;= maxHeap.top()) {
+            maxHeap.push(num);
+        } else {
+            minHeap.push(num);
+        }
+        
+        // 平衡两个堆的大小
+        if (maxHeap.size() &gt; minHeap.size() + 1) {
+            minHeap.push(maxHeap.top());
+            maxHeap.pop();
+        } else if (minHeap.size() &gt; maxHeap.size()) {
+            maxHeap.push(minHeap.top());
+            minHeap.pop();
+        }
+    }
+    
+    double findMedian() {
+        if (maxHeap.size() == minHeap.size()) {
+            return (maxHeap.top() + minHeap.top()) / 2.0;
+        } else {
+            return maxHeap.top();
+        }
+    }
+};
+
+int main() {
+    MedianFinder mf;
+    int n;
+    cin &gt;&gt; n;
+    
+    for (int i = 0; i &lt; n; ++i) {
+        string op;
+        cin &gt;&gt; op;
+        
+        if (op == &quot;add&quot;) {
+            int num;
+            cin &gt;&gt; num;
+            mf.addNum(num);
+        } else {
+            cout &lt;&lt; fixed &lt;&lt; setprecision(1) &lt;&lt; mf.findMedian() &lt;&lt; &quot;\n&quot;;
+        }
+    }
+    
+    return 0;
+}
+</code></pre>
+<p><strong>复杂度</strong>：添加 <code>O(log n)</code>，查询 <code>O(1)</code></p>
+<p><strong>易错点</strong>：</p>
+<ul>
+<li>大根堆存较小的数，小根堆存较大的数</li>
+<ul>
+<li>大根堆大小等于或比小根堆大 1</li>
+<ul>
+<li>中位数：大小相等取平均，否则取大根堆堆顶</li>
+<hr>
+<h3 id="例题-8任务调度器cpu-冷却时间">例题 8：任务调度器（CPU 冷却时间）</h3>
+<p><strong>题目</strong>：给定任务数组和冷却时间 n，相同任务之间至少间隔 n，求最少时间。</p>
+<p><strong>思路</strong>：贪心，优先执行剩余次数最多的任务。</p>
+<pre><code class="language-cpp">
+#include &lt;bits/stdc++.h&gt;
+using namespace std;
+
+int leastInterval(vector&lt;char&gt;&amp; tasks, int n) {
+    unordered_map&lt;char, int&gt; count;
+    for (char task : tasks) {
+        count[task]++;
+    }
+    
+    priority_queue&lt;int&gt; pq;
+    for (auto&amp; [task, cnt] : count) {
+        pq.push(cnt);
+    }
+    
+    int time = 0;
+    
+    while (!pq.empty()) {
+        vector&lt;int&gt; temp;
+        
+        // 执行 n+1 个时间单位
+        for (int i = 0; i &lt;= n; ++i) {
+            if (!pq.empty()) {
+                int cnt = pq.top();
+                pq.pop();
+                
+                if (cnt &gt; 1) {
+                    temp.push_back(cnt - 1);
+                }
+            }
+            
+            time++;
+            
+            // 如果所有任务都完成了，提前结束
+            if (pq.empty() &amp;&amp; temp.empty()) {
+                break;
+            }
+        }
+        
+        for (int cnt : temp) {
+            pq.push(cnt);
+        }
+    }
+    
+    return time;
+}
+
+int main() {
+    int m, n;
+    cin &gt;&gt; m &gt;&gt; n;
+    
+    vector&lt;char&gt; tasks(m);
+    for (int i = 0; i &lt; m; ++i) {
+        cin &gt;&gt; tasks[i];
+    }
+    
+    cout &lt;&lt; leastInterval(tasks, n) &lt;&lt; &quot;\n&quot;;
+    
+    return 0;
+}
+</code></pre>
+<p><strong>复杂度</strong>：时间 <code>O(m)</code> 其中 m 是任务总数</p>
+<p><strong>易错点</strong>：</p>
+<ul>
+<li>每轮执行 n+1 个任务（包括空闲）</li>
+<ul>
+<li>执行后剩余次数 > 0 的任务要暂存，下轮放回堆</li>
+<ul>
+<li>所有任务完成要提前退出</li>
+<hr>
+<h2 id="常见陷阱">常见陷阱</h2>
+<ol>
+<li><strong>堆的比较方向</strong>：</li>
+<ul>
+<li>大根堆：<code>priority_queue<int></code>（默认）</li>
+<ul>
+<li>小根堆：<code>priority_queue<int, vector<int>, greater<int>></code></li>
+<ul>
+<li>自定义：小根堆用 <code>></code>，大根堆用 <code><</code></li>
+<ol>
+<li><strong>贪心正确性证明</strong>：</li>
+<ul>
+<li>反证法：假设最优解不选贪心选择，推出矛盾</li>
+<ul>
+<li>交换论证：交换两个元素不会使解变差</li>
+<ol>
+<li><strong>区间问题排序</strong>：</li>
+<ul>
+<li>区间调度：按结束时间排序</li>
+<ul>
+<li>区间覆盖：按开始时间排序</li>
+<ul>
+<li>会议室：按开始时间排序</li>
+<ol>
+<li><strong>溢出问题</strong>：合并代价、路径和等问题用 <code>long long</code></li>
+<ol>
+<li><strong>堆为空判断</strong>：访问 top() 前必须检查</li>
+<h2 id="适用场景总结">适用场景总结</h2>
+<table>
+<thead>
+<tr>
+<th>问题类型</th>
+<th>数据结构</th>
+<th>贪心策略</th>
+</tr>
+</thead>
+<tbody>
+<table>
+<thead>
+<tr>
+<th>---------</th>
+<th>---------</th>
+<th>---------</th>
+</tr>
+</thead>
+<tbody>
+<table>
+<thead>
+<tr>
+<th>第 K 大/小</th>
+<th>堆（大小为 K）</th>
+<th>维护固定大小堆</th>
+</tr>
+</thead>
+<tbody>
+<table>
+<thead>
+<tr>
+<th>多路归并</th>
+<th>小根堆</th>
+<th>每次取最小</th>
+</tr>
+</thead>
+<tbody>
+<table>
+<thead>
+<tr>
+<th>会议室调度</th>
+<th>小根堆 + 排序</th>
+<th>按开始时间，维护结束时间</th>
+</tr>
+</thead>
+<tbody>
+<table>
+<thead>
+<tr>
+<th>哈夫曼编码</th>
+<th>小根堆</th>
+<th>每次合并最小两个</th>
+</tr>
+</thead>
+<tbody>
+<table>
+<thead>
+<tr>
+<th>区间调度</th>
+<th>排序</th>
+<th>按结束时间，贪心选择</th>
+</tr>
+</thead>
+<tbody>
+<table>
+<thead>
+<tr>
+<th>区间覆盖</th>
+<th>排序</th>
+<th>按开始时间，贪心扩展</th>
+</tr>
+</thead>
+<tbody>
+<table>
+<thead>
+<tr>
+<th>跳跃游戏</th>
+<th>无</th>
+<th>贪心选最远位置</th>
+</tr>
+</thead>
+<tbody>
+<table>
+<thead>
+<tr>
+<th>中位数</th>
+<th>两个堆</th>
+<th>平衡左右两半</th>
+</tr>
+</thead>
+<tbody>
+<p><strong>核心技巧</strong>：</p>
+<ul>
+<li>堆维护动态最值，复杂度 <code>O(log n)</code></li>
+<ul>
+<li>贪心需要证明局部最优 → 全局最优</li>
+<ul>
+<li>区间问题：排序 + 贪心是常见套路</li>
+<ul>
+<li>两个堆可以维护对称的数据结构（如中位数）</li>
+
+        <div class="chapter-nav">
+    <a href="06-stack-queue-monotonic.html" class="prev-chapter">← 栈队列与单调性</a>
+    <a href="08-dfs-backtrack.html" class="next-chapter">DFS与回溯 →</a>
+</div>
+    </main>
+
+    <script>
+        // 主题切换
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+        }
+
+        // 加载保存的主题
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+        }
+
+        // 侧边栏切换
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('collapsed');
+        }
+
+        // 进度条
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.documentElement.style.setProperty('--scroll-progress', scrolled + '%');
+        });
+
+        // 目录高亮
+        const sections = document.querySelectorAll('h2[id]');
+        const tocLinks = document.querySelectorAll('.toc a');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (scrollY >= sectionTop - 100) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            tocLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        // 代码高亮
+        hljs.highlightAll();
+    </script>
+</body>
+</html>

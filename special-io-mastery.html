@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>输入输出专精 - 算法竞赛特辑</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8f9fa;
+            --bg-code: #f6f8fa;
+            --text-primary: #24292f;
+            --text-secondary: #57606a;
+            --border-color: #d0d7de;
+            --accent-color: #0969da;
+            --accent-hover: #0550ae;
+            --sidebar-width: 280px;
+            --header-height: 60px;
+        }
+
+        body.dark-mode {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-code: #161b22;
+            --text-primary: #c9d1d9;
+            --text-secondary: #8b949e;
+            --border-color: #30363d;
+            --accent-color: #58a6ff;
+            --accent-hover: #79c0ff;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background-color: var(--bg-primary);
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-color) 0%, var(--accent-color) var(--scroll-progress, 0%), transparent var(--scroll-progress, 0%));
+            z-index: 1001;
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 1000;
+        }
+
+        .header-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 24px;
+            padding: 5px;
+            transition: transform 0.2s;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: var(--header-height);
+            bottom: 0;
+            width: var(--sidebar-width);
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border-color);
+            overflow-y: auto;
+            padding: 20px;
+            transition: transform 0.3s;
+        }
+
+        .sidebar.collapsed {
+            transform: translateX(-100%);
+        }
+
+        .sidebar-toggle {
+            position: fixed;
+            left: var(--sidebar-width);
+            top: calc(var(--header-height) + 20px);
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 0 4px 4px 0;
+            padding: 10px 8px;
+            cursor: pointer;
+            z-index: 999;
+            transition: left 0.3s;
+        }
+
+        .sidebar.collapsed + .sidebar-toggle {
+            left: 0;
+        }
+
+        .sidebar h3 {
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+        }
+
+        .toc {
+            list-style: none;
+        }
+
+        .toc li {
+            margin: 5px 0;
+        }
+
+        .toc a {
+            color: var(--text-primary);
+            text-decoration: none;
+            display: block;
+            padding: 6px 10px;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+
+        .toc a:hover {
+            background: var(--bg-primary);
+        }
+
+        .toc a.active {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        main {
+            margin-left: var(--sidebar-width);
+            margin-top: var(--header-height);
+            padding: 40px;
+            max-width: 900px;
+            transition: margin-left 0.3s;
+        }
+
+        .sidebar.collapsed ~ main {
+            margin-left: 0;
+        }
+
+        h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+        }
+
+        h2 {
+            font-size: 24px;
+            margin-top: 40px;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+
+        h3 {
+            font-size: 20px;
+            margin-top: 24px;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        p {
+            margin: 16px 0;
+            color: var(--text-primary);
+        }
+
+        code {
+            background: var(--bg-code);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
+            font-size: 0.9em;
+        }
+
+        pre {
+            background: var(--bg-code);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 16px;
+            overflow-x: auto;
+            margin: 16px 0;
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+        }
+
+        ul, ol {
+            margin: 16px 0;
+            padding-left: 32px;
+        }
+
+        li {
+            margin: 8px 0;
+        }
+
+        .tip {
+            background: #dff6dd;
+            border-left: 4px solid #1a7f37;
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin: 16px 0;
+        }
+
+        body.dark-mode .tip {
+            background: #1a3e2b;
+            border-left-color: #2ea043;
+        }
+
+        .warning {
+            background: #fff8c5;
+            border-left: 4px solid #d29922;
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin: 16px 0;
+        }
+
+        body.dark-mode .warning {
+            background: #3d2e00;
+            border-left-color: #d29922;
+        }
+
+        .info {
+            background: #ddf4ff;
+            border-left: 4px solid #0969da;
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin: 16px 0;
+        }
+
+        body.dark-mode .info {
+            background: #0c2d6b;
+            border-left-color: #58a6ff;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+        }
+
+        th, td {
+            border: 1px solid var(--border-color);
+            padding: 8px 12px;
+            text-align: left;
+        }
+
+        th {
+            background: var(--bg-secondary);
+            font-weight: 600;
+        }
+
+        @media print {
+            .sidebar, .sidebar-toggle, .theme-toggle, .progress-bar {
+                display: none;
+            }
+            main {
+                margin-left: 0;
+                margin-top: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            main {
+                margin-left: 0;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar"></div>
+    
+    <header>
+        <div class="header-title">输入输出专精</div>
+        <div class="header-controls">
+            <button class="theme-toggle" onclick="toggleTheme()" title="切换主题">🌓</button>
+        </div>
+    </header>
+
+    <nav class="sidebar" id="sidebar">
+        <h3>目录</h3>
+        <ul class="toc">
+            <li><a href="#oj-modes">OJ 模式对比</a></li>
+            <li><a href="#eof-reading">读到 EOF</a></li>
+            <li><a href="#multi-input">多组输入</a></li>
+            <li><a href="#line-reading">整行读取</a></li>
+            <li><a href="#output-traps">输出格式陷阱</a></li>
+            <li><a href="#fast-io">快速 IO</a></li>
+            <li><a href="#stringstream">字符串流</a></li>
+            <li><a href="#edge-cases">边界情况</a></li>
+        </ul>
+    </nav>
+
+    <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+
+    <main>
+        <h1>输入输出专精</h1>
+        <p>输入输出是 ACM 模式的第一道关卡，格式错误会导致 WA（Wrong Answer）。本文档深入讲解各种 IO 场景。</p>
+
+        <h2 id="oj-modes">OJ 模式对比</h2>
+        
+        <h3>LeetCode 函数模式 vs ACM 模式</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>特性</th>
+                    <th>LeetCode 模式</th>
+                    <th>ACM/OI 模式</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>输入处理</strong></td>
+                    <td>函数参数（自动处理）</td>
+                    <td>cin/scanf 手动读取</td>
+                </tr>
+                <tr>
+                    <td><strong>输出处理</strong></td>
+                    <td>return 返回值</td>
+                    <td>cout/printf 手动输出</td>
+                </tr>
+                <tr>
+                    <td><strong>多组数据</strong></td>
+                    <td>函数多次调用</td>
+                    <td>循环读取到 EOF</td>
+                </tr>
+                <tr>
+                    <td><strong>代码结构</strong></td>
+                    <td>只写核心逻辑</td>
+                    <td>完整 main 函数</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="info">
+            <strong>重要：</strong>大部分高校机考、企业笔试使用 <strong>ACM 模式</strong>，需要自己处理输入输出。
+        </div>
+
+        <h3>LeetCode 模式示例</h3>
+        <pre><code class="language-cpp">class Solution {
+public:
+    vector<int> twoSum(vector<int>& nums, int target) {
+        // 直接写逻辑，不管输入输出
+        unordered_map<int, int> map;
+        for (int i = 0; i < nums.size(); ++i) {
+            int complement = target - nums[i];
+            if (map.count(complement)) {
+                return {map[complement], i};
+            }
+            map[nums[i]] = i;
+        }
+        return {};
+    }
+};</code></pre>
+
+        <h3>ACM 模式示例（同样的问题）</h3>
+        <pre><code class="language-cpp">#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    
+    int n, target;
+    cin >> n >> target;  // 需要自己读取
+    
+    vector<int> nums(n);
+    for (int i = 0; i < n; ++i) {
+        cin >> nums[i];
+    }
+    
+    // 核心逻辑
+    unordered_map<int, int> map;
+    for (int i = 0; i < n; ++i) {
+        int complement = target - nums[i];
+        if (map.count(complement)) {
+            cout << map[complement] << " " << i << "\n";  // 需要自己输出
+            return 0;
+        }
+        map[nums[i]] = i;
+    }
+    
+    return 0;
+}</code></pre>
+
+        <h2 id="eof-reading">读到 EOF</h2>
+
+        <h3>什么是 EOF？</h3>
+        <p>EOF (End Of File) 表示输入结束。在 ACM 模式中，很多题目不会告诉你有多少组数据，需要读到 EOF 为止。</p>
+
+        <h3>基本用法</h3>
+        <pre><code class="language-cpp">// 读取单个整数到 EOF
+int n;
+while (cin >> n) {
+    // 处理每个 n
+    cout << n * 2 << "\n";
+}
+
+// 读取多个变量到 EOF
+int a, b;
+while (cin >> a >> b) {
+    cout << a + b << "\n";
+}
+
+// 读取整行到 EOF
+string line;
+while (getline(cin, line)) {
+    // 处理每行
+    cout << line << "\n";
+}</code></pre>
+
+        <div class="tip">
+            <strong>原理：</strong><code>cin >> n</code> 在成功读取时返回 true，读到 EOF 或错误时返回 false。
+        </div>
+
+        <h3>实战例题：A + B Problem</h3>
+        <p><strong>题意：</strong>多组输入，每组两个整数 a 和 b，输出它们的和。</p>
+        
+        <pre><code class="language-cpp">#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+    int a, b;
+    while (cin >> a >> b) {
+        cout << a + b << "\n";
+    }
+    return 0;
+}
+
+// 输入：
+// 1 2
+// 3 4
+// 5 6
+//
+// 输出：
+// 3
+// 7
+// 11</code></pre>
+
+        <h2 id="multi-input">多组输入</h2>
+
+        <h3>类型 1：给定组数</h3>
+        <pre><code class="language-cpp">int T;
+cin >> T;
+while (T--) {
+    // 处理每组
+    int n;
+    cin >> n;
+    cout << n * n << "\n";
+}</code></pre>
+
+        <h3>类型 2：读到 EOF</h3>
+        <pre><code class="language-cpp">int n;
+while (cin >> n) {
+    // 处理每组
+    cout << n * n << "\n";
+}</code></pre>
+
+        <h3>类型 3：读到特定标记</h3>
+        <pre><code class="language-cpp">// 读到 0 结束
+int n;
+while (cin >> n && n != 0) {
+    cout << n * n << "\n";
+}
+
+// 读到 # 结束
+string s;
+while (cin >> s && s != "#") {
+    cout << s << "\n";
+}</code></pre>
+
+        <h3>类型 4：每组数据第一行是 n，后面 n 行数据</h3>
+        <pre><code class="language-cpp">int n;
+while (cin >> n) {
+    vector<int> a(n);
+    for (int i = 0; i < n; ++i) {
+        cin >> a[i];
+    }
+    // 处理数组 a
+    int sum = accumulate(a.begin(), a.end(), 0);
+    cout << sum << "\n";
+}</code></pre>
+
+        <h2 id="line-reading">整行读取</h2>
+
+        <h3>为什么需要 getline？</h3>
+        <ul>
+            <li><code>cin >> s</code> 遇到空格就停止</li>
+            <li><code>getline(cin, s)</code> 读取一整行（包含空格）</li>
+        </ul>
+
+        <pre><code class="language-cpp">string line;
+getline(cin, line);  // 读取整行，包括空格
+
+// 示例输入："hello world"
+// cin >> line 只会读到 "hello"
+// getline(cin, line) 读到 "hello world"</code></pre>
+
+        <h3>混用 cin 和 getline 的陷阱</h3>
+        <div class="warning">
+            <strong>常见错误：</strong><code>cin >> n</code> 后用 <code>getline</code> 会读到残留的换行符！
+        </div>
+
+        <pre><code class="language-cpp">// 错误示例
+int n;
+cin >> n;          // 输入 "5\n"，读取 5，但 \n 残留在缓冲区
+string line;
+getline(cin, line); // 读到空字符串（残留的 \n）
+
+// 正确做法 1：使用 cin.ignore()
+int n;
+cin >> n;
+cin.ignore();      // 忽略残留的换行符
+string line;
+getline(cin, line);
+
+// 正确做法 2：全部用 getline
+string first_line;
+getline(cin, first_line);
+int n = stoi(first_line);
+string second_line;
+getline(cin, second_line);</code></pre>
+
+        <h3>按分隔符读取</h3>
+        <pre><code class="language-cpp">// 按逗号分隔读取
+string line;
+getline(cin, line);
+stringstream ss(line);
+string token;
+while (getline(ss, token, ',')) {  // 第三个参数是分隔符
+    cout << token << "\n";
+}
+
+// 输入："apple,banana,cherry"
+// 输出：
+// apple
+// banana
+// cherry</code></pre>
+
+        <h2 id="output-traps">输出格式陷阱</h2>
+
+        <h3>陷阱 1：行末空格</h3>
+        <div class="warning">
+            很多 OJ 会判定行末空格为格式错误（Presentation Error 或 Wrong Answer）。
+        </div>
+
+        <pre><code class="language-cpp">// 错误：行末有空格
+for (int i = 0; i < n; ++i) {
+    cout << a[i] << " ";  // 最后一个元素后也有空格
+}
+cout << "\n";
+
+// 正确方法 1：判断是否是最后一个
+for (int i = 0; i < n; ++i) {
+    cout << a[i];
+    if (i < n - 1) cout << " ";
+}
+cout << "\n";
+
+// 正确方法 2：技巧性写法
+for (int i = 0; i < n; ++i) {
+    cout << a[i] << " \n"[i == n - 1];
+}
+
+// 正确方法 3：第一个元素前不加空格
+for (int i = 0; i < n; ++i) {
+    if (i > 0) cout << " ";
+    cout << a[i];
+}
+cout << "\n";</code></pre>
+
+        <h3>陷阱 2：最后一行的换行符</h3>
+        <pre><code class="language-cpp">// 有些题目要求最后一行也要换行
+cout << result << "\n";  // 安全做法：总是加换行
+
+// 有些题目要求最后一行不换行（极少数）
+// 需要特判最后一组数据</code></pre>
+
+        <h3>陷阱 3：浮点数精度</h3>
+        <pre><code class="language-cpp">#include <iomanip>
+
+// 错误：默认精度可能不对
+double x = 3.141592653;
+cout << x << "\n";  // 输出 3.14159（默认 6 位有效数字）
+
+// 正确：指定精度
+cout << fixed << setprecision(2) << x << "\n";  // 输出 3.14
+
+// 常见要求：
+// - 保留 2 位小数：fixed + setprecision(2)
+// - 有效数字：setprecision(n) 不加 fixed</code></pre>
+
+        <h3>陷阱 4：大小写</h3>
+        <pre><code class="language-cpp">// 题目要求输出 "YES" 或 "NO"
+cout << (flag ? "YES" : "NO") << "\n";  // 正确
+
+// 错误示例（大小写不对）
+cout << (flag ? "Yes" : "No") << "\n";
+cout << (flag ? "yes" : "no") << "\n";</code></pre>
+
+        <h2 id="fast-io">快速 IO</h2>
+
+        <h3>为什么需要快速 IO？</h3>
+        <p>当输入数据量很大（10^5 - 10^6 级别）时，cin/cout 可能超时。</p>
+
+        <h3>方法 1：关闭同步（推荐）</h3>
+        <pre><code class="language-cpp">#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+    ios::sync_with_stdio(false);  // 关闭 C++ 与 C 的同步
+    cin.tie(nullptr);              // 解除 cin 与 cout 的绑定
+    
+    // 现在 cin/cout 速度接近 scanf/printf
+    int n;
+    cin >> n;
+    cout << n << "\n";
+    
+    return 0;
+}</code></pre>
+
+        <div class="warning">
+            <strong>注意：</strong>使用上述优化后，<strong>不能混用</strong> cin/cout 和 scanf/printf。
+        </div>
+
+        <h3>方法 2：使用 scanf/printf（C 风格）</h3>
+        <pre><code class="language-cpp">int n;
+scanf("%d", &n);
+printf("%d\n", n);
+
+// 常用格式串
+scanf("%d", &n);          // int
+scanf("%lld", &ll);       // long long
+scanf("%lf", &d);         // double
+scanf("%s", str);         // char[]
+
+printf("%d\n", n);       // int
+printf("%lld\n", ll);    // long long
+printf("%.2lf\n", d);    // double，保留 2 位</code></pre>
+
+        <h3>速度对比</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>方法</th>
+                    <th>相对速度</th>
+                    <th>使用建议</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>scanf/printf</code></td>
+                    <td>最快</td>
+                    <td>简单格式，追求极致速度</td>
+                </tr>
+                <tr>
+                    <td><code>cin/cout</code> + 优化</td>
+                    <td>接近 scanf</td>
+                    <td>推荐，C++ 风格</td>
+                </tr>
+                <tr>
+                    <td><code>cin/cout</code> 不优化</td>
+                    <td>较慢</td>
+                    <td>数据量小时可用</td>
+                </tr>
+                <tr>
+                    <td><code>getline</code></td>
+                    <td>中等</td>
+                    <td>需要读整行时</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 id="stringstream">字符串流应用</h2>
+
+        <h3>用途 1：分割字符串</h3>
+        <pre><code class="language-cpp">#include <sstream>
+
+string line = "1 2 3 4 5";
+stringstream ss(line);
+int x;
+while (ss >> x) {
+    cout << x << "\n";
+}</code></pre>
+
+        <h3>用途 2：读取不定长数组</h3>
+        <pre><code class="language-cpp">// 一行有若干个整数，数量未知
+string line;
+getline(cin, line);
+stringstream ss(line);
+vector<int> arr;
+int x;
+while (ss >> x) {
+    arr.push_back(x);
+}
+
+// 现在 arr 包含所有数字</code></pre>
+
+        <h3>用途 3：构造字符串</h3>
+        <pre><code class="language-cpp">stringstream ss;
+ss << "x = " << x << ", y = " << y;
+string result = ss.str();
+cout << result << "\n";</code></pre>
+
+        <h3>用途 4：类型转换</h3>
+        <pre><code class="language-cpp">// string -> int
+string s = "12345";
+stringstream ss(s);
+int n;
+ss >> n;  // n = 12345
+
+// 或者更简单
+int n = stoi(s);
+
+// int -> string
+int x = 123;
+string s = to_string(x);</code></pre>
+
+        <h2 id="edge-cases">边界情况处理</h2>
+
+        <h3>空行处理</h3>
+        <pre><code class="language-cpp">string line;
+while (getline(cin, line)) {
+    if (line.empty()) {
+        // 空行
+        continue;
+    }
+    // 处理非空行
+}</code></pre>
+
+        <h3>前导/尾随空格</h3>
+        <pre><code class="language-cpp">// 使用 stringstream 自动忽略前后空格
+string line = "   123   ";
+stringstream ss(line);
+int n;
+ss >> n;  // n = 123，空格被忽略
+
+// 手动去除空格（如果需要）
+string trim(string s) {
+    s.erase(s.begin(), find_if(s.begin(), s.end(), [](char c) {
+        return !isspace(c);
+    }));
+    s.erase(find_if(s.rbegin(), s.rend(), [](char c) {
+        return !isspace(c);
+    }).base(), s.end());
+    return s;
+}</code></pre>
+
+        <h3>Windows vs Unix 换行符</h3>
+        <div class="info">
+            <ul>
+                <li><strong>Unix/Linux：</strong>\n (LF)</li>
+                <li><strong>Windows：</strong>\r\n (CRLF)</li>
+            </ul>
+            <p><code>getline</code> 会自动处理，但手动读字符时要小心。</p>
+        </div>
+
+        <h3>读取字符</h3>
+        <pre><code class="language-cpp">// 跳过空白字符
+char c;
+cin >> c;  // 跳过空格、换行
+
+// 不跳过空白字符
+char c = cin.get();  // 读取下一个字符，包括空格和换行</code></pre>
+
+        <h3>实战：读取不定长二维数组</h3>
+        <pre><code class="language-cpp">// 每行数字个数不同
+vector<vector<int>> matrix;
+string line;
+while (getline(cin, line)) {
+    stringstream ss(line);
+    vector<int> row;
+    int x;
+    while (ss >> x) {
+        row.push_back(x);
+    }
+    if (!row.empty()) {
+        matrix.push_back(row);
+    }
+}
+
+// 现在 matrix 包含所有数据</code></pre>
+
+        <h3>检查清单</h3>
+        <div class="tip">
+            <strong>提交前检查：</strong>
+            <ul>
+                <li>✅ 使用了 <code>ios::sync_with_stdio(false)</code></li>
+                <li>✅ 多组输入用了正确的循环（while cin 或 T--）</li>
+                <li>✅ 行末无多余空格</li>
+                <li>✅ 浮点数精度正确</li>
+                <li>✅ 输出大小写正确（YES/NO）</li>
+                <li>✅ 混用 cin 和 getline 时用了 cin.ignore()</li>
+            </ul>
+        </div>
+
+    </main>
+    <script>
+        // 主题切换
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+        }
+
+        // 加载保存的主题
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+        }
+
+        // 侧边栏切换
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('collapsed');
+        }
+
+        // 进度条
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.documentElement.style.setProperty('--scroll-progress', scrolled + '%');
+        });
+
+        // 目录高亮
+        const sections = document.querySelectorAll('h2[id]');
+        const tocLinks = document.querySelectorAll('.toc a');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (scrollY >= sectionTop - 100) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            tocLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        // 代码高亮
+        hljs.highlightAll();
+    </script>
+</body>
+</html>

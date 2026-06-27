@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C++ STL 使用指南 - 算法竞赛速成</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8f9fa;
+            --bg-code: #f6f8fa;
+            --text-primary: #24292f;
+            --text-secondary: #57606a;
+            --border-color: #d0d7de;
+            --accent-color: #0969da;
+            --accent-hover: #0550ae;
+            --sidebar-width: 280px;
+            --header-height: 60px;
+        }
+
+        body.dark-mode {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-code: #161b22;
+            --text-primary: #c9d1d9;
+            --text-secondary: #8b949e;
+            --border-color: #30363d;
+            --accent-color: #58a6ff;
+            --accent-hover: #79c0ff;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background-color: var(--bg-primary);
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-color) 0%, var(--accent-color) var(--scroll-progress, 0%), transparent var(--scroll-progress, 0%));
+            z-index: 1001;
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 1000;
+        }
+
+        .header-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 24px;
+            padding: 5px;
+            transition: transform 0.2s;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: var(--header-height);
+            bottom: 0;
+            width: var(--sidebar-width);
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border-color);
+            overflow-y: auto;
+            padding: 20px;
+            transition: transform 0.3s;
+        }
+
+        .sidebar.collapsed {
+            transform: translateX(-100%);
+        }
+
+        .sidebar-toggle {
+            position: fixed;
+            left: var(--sidebar-width);
+            top: calc(var(--header-height) + 20px);
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 0 4px 4px 0;
+            padding: 10px 8px;
+            cursor: pointer;
+            z-index: 999;
+            transition: left 0.3s;
+        }
+
+        .sidebar.collapsed + .sidebar-toggle {
+            left: 0;
+        }
+
+        .sidebar h3 {
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+        }
+
+        .toc {
+            list-style: none;
+        }
+
+        .toc li {
+            margin: 5px 0;
+        }
+
+        .toc a {
+            color: var(--text-primary);
+            text-decoration: none;
+            display: block;
+            padding: 6px 10px;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+
+        .toc a:hover {
+            background: var(--bg-primary);
+        }
+
+        .toc a.active {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        main {
+            margin-left: var(--sidebar-width);
+            margin-top: var(--header-height);
+            padding: 40px;
+            max-width: 900px;
+            transition: margin-left 0.3s;
+        }
+
+        .sidebar.collapsed ~ main {
+            margin-left: 0;
+        }
+
+        h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+        }
+
+        h2 {
+            font-size: 24px;
+            margin-top: 40px;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+
+        h3 {
+            font-size: 20px;
+            margin-top: 24px;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        h4 {
+            font-size: 18px;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+        }
+
+        p {
+            margin: 16px 0;
+            color: var(--text-primary);
+        }
+
+        code {
+            background: var(--bg-code);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
+            font-size: 0.9em;
+        }
+
+        pre {
+            background: var(--bg-code);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 16px;
+            overflow-x: auto;
+            margin: 16px 0;
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+        }
+
+        ul, ol {
+            margin: 16px 0;
+            padding-left: 32px;
+        }
+
+        li {
+            margin: 8px 0;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid var(--border-color);
+            margin: 24px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+        }
+
+        th, td {
+            border: 1px solid var(--border-color);
+            padding: 8px 12px;
+            text-align: left;
+        }
+
+        th {
+            background: var(--bg-secondary);
+            font-weight: 600;
+        }
+
+        .chapter-nav {
+            display: flex;
+            justify-content: space-between;
+            margin: 40px 0;
+            padding: 20px 0;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .chapter-nav a {
+            color: var(--accent-color);
+            text-decoration: none;
+            padding: 10px 20px;
+            border: 1px solid var(--accent-color);
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .chapter-nav a:hover {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        @media print {
+            .sidebar, .sidebar-toggle, .theme-toggle, .progress-bar {
+                display: none;
+            }
+            main {
+                margin-left: 0;
+                margin-top: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            main {
+                margin-left: 0;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar"></div>
+
+    <header>
+        <div class="header-title">C++ STL 使用指南</div>
+        <div class="header-controls">
+            <button class="theme-toggle" onclick="toggleTheme()" title="切换主题">🌓</button>
+        </div>
+    </header>
+
+    <nav class="sidebar" id="sidebar">
+        <h3>目录</h3>
+        <ul class="toc">
+    <li><a href="#容器">容器</a></li>
+    <li><a href="#算法">算法</a></li>
+    <li><a href="#输入输出">输入输出</a></li>
+    <li><a href="#常用函数">常用函数</a></li>
+    <li><a href="#常见陷阱">常见陷阱</a></li>
+    <li><a href="#容器选择">容器选择</a></li>
+</ul>
+    </nav>
+
+    <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+
+    <main>
+        <h1>C++ STL 使用指南</h1>
+
+        <h2 id="容器">容器</h2>
+<h3 id="vector---动态数组">vector - 动态数组</h3>
+<pre><code class="language-cpp">
+vector&lt;int&gt; v;              // 空
+vector&lt;int&gt; v(n);           // n 个 0
+vector&lt;int&gt; v(n, val);      // n 个 val
+vector&lt;int&gt; v = {1, 2, 3};  // 初始化列表
+
+v.push_back(x);             // 尾部添加
+v.pop_back();               // 尾部删除
+v.size();                   // 大小
+v.empty();                  // 是否为空
+v.clear();                  // 清空
+v[i];                       // 访问（不检查边界）
+v.at(i);                    // 访问（检查边界）
+v.front();                  // 首元素
+v.back();                   // 尾元素
+
+// 遍历
+for (int x : v) { }
+for (int i = 0; i &lt; v.size(); ++i) { }
+
+// 二维
+vector&lt;vector&lt;int&gt;&gt; mat(n, vector&lt;int&gt;(m, 0));
+</code></pre>
+<p><strong>注意</strong>：<code>v.size()</code> 返回 <code>size_t</code>（无符号），倒序遍历要小心：</p>
+<pre><code class="language-cpp">
+// 错误：size() - 1 在空数组时会溢出
+for (int i = v.size() - 1; i &gt;= 0; --i) { }
+
+// 正确
+for (int i = (int)v.size() - 1; i &gt;= 0; --i) { }
+</code></pre>
+<hr>
+<h3 id="string---字符串">string - 字符串</h3>
+<pre><code class="language-cpp">
+string s;
+string s = &quot;hello&quot;;
+string s(n, 'a');           // n 个 'a'
+
+s.size() / s.length();      // 长度
+s.empty();
+s.clear();
+s.push_back('c');
+s.pop_back();
+s.substr(pos, len);         // 子串
+s.find(&quot;sub&quot;);              // 查找子串，返回位置或 npos
+s.rfind(&quot;sub&quot;);             // 反向查找
+
+// 拼接
+s += &quot;world&quot;;
+s = s1 + s2;
+
+// 字符串流
+stringstream ss(s);
+string word;
+while (ss &gt;&gt; word) { }      // 按空白分割
+</code></pre>
+<hr>
+<h3 id="map--unordered_map---映射">map / unordered_map - 映射</h3>
+<pre><code class="language-cpp">
+map&lt;string, int&gt; mp;        // 有序
+unordered_map&lt;string, int&gt; mp; // 无序，更快
+
+mp[key] = value;            // 插入/修改
+mp.count(key);              // 是否存在（返回 0 或 1）
+mp.find(key);               // 查找，返回迭代器
+mp.erase(key);              // 删除
+mp.size();
+
+// 遍历
+for (auto [k, v] : mp) { }
+for (auto&amp; p : mp) { 
+    p.first;  // key
+    p.second; // value
+}
+</code></pre>
+<p><strong>注意</strong>：<code>mp[key]</code> 会插入默认值，判断存在用 <code>count</code> 或 <code>find</code>。</p>
+<hr>
+<h3 id="set--unordered_set---集合">set / unordered_set - 集合</h3>
+<pre><code class="language-cpp">
+set&lt;int&gt; st;                // 有序
+unordered_set&lt;int&gt; st;      // 无序，更快
+
+st.insert(x);               // 插入
+st.erase(x);                // 删除
+st.count(x);                // 是否存在
+st.size();
+st.empty();
+
+// set 特有（有序）
+st.lower_bound(x);          // 第一个 &gt;= x
+st.upper_bound(x);          // 第一个 &gt; x
+</code></pre>
+<hr>
+<h3 id="stack---栈">stack - 栈</h3>
+<pre><code class="language-cpp">
+stack&lt;int&gt; stk;
+
+stk.push(x);                // 入栈
+stk.pop();                  // 出栈
+stk.top();                  // 栈顶
+stk.size();
+stk.empty();
+</code></pre>
+<hr>
+<h3 id="queue---队列">queue - 队列</h3>
+<pre><code class="language-cpp">
+queue&lt;int&gt; q;
+
+q.push(x);                  // 入队
+q.pop();                    // 出队
+q.front();                  // 队首
+q.back();                   // 队尾
+q.size();
+q.empty();
+</code></pre>
+<hr>
+<h3 id="deque---双端队列">deque - 双端队列</h3>
+<pre><code class="language-cpp">
+deque&lt;int&gt; dq;
+
+dq.push_back(x);            // 尾部插入
+dq.push_front(x);           // 头部插入
+dq.pop_back();              // 尾部删除
+dq.pop_front();             // 头部删除
+dq.front();
+dq.back();
+dq[i];                      // 随机访问
+</code></pre>
+<hr>
+<h3 id="priority_queue---优先队列堆">priority_queue - 优先队列（堆）</h3>
+<pre><code class="language-cpp">
+priority_queue&lt;int&gt; pq;                     // 大根堆
+priority_queue&lt;int, vector&lt;int&gt;, greater&lt;int&gt;&gt; pq; // 小根堆
+
+pq.push(x);                 // 插入
+pq.pop();                   // 删除堆顶
+pq.top();                   // 堆顶
+pq.size();
+pq.empty();
+
+// pair 默认按 first 比较
+priority_queue&lt;pair&lt;int, int&gt;&gt; pq;
+
+// 自定义比较
+auto cmp = [](int a, int b) { return a &gt; b; };
+priority_queue&lt;int, vector&lt;int&gt;, decltype(cmp)&gt; pq(cmp);
+</code></pre>
+<hr>
+<h2 id="算法">算法</h2>
+<h3 id="排序">排序</h3>
+<pre><code class="language-cpp">
+sort(v.begin(), v.end());                   // 升序
+sort(v.begin(), v.end(), greater&lt;int&gt;());   // 降序
+
+// 自定义比较
+sort(v.begin(), v.end(), [](int a, int b) {
+    return a &gt; b;
+});
+
+// 结构体排序
+struct Node {
+    int x, y;
+};
+sort(v.begin(), v.end(), [](const Node&amp; a, const Node&amp; b) {
+    if (a.x != b.x) return a.x &lt; b.x;
+    return a.y &lt; b.y;
+});
+
+// 稳定排序
+stable_sort(v.begin(), v.end());
+</code></pre>
+<hr>
+<h3 id="二分查找">二分查找</h3>
+<pre><code class="language-cpp">
+// 前提：数组已排序
+vector&lt;int&gt; v = {1, 2, 2, 3, 4};
+
+// 是否存在
+bool found = binary_search(v.begin(), v.end(), 2);
+
+// 第一个 &gt;= x
+auto it = lower_bound(v.begin(), v.end(), 2);
+int pos = it - v.begin();
+
+// 第一个 &gt; x
+auto it = upper_bound(v.begin(), v.end(), 2);
+
+// 自定义比较
+lower_bound(v.begin(), v.end(), x, greater&lt;int&gt;());
+</code></pre>
+<hr>
+<h3 id="反转旋转去重">反转、旋转、去重</h3>
+<pre><code class="language-cpp">
+// 反转
+reverse(v.begin(), v.end());
+
+// 旋转（将 [first, middle) 移到末尾）
+rotate(v.begin(), v.begin() + k, v.end());
+
+// 去重（必须先排序）
+sort(v.begin(), v.end());
+v.erase(unique(v.begin(), v.end()), v.end());
+</code></pre>
+<hr>
+<h3 id="最值">最值</h3>
+<pre><code class="language-cpp">
+int max_val = *max_element(v.begin(), v.end());
+int min_val = *min_element(v.begin(), v.end());
+
+auto [min_it, max_it] = minmax_element(v.begin(), v.end());
+
+// 最大最小值本身
+int a = 3, b = 5;
+int mx = max(a, b);
+int mn = min(a, b);
+int mx3 = max({a, b, c});  // 多个值
+</code></pre>
+<hr>
+<h3 id="累加填充">累加、填充</h3>
+<pre><code class="language-cpp">
+// 求和
+int sum = accumulate(v.begin(), v.end(), 0);
+long long sum = accumulate(v.begin(), v.end(), 0LL);
+
+// 填充
+fill(v.begin(), v.end(), value);
+
+// 递增序列
+iota(v.begin(), v.end(), start); // v = [start, start+1, ...]
+</code></pre>
+<hr>
+<h3 id="全排列">全排列</h3>
+<pre><code class="language-cpp">
+vector&lt;int&gt; v = {1, 2, 3};
+sort(v.begin(), v.end());
+
+do {
+    // 使用当前排列
+} while (next_permutation(v.begin(), v.end()));
+</code></pre>
+<hr>
+<h2 id="输入输出">输入输出</h2>
+<h3 id="标准输入输出">标准输入输出</h3>
+<pre><code class="language-cpp">
+int n;
+cin &gt;&gt; n;                   // 读一个数
+cout &lt;&lt; n &lt;&lt; &quot;\n&quot;;          // 输出
+
+// 读整行
+string line;
+getline(cin, line);
+
+// 读到 EOF
+while (cin &gt;&gt; n) { }
+while (getline(cin, line)) { }
+</code></pre>
+<p><strong>注意</strong>：<code>cin >> x</code> 后用 <code>getline</code> 会读到残留换行符，需要：</p>
+<pre><code class="language-cpp">
+cin &gt;&gt; n;
+cin.ignore();               // 忽略换行符
+getline(cin, line);
+</code></pre>
+<hr>
+<h3 id="加速输入输出">加速输入输出</h3>
+<pre><code class="language-cpp">
+ios::sync_with_stdio(false);
+cin.tie(nullptr);
+</code></pre>
+<p><strong>注意</strong>：使用后不能混用 <code>scanf/printf</code> 和 <code>cin/cout</code>。</p>
+<hr>
+<h3 id="格式化输出">格式化输出</h3>
+<pre><code class="language-cpp">
+#include &lt;iomanip&gt;
+
+// 精度
+cout &lt;&lt; fixed &lt;&lt; setprecision(2) &lt;&lt; x &lt;&lt; &quot;\n&quot;;
+
+// 宽度
+cout &lt;&lt; setw(5) &lt;&lt; x &lt;&lt; &quot;\n&quot;;
+
+// 填充
+cout &lt;&lt; setfill('0') &lt;&lt; setw(5) &lt;&lt; x &lt;&lt; &quot;\n&quot;;  // 00123
+</code></pre>
+<hr>
+<h3 id="字符串流">字符串流</h3>
+<pre><code class="language-cpp">
+#include &lt;sstream&gt;
+
+// 分割字符串
+string s = &quot;1 2 3&quot;;
+stringstream ss(s);
+int x;
+while (ss &gt;&gt; x) { }
+
+// 拼接
+stringstream ss;
+ss &lt;&lt; &quot;x = &quot; &lt;&lt; x &lt;&lt; &quot;, y = &quot; &lt;&lt; y;
+string result = ss.str();
+</code></pre>
+<hr>
+<h2 id="常用函数">常用函数</h2>
+<h3 id="字符处理">字符处理</h3>
+<pre><code class="language-cpp">
+#include &lt;cctype&gt;
+
+isdigit(c);                 // 是否数字
+isalpha(c);                 // 是否字母
+isalnum(c);                 // 是否数字或字母
+islower(c);                 // 是否小写
+isupper(c);                 // 是否大写
+isspace(c);                 // 是否空白
+
+tolower(c);                 // 转小写
+toupper(c);                 // 转大写
+</code></pre>
+<hr>
+<h3 id="数学函数">数学函数</h3>
+<pre><code class="language-cpp">
+#include &lt;cmath&gt;
+
+abs(x);                     // 绝对值
+sqrt(x);                    // 平方根
+pow(x, y);                  // x^y
+ceil(x);                    // 向上取整
+floor(x);                   // 向下取整
+round(x);                   // 四舍五入
+
+gcd(a, b);                  // 最大公约数（C++17）
+lcm(a, b);                  // 最小公倍数（C++17）
+</code></pre>
+<hr>
+<h3 id="位运算内置函数">位运算内置函数</h3>
+<pre><code class="language-cpp">
+__builtin_popcount(x);      // 二进制中 1 的个数 (int)
+__builtin_popcountll(x);    // long long 版本
+__builtin_clz(x);           // 前导 0 个数
+__builtin_ctz(x);           // 后缀 0 个数
+__builtin_ffs(x);           // 最低位 1 的位置（1-indexed）
+</code></pre>
+<hr>
+<h2 id="常见陷阱">常见陷阱</h2>
+<ol>
+<li><strong>无符号类型</strong>：<code>size()</code> 返回无符号类型，减法可能溢出</li>
+<ol>
+<li><strong>迭代器失效</strong>：遍历时修改容器可能导致迭代器失效</li>
+<ol>
+<li><strong>map[] 副作用</strong>：会插入默认值，判断存在用 <code>count</code></li>
+<ol>
+<li><strong>比较函数</strong>：必须满足严格弱序，不能写 <code><=</code></li>
+<ol>
+<li><strong>优先队列</strong>：默认大根堆，小根堆要用 <code>greater<int></code></li>
+<ol>
+<li><strong>整数溢出</strong>：<code>accumulate</code> 的初始值要匹配类型</li>
+<h2 id="容器选择">容器选择</h2>
+<table>
+<thead>
+<tr>
+<th>需求</th>
+<th>容器</th>
+<th>复杂度</th>
+</tr>
+</thead>
+<tbody>
+<table>
+<thead>
+<tr>
+<th>------</th>
+<th>------</th>
+<th>--------</th>
+</tr>
+</thead>
+<tbody>
+<table>
+<thead>
+<tr>
+<th>动态数组</th>
+<th>`vector`</th>
+<th>O(1) 随机访问</th>
+</tr>
+</thead>
+<tbody>
+<table>
+<thead>
+<tr>
+<th>有序键值对</th>
+<th>`map`</th>
+<th>O(log n) 查找</th>
+</tr>
+</thead>
+<tbody>
+<table>
+<thead>
+<tr>
+<th>无序键值对</th>
+<th>`unordered_map`</th>
+<th>O(1) 平均查找</th>
+</tr>
+</thead>
+<tbody>
+<table>
+<thead>
+<tr>
+<th>有序集合</th>
+<th>`set`</th>
+<th>O(log n) 插入/查找</th>
+</tr>
+</thead>
+<tbody>
+<table>
+<thead>
+<tr>
+<th>无序集合</th>
+<th>`unordered_set`</th>
+<th>O(1) 平均插入/查找</th>
+</tr>
+</thead>
+<tbody>
+<table>
+<thead>
+<tr>
+<th>栈</th>
+<th>`stack`</th>
+<th>O(1) 栈顶操作</th>
+</tr>
+</thead>
+<tbody>
+<table>
+<thead>
+<tr>
+<th>队列</th>
+<th>`queue`</th>
+<th>O(1) 队首队尾操作</th>
+</tr>
+</thead>
+<tbody>
+<table>
+<thead>
+<tr>
+<th>双端队列</th>
+<th>`deque`</th>
+<th>O(1) 两端操作</th>
+</tr>
+</thead>
+<tbody>
+<table>
+<thead>
+<tr>
+<th>优先队列</th>
+<th>`priority_queue`</th>
+<th>O(log n) 插入/删除</th>
+</tr>
+</thead>
+<tbody>
+
+        <div class="chapter-nav">
+    <a href="templates.html" class="prev-chapter">← 算法模板库</a>
+    <a href="io-handling.html" class="next-chapter">输入输出处理 →</a>
+</div>
+    </main>
+
+    <script>
+        // 主题切换
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+        }
+
+        // 加载保存的主题
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+        }
+
+        // 侧边栏切换
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('collapsed');
+        }
+
+        // 进度条
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.documentElement.style.setProperty('--scroll-progress', scrolled + '%');
+        });
+
+        // 目录高亮
+        const sections = document.querySelectorAll('h2[id]');
+        const tocLinks = document.querySelectorAll('.toc a');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (scrollY >= sectionTop - 100) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            tocLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        // 代码高亮
+        hljs.highlightAll();
+    </script>
+</body>
+</html>

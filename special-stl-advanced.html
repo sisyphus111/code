@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C++ STL 深度使用 - 算法竞赛特辑</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8f9fa;
+            --bg-code: #f6f8fa;
+            --text-primary: #24292f;
+            --text-secondary: #57606a;
+            --border-color: #d0d7de;
+            --accent-color: #0969da;
+            --accent-hover: #0550ae;
+            --sidebar-width: 280px;
+            --header-height: 60px;
+        }
+
+        body.dark-mode {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-code: #161b22;
+            --text-primary: #c9d1d9;
+            --text-secondary: #8b949e;
+            --border-color: #30363d;
+            --accent-color: #58a6ff;
+            --accent-hover: #79c0ff;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background-color: var(--bg-primary);
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-color) 0%, var(--accent-color) var(--scroll-progress, 0%), transparent var(--scroll-progress, 0%));
+            z-index: 1001;
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 1000;
+        }
+
+        .header-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 24px;
+            padding: 5px;
+            transition: transform 0.2s;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: var(--header-height);
+            bottom: 0;
+            width: var(--sidebar-width);
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border-color);
+            overflow-y: auto;
+            padding: 20px;
+            transition: transform 0.3s;
+        }
+
+        .sidebar.collapsed {
+            transform: translateX(-100%);
+        }
+
+        .sidebar-toggle {
+            position: fixed;
+            left: var(--sidebar-width);
+            top: calc(var(--header-height) + 20px);
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 0 4px 4px 0;
+            padding: 10px 8px;
+            cursor: pointer;
+            z-index: 999;
+            transition: left 0.3s;
+        }
+
+        .sidebar.collapsed + .sidebar-toggle {
+            left: 0;
+        }
+
+        .sidebar h3 {
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+        }
+
+        .toc {
+            list-style: none;
+        }
+
+        .toc li {
+            margin: 5px 0;
+        }
+
+        .toc a {
+            color: var(--text-primary);
+            text-decoration: none;
+            display: block;
+            padding: 6px 10px;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+
+        .toc a:hover {
+            background: var(--bg-primary);
+        }
+
+        .toc a.active {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        main {
+            margin-left: var(--sidebar-width);
+            margin-top: var(--header-height);
+            padding: 40px;
+            max-width: 900px;
+            transition: margin-left 0.3s;
+        }
+
+        .sidebar.collapsed ~ main {
+            margin-left: 0;
+        }
+
+        h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+        }
+
+        h2 {
+            font-size: 24px;
+            margin-top: 40px;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+
+        h3 {
+            font-size: 20px;
+            margin-top: 24px;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        p {
+            margin: 16px 0;
+            color: var(--text-primary);
+        }
+
+        code {
+            background: var(--bg-code);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
+            font-size: 0.9em;
+        }
+
+        pre {
+            background: var(--bg-code);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 16px;
+            overflow-x: auto;
+            margin: 16px 0;
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+        }
+
+        ul, ol {
+            margin: 16px 0;
+            padding-left: 32px;
+        }
+
+        li {
+            margin: 8px 0;
+        }
+
+        .tip {
+            background: #dff6dd;
+            border-left: 4px solid #1a7f37;
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin: 16px 0;
+        }
+
+        body.dark-mode .tip {
+            background: #1a3e2b;
+            border-left-color: #2ea043;
+        }
+
+        .warning {
+            background: #fff8c5;
+            border-left: 4px solid #d29922;
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin: 16px 0;
+        }
+
+        body.dark-mode .warning {
+            background: #3d2e00;
+            border-left-color: #d29922;
+        }
+
+        .info {
+            background: #ddf4ff;
+            border-left: 4px solid #0969da;
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin: 16px 0;
+        }
+
+        body.dark-mode .info {
+            background: #0c2d6b;
+            border-left-color: #58a6ff;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+        }
+
+        th, td {
+            border: 1px solid var(--border-color);
+            padding: 8px 12px;
+            text-align: left;
+        }
+
+        th {
+            background: var(--bg-secondary);
+            font-weight: 600;
+        }
+
+        @media print {
+            .sidebar, .sidebar-toggle, .theme-toggle, .progress-bar {
+                display: none;
+            }
+            main {
+                margin-left: 0;
+                margin-top: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            main {
+                margin-left: 0;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar"></div>
+    
+    <header>
+        <div class="header-title">C++ STL 深度使用</div>
+        <div class="header-controls">
+            <button class="theme-toggle" onclick="toggleTheme()" title="切换主题">🌓</button>
+        </div>
+    </header>
+
+    <nav class="sidebar" id="sidebar">
+        <h3>目录</h3>
+        <ul class="toc">
+            <li><a href="#container-performance">容器性能对比</a></li>
+            <li><a href="#common-mistakes">常见误区</a></li>
+            <li><a href="#advanced-usage">高级用法</a></li>
+            <li><a href="#stl-algorithms">STL 算法库</a></li>
+            <li><a href="#memory-optimization">内存与性能优化</a></li>
+            <li><a href="#custom-comparators">自定义比较器</a></li>
+        </ul>
+    </nav>
+
+    <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+
+    <main>
+        <h1>C++ STL 深度使用</h1>
+        <p>STL 是算法竞赛的利器，但也有很多陷阱。深入理解 STL 能让你少走弯路，写出高效代码。</p>
+
+        <h2 id="container-performance">容器性能对比</h2>
+        
+        <h3>时间复杂度对比</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>容器</th>
+                    <th>插入</th>
+                    <th>查找</th>
+                    <th>删除</th>
+                    <th>随机访问</th>
+                    <th>内存</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>vector</code></td>
+                    <td>O(1) 尾部<br>O(n) 中间</td>
+                    <td>O(n)</td>
+                    <td>O(n)</td>
+                    <td>O(1)</td>
+                    <td>连续，缓存友好</td>
+                </tr>
+                <tr>
+                    <td><code>deque</code></td>
+                    <td>O(1) 两端<br>O(n) 中间</td>
+                    <td>O(n)</td>
+                    <td>O(n)</td>
+                    <td>O(1)</td>
+                    <td>分段连续</td>
+                </tr>
+                <tr>
+                    <td><code>list</code></td>
+                    <td>O(1) 任意位置</td>
+                    <td>O(n)</td>
+                    <td>O(1)</td>
+                    <td>O(n)</td>
+                    <td>不连续，开销大</td>
+                </tr>
+                <tr>
+                    <td><code>set/map</code></td>
+                    <td>O(log n)</td>
+                    <td>O(log n)</td>
+                    <td>O(log n)</td>
+                    <td>N/A</td>
+                    <td>红黑树</td>
+                </tr>
+                <tr>
+                    <td><code>unordered_set/map</code></td>
+                    <td>O(1) 平均<br>O(n) 最坏</td>
+                    <td>O(1) 平均</td>
+                    <td>O(1) 平均</td>
+                    <td>N/A</td>
+                    <td>哈希表</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>实测性能对比（10^6 次操作）</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>操作</th>
+                    <th>vector</th>
+                    <th>set</th>
+                    <th>unordered_set</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>插入</td>
+                    <td>~10ms</td>
+                    <td>~200ms</td>
+                    <td>~100ms</td>
+                </tr>
+                <tr>
+                    <td>查找</td>
+                    <td>~500ms</td>
+                    <td>~150ms</td>
+                    <td>~80ms</td>
+                </tr>
+                <tr>
+                    <td>遍历</td>
+                    <td>~5ms</td>
+                    <td>~30ms</td>
+                    <td>~20ms</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="tip">
+            <strong>选择建议：</strong>
+            <ul>
+                <li><strong>vector</strong>：默认选择，缓存友好，适合大部分场景</li>
+                <li><strong>unordered_set/map</strong>：需要快速查找且不需要有序</li>
+                <li><strong>set/map</strong>：需要有序或范围查询</li>
+                <li><strong>list</strong>：极少使用，频繁中间插入删除才考虑</li>
+            </ul>
+        </div>
+
+        <h2 id="common-mistakes">常见误区</h2>
+
+        <h3>误区 1：size() 是无符号类型</h3>
+        <div class="warning">
+            <strong>陷阱：</strong><code>v.size()</code> 返回 <code>size_t</code>（无符号），减法可能溢出！
+        </div>
+
+        <pre><code class="language-cpp">vector&lt;int&gt; v;
+// v 为空
+
+// 错误：无符号数下溢，变成一个巨大的正数
+for (int i = v.size() - 1; i >= 0; --i) {  // 死循环！
+    cout << v[i] << "\n";
+}
+
+// 正确方法 1：强制转换
+for (int i = (int)v.size() - 1; i >= 0; --i) {
+    cout << v[i] << "\n";
+}
+
+// 正确方法 2：使用 ssize (C++20)
+for (int i = ssize(v) - 1; i >= 0; --i) {
+    cout << v[i] << "\n";
+}
+
+// 正确方法 3：反向迭代器
+for (auto it = v.rbegin(); it != v.rend(); ++it) {
+    cout << *it << "\n";
+}</code></pre>
+
+        <h3>误区 2：map[] 的副作用</h3>
+        <div class="warning">
+            <strong>陷阱：</strong><code>map[key]</code> 会插入默认值（0, "", false 等），即使 key 不存在！
+        </div>
+
+        <pre><code class="language-cpp">map&lt;string, int&gt; mp;
+
+// 检查 key 是否存在
+if (mp["hello"]) {  // 错误：即使不存在，也会插入 mp["hello"] = 0
+    cout << "Found\n";
+}
+
+// 此时 mp.size() == 1，mp["hello"] == 0
+
+// 正确方法 1：使用 count
+if (mp.count("hello")) {
+    cout << "Found\n";
+}
+
+// 正确方法 2：使用 find
+if (mp.find("hello") != mp.end()) {
+    cout << "Found\n";
+}
+
+// 正确方法 3：C++20 contains
+if (mp.contains("hello")) {  // C++20
+    cout << "Found\n";
+}</code></pre>
+
+        <h3>误区 3：迭代器失效</h3>
+        <pre><code class="language-cpp">// 错误：边遍历边删除
+vector&lt;int&gt; v = {1, 2, 3, 4, 5};
+for (auto it = v.begin(); it != v.end(); ++it) {
+    if (*it % 2 == 0) {
+        v.erase(it);  // 迭代器失效！
+    }
+}
+
+// 正确方法 1：erase 返回下一个有效迭代器
+for (auto it = v.begin(); it != v.end(); ) {
+    if (*it % 2 == 0) {
+        it = v.erase(it);  // erase 返回下一个位置
+    } else {
+        ++it;
+    }
+}
+
+// 正确方法 2：使用 remove_if + erase
+v.erase(remove_if(v.begin(), v.end(), [](int x) {
+    return x % 2 == 0;
+}), v.end());</code></pre>
+
+        <h3>误区 4：比较函数写错</h3>
+        <div class="warning">
+            <strong>要求：</strong>比较函数必须满足 <strong>严格弱序</strong>（不能 <=，必须 <）
+        </div>
+
+        <pre><code class="language-cpp">// 错误：使用 <=
+sort(v.begin(), v.end(), [](int a, int b) {
+    return a <= b;  // 错误！运行时可能崩溃
+});
+
+// 正确：使用 <
+sort(v.begin(), v.end(), [](int a, int b) {
+    return a < b;
+});
+
+// 降序
+sort(v.begin(), v.end(), [](int a, int b) {
+    return a > b;
+});</code></pre>
+
+        <h3>误区 5：vector 的 reserve vs resize</h3>
+        <pre><code class="language-cpp">vector&lt;int&gt; v;
+
+// reserve：只分配内存，不改变 size
+v.reserve(100);
+cout << v.size() << "\n";  // 0
+v.push_back(1);  // OK
+
+// resize：改变 size，初始化元素
+v.resize(100);
+cout << v.size() << "\n";  // 100
+v[50] = 1;  // OK，元素已存在
+
+// 使用场景
+vector&lt;int&gt; v1;
+v1.reserve(n);  // 提前分配，避免多次扩容
+for (int i = 0; i < n; ++i) {
+    v1.push_back(i);
+}
+
+vector&lt;int&gt; v2(n);  // 或者直接 resize
+for (int i = 0; i < n; ++i) {
+    v2[i] = i;
+}</code></pre>
+
+        <h2 id="advanced-usage">高级用法</h2>
+
+        <h3>Lambda 表达式</h3>
+        <pre><code class="language-cpp">// 自定义排序
+vector&lt;pair&lt;int, int&gt;&gt; v = {{3, 1}, {1, 2}, {2, 3}};
+sort(v.begin(), v.end(), [](auto& a, auto& b) {
+    return a.second < b.second;  // 按第二个元素排序
+});
+
+// 带捕获的 lambda
+int threshold = 5;
+auto count = count_if(v.begin(), v.end(), [threshold](int x) {
+    return x > threshold;
+});
+
+// 捕获方式
+[=]   // 值捕获所有外部变量
+[&]   // 引用捕获所有外部变量
+[x]   // 值捕获 x
+[&x]  // 引用捕获 x
+[=, &x] // 值捕获所有，但 x 用引用</code></pre>
+
+        <h3>结构化绑定（C++17）</h3>
+        <pre><code class="language-cpp">// 遍历 map
+map&lt;string, int&gt; mp = {{"a", 1}, {"b", 2}};
+for (auto [key, value] : mp) {  // C++17
+    cout << key << ": " << value << "\n";
+}
+
+// 等价于
+for (auto& p : mp) {
+    cout << p.first << ": " << p.second << "\n";
+}
+
+// 解构 pair
+pair&lt;int, string&gt; p = {1, "hello"};
+auto [id, name] = p;
+cout << id << " " << name << "\n";</code></pre>
+
+        <h3>自定义哈希函数</h3>
+        <pre><code class="language-cpp">// pair 没有默认哈希函数，需要自定义
+struct PairHash {
+    size_t operator()(const pair&lt;int, int&gt;& p) const {
+        return hash&lt;int&gt;()(p.first) ^ (hash&lt;int&gt;()(p.second) << 1);
+    }
+};
+
+unordered_set&lt;pair&lt;int, int&gt;, PairHash&gt; st;
+st.insert({1, 2});
+
+// 或者用 set（有默认比较器）
+set&lt;pair&lt;int, int&gt;&gt; st2;  // 不需要自定义</code></pre>
+
+        <h2 id="stl-algorithms">STL 算法库</h2>
+
+        <h3>partition - 分区</h3>
+        <pre><code class="language-cpp">// 将满足条件的元素移到前面
+vector&lt;int&gt; v = {1, 2, 3, 4, 5, 6};
+auto it = partition(v.begin(), v.end(), [](int x) {
+    return x % 2 == 0;  // 偶数移到前面
+});
+// v = {2, 4, 6, 1, 3, 5} (顺序可能不同)
+// it 指向第一个不满足条件的元素
+
+// 应用：快速排序的分区步骤</code></pre>
+
+        <h3>nth_element - 第 k 大元素</h3>
+        <pre><code class="language-cpp">// O(n) 找到第 k 小的元素
+vector&lt;int&gt; v = {3, 1, 4, 1, 5, 9, 2, 6};
+int k = 3;
+nth_element(v.begin(), v.begin() + k, v.end());
+// v[k] 就是第 k 小的元素
+// v[0...k-1] 都 <= v[k]
+// v[k+1...n-1] 都 >= v[k]
+cout << "第 " << k << " 小: " << v[k] << "\n";
+
+// 应用：快速选择算法</code></pre>
+
+        <h3>partial_sort - 部分排序</h3>
+        <pre><code class="language-cpp">// 只排序前 k 个元素
+vector&lt;int&gt; v = {3, 1, 4, 1, 5, 9, 2, 6};
+int k = 3;
+partial_sort(v.begin(), v.begin() + k, v.end());
+// 前 k 个是最小的 k 个，且已排序
+// v = {1, 1, 2, ...} (后面乱序)
+
+// 应用：Top K 问题</code></pre>
+
+        <h3>rotate - 旋转</h3>
+        <pre><code class="language-cpp">// 将 [first, middle) 移到末尾
+vector&lt;int&gt; v = {1, 2, 3, 4, 5};
+rotate(v.begin(), v.begin() + 2, v.end());
+// v = {3, 4, 5, 1, 2}
+
+// 应用：循环移位</code></pre>
+
+        <h3>iota - 递增序列</h3>
+        <pre><code class="language-cpp">vector&lt;int&gt; v(10);
+iota(v.begin(), v.end(), 0);
+// v = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
+
+iota(v.begin(), v.end(), 1);
+// v = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}</code></pre>
+
+        <h3>adjacent_difference - 差分</h3>
+        <pre><code class="language-cpp">vector&lt;int&gt; v = {1, 3, 6, 10, 15};
+vector&lt;int&gt; diff(v.size());
+adjacent_difference(v.begin(), v.end(), diff.begin());
+// diff = {1, 2, 3, 4, 5}
+
+// 应用：差分数组</code></pre>
+
+        <h2 id="memory-optimization">内存与性能优化</h2>
+
+        <h3>避免不必要的拷贝</h3>
+        <pre><code class="language-cpp">// 慢：每次循环拷贝 string
+vector&lt;string&gt; v = {"hello", "world"};
+for (string s : v) {  // 拷贝
+    cout << s << "\n";
+}
+
+// 快：使用引用
+for (const string& s : v) {  // 引用，不拷贝
+    cout << s << "\n";
+}
+
+// 或者用 auto
+for (const auto& s : v) {
+    cout << s << "\n";
+}</code></pre>
+
+        <h3>vector 扩容优化</h3>
+        <pre><code class="language-cpp">// 慢：多次扩容
+vector&lt;int&gt; v;
+for (int i = 0; i < 1000000; ++i) {
+    v.push_back(i);  // 可能触发多次扩容
+}
+
+// 快：提前分配
+vector&lt;int&gt; v;
+v.reserve(1000000);  // 一次性分配
+for (int i = 0; i < 1000000; ++i) {
+    v.push_back(i);
+}</code></pre>
+
+        <h3>emplace vs push</h3>
+        <pre><code class="language-cpp">struct Node {
+    int x, y;
+    Node(int x, int y) : x(x), y(y) {}
+};
+
+vector&lt;Node&gt; v;
+
+// push_back：先构造临时对象，再拷贝
+v.push_back(Node(1, 2));
+
+// emplace_back：直接在容器内构造，避免拷贝
+v.emplace_back(1, 2);  // 更高效
+
+// 适用于所有容器
+set&lt;pair&lt;int, int&gt;&gt; st;
+st.emplace(1, 2);  // 比 insert(make_pair(1, 2)) 快</code></pre>
+
+        <h3>清空容器并释放内存</h3>
+        <pre><code class="language-cpp">vector&lt;int&gt; v(1000000);
+v.clear();  // size = 0，但内存未释放
+cout << v.capacity() << "\n";  // 仍然是 1000000
+
+// 释放内存
+vector&lt;int&gt;().swap(v);  // swap with empty vector
+// 或者 C++11
+v.shrink_to_fit();</code></pre>
+
+        <h2 id="custom-comparators">自定义比较器</h2>
+
+        <h3>priority_queue 自定义</h3>
+        <pre><code class="language-cpp">// 默认大根堆
+priority_queue&lt;int&gt; pq;
+
+// 小根堆方法 1：使用 greater
+priority_queue&lt;int, vector&lt;int&gt;, greater&lt;int&gt;&gt; pq;
+
+// 小根堆方法 2：自定义比较器
+auto cmp = [](int a, int b) { return a > b; };
+priority_queue&lt;int, vector&lt;int&gt;, decltype(cmp)&gt; pq(cmp);
+
+// 复杂对象
+struct Node {
+    int x, y;
+};
+auto cmp = [](const Node& a, const Node& b) {
+    return a.x > b.x;  // 按 x 升序
+};
+priority_queue&lt;Node, vector&lt;Node&gt;, decltype(cmp)&gt; pq(cmp);</code></pre>
+
+        <h3>set/map 自定义</h3>
+        <pre><code class="language-cpp">// 降序 set
+set&lt;int, greater&lt;int&gt;&gt; st;
+
+// 自定义比较
+struct Cmp {
+    bool operator()(const pair&lt;int, int&gt;& a, const pair&lt;int, int&gt;& b) const {
+        if (a.first != b.first) return a.first < b.first;
+        return a.second > b.second;  // 第一个升序，第二个降序
+    }
+};
+set&lt;pair&lt;int, int&gt;, Cmp&gt; st;</code></pre>
+
+        <h3>性能提示</h3>
+        <div class="tip">
+            <strong>竞赛实用技巧：</strong>
+            <ul>
+                <li>优先使用 <code>vector</code>，缓存友好</li>
+                <li>需要快速查找用 <code>unordered_set/map</code></li>
+                <li>需要有序用 <code>set/map</code></li>
+                <li>循环用 <code>const auto&</code> 避免拷贝</li>
+                <li>知道大小时用 <code>reserve</code></li>
+                <li>用 <code>emplace</code> 代替 <code>push/insert</code></li>
+                <li>输出用 <code>\n</code> 而非 <code>endl</code></li>
+            </ul>
+        </div>
+
+    </main>
+
+<script>
+        // 主题切换
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+        }
+
+        // 加载保存的主题
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+        }
+
+        // 侧边栏切换
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('collapsed');
+        }
+
+        // 进度条
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.documentElement.style.setProperty('--scroll-progress', scrolled + '%');
+        });
+
+        // 目录高亮
+        const sections = document.querySelectorAll('h2[id]');
+        const tocLinks = document.querySelectorAll('.toc a');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (scrollY >= sectionTop - 100) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            tocLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        // 代码高亮
+        hljs.highlightAll();
+    </script>
+</body>
+</html>

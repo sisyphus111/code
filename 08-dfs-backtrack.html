@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DFS 与回溯 - 算法竞赛速成</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8f9fa;
+            --bg-code: #f6f8fa;
+            --text-primary: #24292f;
+            --text-secondary: #57606a;
+            --border-color: #d0d7de;
+            --accent-color: #0969da;
+            --accent-hover: #0550ae;
+            --sidebar-width: 280px;
+            --header-height: 60px;
+        }
+
+        body.dark-mode {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-code: #161b22;
+            --text-primary: #c9d1d9;
+            --text-secondary: #8b949e;
+            --border-color: #30363d;
+            --accent-color: #58a6ff;
+            --accent-hover: #79c0ff;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background-color: var(--bg-primary);
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-color) 0%, var(--accent-color) var(--scroll-progress, 0%), transparent var(--scroll-progress, 0%));
+            z-index: 1001;
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 1000;
+        }
+
+        .header-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 24px;
+            padding: 5px;
+            transition: transform 0.2s;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: var(--header-height);
+            bottom: 0;
+            width: var(--sidebar-width);
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border-color);
+            overflow-y: auto;
+            padding: 20px;
+            transition: transform 0.3s;
+        }
+
+        .sidebar.collapsed {
+            transform: translateX(-100%);
+        }
+
+        .sidebar-toggle {
+            position: fixed;
+            left: var(--sidebar-width);
+            top: calc(var(--header-height) + 20px);
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 0 4px 4px 0;
+            padding: 10px 8px;
+            cursor: pointer;
+            z-index: 999;
+            transition: left 0.3s;
+        }
+
+        .sidebar.collapsed + .sidebar-toggle {
+            left: 0;
+        }
+
+        .sidebar h3 {
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+        }
+
+        .toc {
+            list-style: none;
+        }
+
+        .toc li {
+            margin: 5px 0;
+        }
+
+        .toc a {
+            color: var(--text-primary);
+            text-decoration: none;
+            display: block;
+            padding: 6px 10px;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+
+        .toc a:hover {
+            background: var(--bg-primary);
+        }
+
+        .toc a.active {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        main {
+            margin-left: var(--sidebar-width);
+            margin-top: var(--header-height);
+            padding: 40px;
+            max-width: 900px;
+            transition: margin-left 0.3s;
+        }
+
+        .sidebar.collapsed ~ main {
+            margin-left: 0;
+        }
+
+        h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+        }
+
+        h2 {
+            font-size: 24px;
+            margin-top: 40px;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+
+        h3 {
+            font-size: 20px;
+            margin-top: 24px;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        h4 {
+            font-size: 18px;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+        }
+
+        p {
+            margin: 16px 0;
+            color: var(--text-primary);
+        }
+
+        code {
+            background: var(--bg-code);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
+            font-size: 0.9em;
+        }
+
+        pre {
+            background: var(--bg-code);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 16px;
+            overflow-x: auto;
+            margin: 16px 0;
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+        }
+
+        ul, ol {
+            margin: 16px 0;
+            padding-left: 32px;
+        }
+
+        li {
+            margin: 8px 0;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid var(--border-color);
+            margin: 24px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+        }
+
+        th, td {
+            border: 1px solid var(--border-color);
+            padding: 8px 12px;
+            text-align: left;
+        }
+
+        th {
+            background: var(--bg-secondary);
+            font-weight: 600;
+        }
+
+        .chapter-nav {
+            display: flex;
+            justify-content: space-between;
+            margin: 40px 0;
+            padding: 20px 0;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .chapter-nav a {
+            color: var(--accent-color);
+            text-decoration: none;
+            padding: 10px 20px;
+            border: 1px solid var(--accent-color);
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .chapter-nav a:hover {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        @media print {
+            .sidebar, .sidebar-toggle, .theme-toggle, .progress-bar {
+                display: none;
+            }
+            main {
+                margin-left: 0;
+                margin-top: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            main {
+                margin-left: 0;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar"></div>
+
+    <header>
+        <div class="header-title">DFS 与回溯</div>
+        <div class="header-controls">
+            <button class="theme-toggle" onclick="toggleTheme()" title="切换主题">🌓</button>
+        </div>
+    </header>
+
+    <nav class="sidebar" id="sidebar">
+        <h3>目录</h3>
+        <ul class="toc">
+    <li><a href="#什么时候用">什么时候用</a></li>
+    <li><a href="#核心模板">核心模板</a></li>
+    <li><a href="#例题演示">例题演示</a></li>
+    <li><a href="#常见陷阱">常见陷阱</a></li>
+    <li><a href="#适用场景总结">适用场景总结</a></li>
+</ul>
+    </nav>
+
+    <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+
+    <main>
+        <h1>DFS 与回溯</h1>
+
+        <h2 id="什么时候用">什么时候用</h2>
+<p>看到以下特征优先考虑 DFS 与回溯：</p>
+<ul>
+<li><strong>排列组合</strong>：全排列、子集、组合</li>
+<ul>
+<li><strong>路径搜索</strong>：迷宫、岛屿数量、连通性</li>
+<ul>
+<li><strong>棋盘问题</strong>：N 皇后、数独</li>
+<ul>
+<li><strong>字符串分割</strong>：括号生成、IP 地址还原</li>
+<ul>
+<li><strong>决策树遍历</strong>：选或不选、剪枝优化</li>
+<ul>
+<li>题目要求"所有可能"、"所有方案"、"是否存在"</li>
+<p>核心思路：<strong>尝试所有可能的选择，不符合条件就回退，符合条件就继续深入</strong>。</p>
+<h2 id="核心模板">核心模板</h2>
+<h3 id="dfs-基本框架">DFS 基本框架</h3>
+<pre><code class="language-cpp">
+void dfs(当前状态, 路径, 结果集) {
+    // 终止条件
+    if (满足条件) {
+        结果集.add(路径);
+        return;
+    }
+    
+    // 剪枝
+    if (不可能有解) return;
+    
+    // 遍历所有选择
+    for (选择 in 选择列表) {
+        做选择;
+        dfs(新状态, 路径, 结果集);
+        撤销选择;  // 回溯
+    }
+}
+</code></pre>
+<h3 id="回溯三要素">回溯三要素</h3>
+<ol>
+<li><strong>路径</strong>：已经做出的选择</li>
+<ol>
+<li><strong>选择列表</strong>：当前可以做的选择</li>
+<ol>
+<li><strong>终止条件</strong>：到达决策树底层</li>
+<h3 id="常见剪枝技巧">常见剪枝技巧</h3>
+<pre><code class="language-cpp">
+// 1. 排序后去重
+sort(nums.begin(), nums.end());
+if (i &gt; start &amp;&amp; nums[i] == nums[i-1]) continue;
+
+// 2. 可行性剪枝
+if (当前和 &gt; 目标) return;
+
+// 3. 最优性剪枝
+if (当前步数 &gt;= 已知最优) return;
+</code></pre>
+<h2 id="例题演示">例题演示</h2>
+<h3 id="例题-1全排列">例题 1：全排列</h3>
+<p><strong>题目</strong>：给定不含重复数字的数组，返回所有可能的全排列。</p>
+<p><strong>思路</strong>：每次选择一个未使用的数字，递归处理剩余数字。</p>
+<pre><code class="language-cpp">
+#include &lt;bits/stdc++.h&gt;
+using namespace std;
+
+void backtrack(vector&lt;int&gt;&amp; nums, vector&lt;bool&gt;&amp; used, vector&lt;int&gt;&amp; path, vector&lt;vector&lt;int&gt;&gt;&amp; result) {
+    if (path.size() == nums.size()) {
+        result.push_back(path);
+        return;
+    }
+    
+    for (int i = 0; i &lt; nums.size(); ++i) {
+        if (used[i]) continue;
+        
+        path.push_back(nums[i]);
+        used[i] = true;
+        
+        backtrack(nums, used, path, result);
+        
+        path.pop_back();
+        used[i] = false;
+    }
+}
+
+vector&lt;vector&lt;int&gt;&gt; permute(vector&lt;int&gt;&amp; nums) {
+    vector&lt;vector&lt;int&gt;&gt; result;
+    vector&lt;int&gt; path;
+    vector&lt;bool&gt; used(nums.size(), false);
+    
+    backtrack(nums, used, path, result);
+    return result;
+}
+
+int main() {
+    int n;
+    cin &gt;&gt; n;
+    vector&lt;int&gt; nums(n);
+    for (int i = 0; i &lt; n; ++i) {
+        cin &gt;&gt; nums[i];
+    }
+    
+    vector&lt;vector&lt;int&gt;&gt; result = permute(nums);
+    
+    for (auto&amp; perm : result) {
+        for (int i = 0; i &lt; perm.size(); ++i) {
+            cout &lt;&lt; perm[i] &lt;&lt; &quot; \n&quot;[i == perm.size() - 1];
+        }
+    }
+    
+    return 0;
+}
+</code></pre>
+<p><strong>复杂度</strong>：时间 <code>O(n × n!)</code>，空间 <code>O(n)</code></p>
+<p><strong>易错点</strong>：</p>
+<ul>
+<li>回溯时要撤销选择（pop_back 和恢复 used）</li>
+<ul>
+<li>used 数组标记已使用的元素</li>
+<hr>
+<h3 id="例题-2子集">例题 2：子集</h3>
+<p><strong>题目</strong>：给定不含重复元素的数组，返回所有可能的子集。</p>
+<p><strong>思路</strong>：每个元素有选或不选两种选择。</p>
+<pre><code class="language-cpp">
+#include &lt;bits/stdc++.h&gt;
+using namespace std;
+
+void backtrack(vector&lt;int&gt;&amp; nums, int start, vector&lt;int&gt;&amp; path, vector&lt;vector&lt;int&gt;&gt;&amp; result) {
+    result.push_back(path);
+    
+    for (int i = start; i &lt; nums.size(); ++i) {
+        path.push_back(nums[i]);
+        backtrack(nums, i + 1, path, result);
+        path.pop_back();
+    }
+}
+
+vector&lt;vector&lt;int&gt;&gt; subsets(vector&lt;int&gt;&amp; nums) {
+    vector&lt;vector&lt;int&gt;&gt; result;
+    vector&lt;int&gt; path;
+    backtrack(nums, 0, path, result);
+    return result;
+}
+
+int main() {
+    int n;
+    cin &gt;&gt; n;
+    vector&lt;int&gt; nums(n);
+    for (int i = 0; i &lt; n; ++i) {
+        cin &gt;&gt; nums[i];
+    }
+    
+    vector&lt;vector&lt;int&gt;&gt; result = subsets(nums);
+    
+    for (auto&amp; subset : result) {
+        if (subset.empty()) {
+            cout &lt;&lt; &quot;[]&quot;;
+        } else {
+            for (int i = 0; i &lt; subset.size(); ++i) {
+                cout &lt;&lt; subset[i] &lt;&lt; &quot; \n&quot;[i == subset.size() - 1];
+            }
+        }
+    }
+    
+    return 0;
+}
+</code></pre>
+<p><strong>复杂度</strong>：时间 <code>O(n × 2^n)</code>，空间 <code>O(n)</code></p>
+<p><strong>易错点</strong>：</p>
+<ul>
+<li>每个节点都是一个解，不只是叶子节点</li>
+<ul>
+<li>start 参数避免重复选择</li>
+<hr>
+<h3 id="例题-3组合总和元素可重复使用">例题 3：组合总和（元素可重复使用）</h3>
+<p><strong>题目</strong>：给定候选数组和目标数，找出所有和为目标数的组合，每个数字可以无限次使用。</p>
+<p><strong>思路</strong>：每次可以选择当前数字或跳过，选择后可以继续选择同一数字。</p>
+<pre><code class="language-cpp">
+#include &lt;bits/stdc++.h&gt;
+using namespace std;
+
+void backtrack(vector&lt;int&gt;&amp; candidates, int target, int start, vector&lt;int&gt;&amp; path, vector&lt;vector&lt;int&gt;&gt;&amp; result) {
+    if (target == 0) {
+        result.push_back(path);
+        return;
+    }
+    
+    if (target &lt; 0) return;
+    
+    for (int i = start; i &lt; candidates.size(); ++i) {
+        path.push_back(candidates[i]);
+        // 可以重复使用，所以还是从 i 开始
+        backtrack(candidates, target - candidates[i], i, path, result);
+        path.pop_back();
+    }
+}
+
+vector&lt;vector&lt;int&gt;&gt; combinationSum(vector&lt;int&gt;&amp; candidates, int target) {
+    vector&lt;vector&lt;int&gt;&gt; result;
+    vector&lt;int&gt; path;
+    backtrack(candidates, target, 0, path, result);
+    return result;
+}
+
+int main() {
+    int n, target;
+    cin &gt;&gt; n &gt;&gt; target;
+    
+    vector&lt;int&gt; candidates(n);
+    for (int i = 0; i &lt; n; ++i) {
+        cin &gt;&gt; candidates[i];
+    }
+    
+    vector&lt;vector&lt;int&gt;&gt; result = combinationSum(candidates, target);
+    
+    for (auto&amp; combo : result) {
+        for (int i = 0; i &lt; combo.size(); ++i) {
+            cout &lt;&lt; combo[i] &lt;&lt; &quot; \n&quot;[i == combo.size() - 1];
+        }
+    }
+    
+    return 0;
+}
+</code></pre>
+<p><strong>复杂度</strong>：时间 <code>O(n^(target/min))</code>，最坏情况</p>
+<p><strong>易错点</strong>：</p>
+<ul>
+<li>可以重复使用，递归时传 i 而不是 i+1</li>
+<ul>
+<li>剪枝：target < 0 时提前返回</li>
+<hr>
+<h3 id="例题-4n-皇后">例题 4：N 皇后</h3>
+<p><strong>题目</strong>：在 n×n 棋盘上放置 n 个皇后，使得它们不能互相攻击。</p>
+<p><strong>思路</strong>：逐行放置，检查列、对角线是否冲突。</p>
+<pre><code class="language-cpp">
+#include &lt;bits/stdc++.h&gt;
+using namespace std;
+
+bool isValid(vector&lt;string&gt;&amp; board, int row, int col, int n) {
+    // 检查列
+    for (int i = 0; i &lt; row; ++i) {
+        if (board[i][col] == 'Q') return false;
+    }
+    
+    // 检查左上对角线
+    for (int i = row - 1, j = col - 1; i &gt;= 0 &amp;&amp; j &gt;= 0; --i, --j) {
+        if (board[i][j] == 'Q') return false;
+    }
+    
+    // 检查右上对角线
+    for (int i = row - 1, j = col + 1; i &gt;= 0 &amp;&amp; j &lt; n; --i, ++j) {
+        if (board[i][j] == 'Q') return false;
+    }
+    
+    return true;
+}
+
+void backtrack(int row, int n, vector&lt;string&gt;&amp; board, vector&lt;vector&lt;string&gt;&gt;&amp; result) {
+    if (row == n) {
+        result.push_back(board);
+        return;
+    }
+    
+    for (int col = 0; col &lt; n; ++col) {
+        if (!isValid(board, row, col, n)) continue;
+        
+        board[row][col] = 'Q';
+        backtrack(row + 1, n, board, result);
+        board[row][col] = '.';
+    }
+}
+
+vector&lt;vector&lt;string&gt;&gt; solveNQueens(int n) {
+    vector&lt;vector&lt;string&gt;&gt; result;
+    vector&lt;string&gt; board(n, string(n, '.'));
+    backtrack(0, n, board, result);
+    return result;
+}
+
+int main() {
+    int n;
+    cin &gt;&gt; n;
+    
+    vector&lt;vector&lt;string&gt;&gt; result = solveNQueens(n);
+    
+    cout &lt;&lt; result.size() &lt;&lt; &quot;\n&quot;;
+    for (auto&amp; solution : result) {
+        for (auto&amp; row : solution) {
+            cout &lt;&lt; row &lt;&lt; &quot;\n&quot;;
+        }
+        cout &lt;&lt; &quot;\n&quot;;
+    }
+    
+    return 0;
+}
+</code></pre>
+<p><strong>复杂度</strong>：时间 <code>O(n!)</code>，空间 <code>O(n^2)</code></p>
+<p><strong>易错点</strong>：</p>
+<ul>
+<li>只需要检查上方、左上、右上，因为是逐行放置</li>
+<ul>
+<li>对角线检查：左上 (i-1, j-1)，右上 (i-1, j+1)</li>
+<hr>
+<h3 id="例题-5岛屿数量">例题 5：岛屿数量</h3>
+<p><strong>题目</strong>：给定二维网格，1 表示陆地，0 表示水，计算岛屿数量（连通的陆地）。</p>
+<p><strong>思路</strong>：DFS 遍历每个未访问的陆地，标记连通区域。</p>
+<pre><code class="language-cpp">
+#include &lt;bits/stdc++.h&gt;
+using namespace std;
+
+void dfs(vector&lt;vector&lt;char&gt;&gt;&amp; grid, int i, int j) {
+    int m = grid.size(), n = grid[0].size();
+    
+    if (i &lt; 0 || i &gt;= m || j &lt; 0 || j &gt;= n || grid[i][j] != '1') {
+        return;
+    }
+    
+    grid[i][j] = '0';  // 标记为已访问
+    
+    dfs(grid, i + 1, j);
+    dfs(grid, i - 1, j);
+    dfs(grid, i, j + 1);
+    dfs(grid, i, j - 1);
+}
+
+int numIslands(vector&lt;vector&lt;char&gt;&gt;&amp; grid) {
+    if (grid.empty()) return 0;
+    
+    int count = 0;
+    int m = grid.size(), n = grid[0].size();
+    
+    for (int i = 0; i &lt; m; ++i) {
+        for (int j = 0; j &lt; n; ++j) {
+            if (grid[i][j] == '1') {
+                count++;
+                dfs(grid, i, j);
+            }
+        }
+    }
+    
+    return count;
+}
+
+int main() {
+    int m, n;
+    cin &gt;&gt; m &gt;&gt; n;
+    
+    vector&lt;vector&lt;char&gt;&gt; grid(m, vector&lt;char&gt;(n));
+    for (int i = 0; i &lt; m; ++i) {
+        for (int j = 0; j &lt; n; ++j) {
+            cin &gt;&gt; grid[i][j];
+        }
+    }
+    
+    cout &lt;&lt; numIslands(grid) &lt;&lt; &quot;\n&quot;;
+    
+    return 0;
+}
+</code></pre>
+<p><strong>复杂度</strong>：时间 <code>O(m × n)</code>，空间 <code>O(m × n)</code> 递归栈</p>
+<p><strong>易错点</strong>：</p>
+<ul>
+<li>访问过的陆地要标记，避免重复访问</li>
+<ul>
+<li>边界检查要在递归函数开头</li>
+<hr>
+<h3 id="例题-6括号生成">例题 6：括号生成</h3>
+<p><strong>题目</strong>：生成 n 对有效括号的所有组合。</p>
+<p><strong>思路</strong>：回溯，左括号数不超过 n，右括号数不超过左括号数。</p>
+<pre><code class="language-cpp">
+#include &lt;bits/stdc++.h&gt;
+using namespace std;
+
+void backtrack(int left, int right, int n, string&amp; path, vector&lt;string&gt;&amp; result) {
+    if (path.size() == 2 * n) {
+        result.push_back(path);
+        return;
+    }
+    
+    // 可以添加左括号
+    if (left &lt; n) {
+        path.push_back('(');
+        backtrack(left + 1, right, n, path, result);
+        path.pop_back();
+    }
+    
+    // 可以添加右括号
+    if (right &lt; left) {
+        path.push_back(')');
+        backtrack(left, right + 1, n, path, result);
+        path.pop_back();
+    }
+}
+
+vector&lt;string&gt; generateParenthesis(int n) {
+    vector&lt;string&gt; result;
+    string path;
+    backtrack(0, 0, n, path, result);
+    return result;
+}
+
+int main() {
+    int n;
+    cin &gt;&gt; n;
+    
+    vector&lt;string&gt; result = generateParenthesis(n);
+    
+    for (auto&amp; s : result) {
+        cout &lt;&lt; s &lt;&lt; &quot;\n&quot;;
+    }
+    
+    return 0;
+}
+</code></pre>
+<p><strong>复杂度</strong>：时间 <code>O(4^n / √n)</code> 卡特兰数，空间 <code>O(n)</code></p>
+<p><strong>易错点</strong>：</p>
+<ul>
+<li>左括号数量不能超过 n</li>
+<ul>
+<li>右括号数量不能超过左括号数量</li>
+<ul>
+<li>这是隐式的剪枝</li>
+<hr>
+<h3 id="例题-7单词搜索">例题 7：单词搜索</h3>
+<p><strong>题目</strong>：给定二维字符网格和单词，判断单词是否存在于网格中（可以上下左右移动）。</p>
+<p><strong>思路</strong>：DFS + 回溯，尝试每个起点，标记访问过的位置。</p>
+<pre><code class="language-cpp">
+#include &lt;bits/stdc++.h&gt;
+using namespace std;
+
+bool dfs(vector&lt;vector&lt;char&gt;&gt;&amp; board, string&amp; word, int i, int j, int k) {
+    if (k == word.size()) return true;
+    
+    int m = board.size(), n = board[0].size();
+    
+    if (i &lt; 0 || i &gt;= m || j &lt; 0 || j &gt;= n || board[i][j] != word[k]) {
+        return false;
+    }
+    
+    char temp = board[i][j];
+    board[i][j] = '#';  // 标记为已访问
+    
+    bool found = dfs(board, word, i + 1, j, k + 1) ||
+                 dfs(board, word, i - 1, j, k + 1) ||
+                 dfs(board, word, i, j + 1, k + 1) ||
+                 dfs(board, word, i, j - 1, k + 1);
+    
+    board[i][j] = temp;  // 回溯
+    
+    return found;
+}
+
+bool exist(vector&lt;vector&lt;char&gt;&gt;&amp; board, string word) {
+    int m = board.size(), n = board[0].size();
+    
+    for (int i = 0; i &lt; m; ++i) {
+        for (int j = 0; j &lt; n; ++j) {
+            if (dfs(board, word, i, j, 0)) {
+                return true;
+            }
+        }
+    }
+    
+    return false;
+}
+
+int main() {
+    int m, n;
+    string word;
+    cin &gt;&gt; m &gt;&gt; n &gt;&gt; word;
+    
+    vector&lt;vector&lt;char&gt;&gt; board(m, vector&lt;char&gt;(n));
+    for (int i = 0; i &lt; m; ++i) {
+        for (int j = 0; j &lt; n; ++j) {
+            cin &gt;&gt; board[i][j];
+        }
+    }
+    
+    cout &lt;&lt; (exist(board, word) ? &quot;YES&quot; : &quot;NO&quot;) &lt;&lt; &quot;\n&quot;;
+    
+    return 0;
+}
+</code></pre>
+<p><strong>复杂度</strong>：时间 <code>O(m × n × 4^L)</code>，L 是单词长度</p>
+<p><strong>易错点</strong>：</p>
+<ul>
+<li>访问过的格子要临时标记，回溯时要恢复</li>
+<ul>
+<li>四个方向可以用数组简化：<code>dx[] = {0,0,1,-1}, dy[] = {1,-1,0,0}</code></li>
+<hr>
+<h3 id="例题-8分割回文串">例题 8：分割回文串</h3>
+<p><strong>题目</strong>：给定字符串，将其分割成若干回文子串，返回所有可能的分割方案。</p>
+<p><strong>思路</strong>：回溯，尝试每个分割点，检查子串是否是回文。</p>
+<pre><code class="language-cpp">
+#include &lt;bits/stdc++.h&gt;
+using namespace std;
+
+bool isPalindrome(const string&amp; s, int left, int right) {
+    while (left &lt; right) {
+        if (s[left++] != s[right--]) return false;
+    }
+    return true;
+}
+
+void backtrack(string&amp; s, int start, vector&lt;string&gt;&amp; path, vector&lt;vector&lt;string&gt;&gt;&amp; result) {
+    if (start == s.size()) {
+        result.push_back(path);
+        return;
+    }
+    
+    for (int end = start; end &lt; s.size(); ++end) {
+        if (isPalindrome(s, start, end)) {
+            path.push_back(s.substr(start, end - start + 1));
+            backtrack(s, end + 1, path, result);
+            path.pop_back();
+        }
+    }
+}
+
+vector&lt;vector&lt;string&gt;&gt; partition(string s) {
+    vector&lt;vector&lt;string&gt;&gt; result;
+    vector&lt;string&gt; path;
+    backtrack(s, 0, path, result);
+    return result;
+}
+
+int main() {
+    string s;
+    cin &gt;&gt; s;
+    
+    vector&lt;vector&lt;string&gt;&gt; result = partition(s);
+    
+    for (auto&amp; partition : result) {
+        for (int i = 0; i &lt; partition.size(); ++i) {
+            cout &lt;&lt; partition[i] &lt;&lt; &quot; \n&quot;[i == partition.size() - 1];
+        }
+    }
+    
+    return 0;
+}
+</code></pre>
+<p><strong>复杂度</strong>：时间 <code>O(n × 2^n)</code>，空间 <code>O(n)</code></p>
+<p><strong>易错点</strong>：</p>
+<ul>
+<li>子串的长度是 end - start + 1</li>
+<ul>
+<li>回文判断可以预处理用 DP 优化到 <code>O(n^2)</code> 预处理，<code>O(1)</code> 查询</li>
+<hr>
+<h2 id="常见陷阱">常见陷阱</h2>
+<ol>
+<li><strong>忘记回溯</strong>：做选择后要在递归返回时撤销选择</li>
+<ol>
+<li><strong>重复解</strong>：</li>
+<ul>
+<li>排序 + 跳过相同元素：<code>if (i > start && nums[i] == nums[i-1]) continue</code></li>
+<ul>
+<li>使用 set 去重（效率较低）</li>
+<ol>
+<li><strong>边界条件</strong>：</li>
+<ul>
+<li>数组越界、负数索引</li>
+<ul>
+<li>空字符串、空数组</li>
+<ol>
+<li><strong>visited 标记</strong>：</li>
+<ul>
+<li>全排列：需要 visited 数组</li>
+<ul>
+<li>组合/子集：用 start 参数控制</li>
+<ul>
+<li>网格问题：原地标记或额外 visited 数组</li>
+<ol>
+<li><strong>剪枝遗漏</strong>：不剪枝可能超时</li>
+<h2 id="适用场景总结">适用场景总结</h2>
+<table>
+<thead>
+<tr>
+<th>问题类型</th>
+<th>关键技巧</th>
+<th>时间复杂度</th>
+</tr>
+</thead>
+<tbody>
+<table>
+<thead>
+<tr>
+<th>---------</th>
+<th>---------</th>
+<th>-----------</th>
+</tr>
+</thead>
+<tbody>
+<table>
+<thead>
+<tr>
+<th>全排列</th>
+<th>visited 数组</th>
+<th>O(n × n!)</th>
+</tr>
+</thead>
+<tbody>
+<table>
+<thead>
+<tr>
+<th>组合/子集</th>
+<th>start 参数</th>
+<th>O(n × 2^n)</th>
+</tr>
+</thead>
+<tbody>
+<table>
+<thead>
+<tr>
+<th>组合总和</th>
+<th>可重复用传 i，不可重复传 i+1</th>
+<th>指数级</th>
+</tr>
+</thead>
+<tbody>
+<table>
+<thead>
+<tr>
+<th>N 皇后</th>
+<th>逐行放置 + 冲突检查</th>
+<th>O(n!)</th>
+</tr>
+</thead>
+<tbody>
+<table>
+<thead>
+<tr>
+<th>岛屿问题</th>
+<th>DFS 标记连通分量</th>
+<th>O(m × n)</th>
+</tr>
+</thead>
+<tbody>
+<table>
+<thead>
+<tr>
+<th>括号生成</th>
+<th>左右括号计数剪枝</th>
+<th>O(4^n / √n)</th>
+</tr>
+</thead>
+<tbody>
+<table>
+<thead>
+<tr>
+<th>单词搜索</th>
+<th>临时标记 + 回溯</th>
+<th>O(m × n × 4^L)</th>
+</tr>
+</thead>
+<tbody>
+<table>
+<thead>
+<tr>
+<th>分割问题</th>
+<th>枚举分割点</th>
+<th>O(n × 2^n)</th>
+</tr>
+</thead>
+<tbody>
+<p><strong>核心技巧</strong>：</p>
+<ul>
+<li>画决策树，明确选择和路径</li>
+<ul>
+<li>先写终止条件，再写选择逻辑</li>
+<ul>
+<li>做选择 → 递归 → 撤销选择（回溯三部曲）</li>
+<ul>
+<li>剪枝是优化的关键，想清楚什么情况不可能有解</li>
+
+        <div class="chapter-nav">
+    <a href="07-heap-greedy.html" class="prev-chapter">← 堆与贪心</a>
+    <a href="09-bfs-grid.html" class="next-chapter">BFS与网格 →</a>
+</div>
+    </main>
+
+    <script>
+        // 主题切换
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+        }
+
+        // 加载保存的主题
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+        }
+
+        // 侧边栏切换
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('collapsed');
+        }
+
+        // 进度条
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.documentElement.style.setProperty('--scroll-progress', scrolled + '%');
+        });
+
+        // 目录高亮
+        const sections = document.querySelectorAll('h2[id]');
+        const tocLinks = document.querySelectorAll('.toc a');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (scrollY >= sectionTop - 100) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            tocLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        // 代码高亮
+        hljs.highlightAll();
+    </script>
+</body>
+</html>
