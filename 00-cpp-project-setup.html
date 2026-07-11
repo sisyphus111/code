@@ -35,35 +35,11 @@
     <div class="nav"><a href="index.html">← 返回主页</a></div>
 
     <h1>00 从零构建 C++ 项目</h1>
-    <p>这一节解决的不是某道算法题，而是更基础的问题：拿到一台机器和一个空目录后，怎样创建源码、编译、运行、组织多文件代码，并用 CMake 管理项目。</p>
+    <p>这一节只解决两种最常见的构建场景：单文件程序直接用 <code>g++</code>，多文件项目用 CMake。</p>
 
-    <div class="tip"><strong>先建立整体模型：</strong>你写的是源码；编译器把源码变成可执行文件；终端负责启动编译器和程序；CMake 负责描述并生成整套构建规则。</div>
+    <div class="tip"><strong>选择方法：</strong>只有一个 <code>main.cpp</code> 时不需要 CMake；出现多个 <code>.cpp</code>、头文件或第三方库后，再用 CMake 统一管理构建规则。</div>
 
-    <h2>1. 命令行：在终端里操作项目</h2>
-    <p>终端中的每条命令都在一个“当前目录”下执行。先学会确认位置、查看文件、创建目录和切换目录。</p>
-    <table>
-        <thead><tr><th>命令</th><th>作用</th><th>示例</th></tr></thead>
-        <tbody>
-            <tr><td><code>pwd</code></td><td>显示当前目录的完整路径</td><td><code>pwd</code></td></tr>
-            <tr><td><code>ls</code></td><td>列出当前目录内容</td><td><code>ls -la</code></td></tr>
-            <tr><td><code>cd</code></td><td>切换目录；<code>..</code> 表示上一级</td><td><code>cd project</code>、<code>cd ..</code></td></tr>
-            <tr><td><code>mkdir</code></td><td>创建目录</td><td><code>mkdir -p src include</code></td></tr>
-            <tr><td><code>touch</code></td><td>创建空文件</td><td><code>touch src/main.cpp</code></td></tr>
-            <tr><td><code>cp</code></td><td>复制文件或目录</td><td><code>cp input.txt input.bak</code></td></tr>
-            <tr><td><code>mv</code></td><td>移动或重命名</td><td><code>mv old.cpp main.cpp</code></td></tr>
-            <tr><td><code>rm</code></td><td>删除文件；通常无法从回收站恢复</td><td><code>rm old.cpp</code></td></tr>
-        </tbody>
-    </table>
-    <div class="warning"><strong>路径要分清：</strong><code>main.cpp</code> 和 <code>./main.cpp</code> 都指当前目录中的文件；<code>../main.cpp</code> 指上一级目录中的文件；以 <code>/</code> 开头的是绝对路径。</div>
-
-    <p>从空目录创建项目：</p>
-    <pre><code>mkdir hello_cpp
-cd hello_cpp
-mkdir src include
-touch src/main.cpp
-ls -R</code></pre>
-
-    <h2>2. C++ 程序从源码到运行</h2>
+    <h2>1. 单文件：直接使用 g++</h2>
     <p>最小程序只需要一个入口函数 <code>main</code>：</p>
     <pre><code>#include &lt;iostream&gt;
 
@@ -72,9 +48,9 @@ int main() {
     return 0;
 }</code></pre>
 
-    <p>用编译器直接构建。macOS 常见 <code>clang++</code>，Linux 和很多机试环境常见 <code>g++</code>；二者在这里的用法基本一致。</p>
-    <pre><code>g++ -std=c++17 -Wall -Wextra -O2 src/main.cpp -o hello
-./hello</code></pre>
+    <p>将代码保存为 <code>main.cpp</code>，用下面两条命令编译并运行：</p>
+    <pre><code>g++ -std=c++17 -Wall -Wextra -O2 main.cpp -o main
+./main</code></pre>
 
     <table>
         <thead><tr><th>参数</th><th>含义</th></tr></thead>
@@ -82,8 +58,8 @@ int main() {
             <tr><td><code>-std=c++17</code></td><td>使用 C++17 标准；机试前应确认允许的标准版本</td></tr>
             <tr><td><code>-Wall -Wextra</code></td><td>打开常用警告，尽早发现可疑代码</td></tr>
             <tr><td><code>-O2</code></td><td>开启常用优化；调试阶段也可以先用 <code>-O0 -g</code></td></tr>
-            <tr><td><code>-o hello</code></td><td>把生成的可执行文件命名为 <code>hello</code></td></tr>
-            <tr><td><code>./hello</code></td><td>运行当前目录下的可执行文件；不能只写 <code>hello</code></td></tr>
+            <tr><td><code>main.cpp</code></td><td>需要编译的源文件</td></tr>
+            <tr><td><code>-o main</code></td><td>把生成的可执行文件命名为 <code>main</code></td></tr>
         </tbody>
     </table>
 
@@ -96,12 +72,21 @@ int main() {
     std::cin &gt;&gt; a &gt;&gt; b;
     std::cout &lt;&lt; a + b &lt;&lt; '\n';
 }</code></pre>
-    <pre><code>echo "3 5" | ./hello          # 把字符串作为程序输入
-./hello &lt; input.txt           # 从文件读取输入
-./hello &lt; input.txt &gt; out.txt # 输入和输出都重定向
+    <pre><code>echo "3 5" | ./main          # 把字符串作为程序输入
+./main &lt; input.txt           # 从文件读取输入
+./main &lt; input.txt &gt; out.txt # 输入和输出都重定向
 diff out.txt answer.txt       # 比较实际输出与标准答案</code></pre>
 
-    <h2>3. 编译到底经历了什么</h2>
+    <h3>调试版本与提交版本</h3>
+    <pre><code># 调试：保留调试信息，并开启运行时错误检查
+g++ -std=c++17 -Wall -Wextra -O0 -g \
+    -fsanitize=address,undefined main.cpp -o main
+
+# 提交前：使用常见优化参数
+g++ -std=c++17 -Wall -Wextra -O2 main.cpp -o main</code></pre>
+    <p>AddressSanitizer 可以发现数组越界、use-after-free 等内存错误；UndefinedBehaviorSanitizer 可以发现有符号整数溢出等未定义行为。部分机试环境不提供 sanitizer，因此它们主要用于本地调试，不要把 sanitizer 参数带进最终提交环境。</p>
+
+    <h2>2. 从源码到可执行文件</h2>
     <ol>
         <li><strong>预处理：</strong>展开 <code>#include</code>、宏和条件编译。</li>
         <li><strong>编译：</strong>检查 C++ 语法与类型，把每个源文件变成目标文件。</li>
@@ -109,7 +94,7 @@ diff out.txt answer.txt       # 比较实际输出与标准答案</code></pre>
     </ol>
     <p>因此错误也分两类：看到 <code>syntax error</code>、类型不匹配通常是编译错误；看到 <code>undefined reference</code> 或 <code>Undefined symbols</code> 通常是链接阶段找不到某个函数的实现。</p>
 
-    <h2>4. 从单文件变成多文件项目</h2>
+    <h2>3. 多文件项目的结构</h2>
     <p>常见结构是头文件声明接口，源文件提供实现，<code>main.cpp</code> 负责组织程序流程：</p>
     <pre><code>hello_cpp/
 ├── CMakeLists.txt
@@ -136,12 +121,9 @@ int add(int a, int b) {
 int main() {
     std::cout &lt;&lt; add(3, 5) &lt;&lt; '\n';
 }</code></pre>
-    <p>暂时不用 CMake 时，可以把两个源文件同时交给编译器，并用 <code>-I</code> 指定头文件目录：</p>
-    <pre><code>g++ -std=c++17 -Wall -Wextra -Iinclude \
-    src/main.cpp src/calculator.cpp -o calculator
-./calculator</code></pre>
+    <p><code>calculator.h</code> 声明模块向外提供的接口，<code>calculator.cpp</code> 实现接口，<code>main.cpp</code> 只负责程序入口和整体流程。接下来由 CMake 统一管理这些文件。</p>
 
-    <h2>5. CMake：描述项目怎样构建</h2>
+    <h2>4. 用 CMake 构建多文件项目</h2>
     <p>CMake 不是编译器。它读取 <code>CMakeLists.txt</code>，生成适合当前平台的构建系统，再由该构建系统调用编译器。</p>
     <p>项目根目录的 <code>CMakeLists.txt</code>：</p>
     <pre><code>cmake_minimum_required(VERSION 3.16)
@@ -187,7 +169,7 @@ cmake --build build
         <li>切换编译器、生成器或重要配置：删除旧 <code>build/</code> 后重新配置，避免缓存冲突。</li>
     </ul>
 
-    <h2>6. Debug 与 Release</h2>
+    <h2>5. Debug 与 Release</h2>
     <table>
         <thead><tr><th>模式</th><th>特点</th><th>适合场景</th></tr></thead>
         <tbody>
@@ -201,47 +183,39 @@ cmake --build build-debug
 cmake -S . -B build-release -DCMAKE_BUILD_TYPE=Release
 cmake --build build-release</code></pre>
 
-    <h2>7. 最常见的错误怎么判断</h2>
+    <h2>6. 最常见的错误怎么判断</h2>
     <table>
         <thead><tr><th>现象</th><th>先检查什么</th></tr></thead>
         <tbody>
             <tr><td><code>command not found: cmake</code></td><td>CMake 是否安装，以及可执行文件是否位于 <code>PATH</code></td></tr>
             <tr><td><code>fatal error: xxx.h: No such file</code></td><td>头文件名是否正确，include 目录是否通过 <code>-I</code> 或 CMake 加入</td></tr>
             <tr><td><code>undefined reference</code></td><td>函数是否只有声明没有实现，或实现所在的 <code>.cpp</code> 是否加入构建目标</td></tr>
-            <tr><td><code>permission denied</code></td><td>是否在运行源码文件，或可执行文件是否缺少执行权限</td></tr>
             <tr><td><code>./program: no such file</code></td><td>编译是否成功、程序实际生成在哪个目录、文件名是否正确</td></tr>
             <tr><td>修改后运行结果没变化</td><td>是否重新构建，以及运行的是不是另一个目录中的旧程序</td></tr>
         </tbody>
     </table>
     <div class="tip"><strong>排错原则：</strong>先看终端输出的第一条错误，而不是最后一条；后面的错误经常只是第一处失败引发的连锁反应。</div>
 
-    <h2>8. 从零开始时的固定动作</h2>
+    <h2>7. 从零开始时的固定动作</h2>
     <ol>
-        <li>运行 <code>pwd</code> 和 <code>ls</code>，确认自己在哪里、已有些什么。</li>
-        <li>建立 <code>src/</code>、<code>include/</code> 和根目录的 <code>CMakeLists.txt</code>。</li>
-        <li>先写一个能打印固定字符串的最小 <code>main.cpp</code>，打通构建链路。</li>
+        <li>只有一个 <code>main.cpp</code> 时，先用 <code>g++</code> 直接编译运行，不引入 CMake。</li>
+        <li>先让最小程序成功运行，再开始添加算法或业务逻辑。</li>
+        <li>需要拆分模块时，建立 <code>src/</code>、<code>include/</code> 和根目录的 <code>CMakeLists.txt</code>。</li>
         <li>用 <code>cmake -S . -B build</code> 配置，用 <code>cmake --build build</code> 构建。</li>
-        <li>运行最小程序，确认输入、输出和工作目录符合预期。</li>
-        <li>再逐步添加业务模块或算法；每增加一小步就重新构建验证。</li>
-        <li>提交前用多组输入测试，并用 Release 模式检查性能。</li>
+        <li>每增加一个源文件，都把它加入对应的 <code>add_executable</code> 或 <code>add_library</code>。</li>
+        <li>提交前使用多组输入测试，并用 Release 模式检查性能。</li>
     </ol>
 
-    <h2>9. 一分钟速查</h2>
-    <pre><code># 看环境
-pwd
-ls -la
-g++ --version
-cmake --version
-
-# 直接编译单文件
+    <h2>8. 一分钟速查</h2>
+    <pre><code># 单文件：g++
 g++ -std=c++17 -Wall -Wextra -O2 main.cpp -o main
 ./main &lt; input.txt
 
-# 构建 CMake 项目
+# 多文件：CMake
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
 cmake --build build
 ./build/程序名</code></pre>
-    <p class="muted">掌握这一节的标准：不依赖 IDE 的“运行”按钮，也能在空目录中创建并运行一个多文件 C++ 项目；看到编译或链接错误时，知道应该从哪一层开始检查。</p>
+    <p class="muted">掌握标准：能独立用 <code>g++</code> 构建单文件程序；能根据 <code>CMakeLists.txt</code> 构建多文件项目；看到编译或链接错误时知道从哪一层检查。</p>
 
     <div class="nav"><a href="index.html">← 返回主页</a> · <a href="01-simulation.html">下一章：模拟与枚举 →</a></div>
     <script>
