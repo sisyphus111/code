@@ -3,13 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>C++ STL使用 - C++算法竞赛</title>
+    <title>STL 板块：总览与速查</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-    <h1>C++ STL 使用指南</h1>
-<h2>容器</h2>
+    <h1>STL 板块：总览与速查</h1>
+    <p>STL 不只是一组可以背诵的函数。容器的底层结构决定了它怎样分配内存、复制元素、返回引用，以及插入删除后哪些指针和迭代器还有效。先建立统一对象模型，再选择具体容器，代码才不容易“能编译但行为不对”。</p>
+    <div class="tip"><strong>固定学习问题：</strong>每种结构都要回答：元素存在哪里？容器是否拥有元素？复制和移动做了什么？函数参数会不会复制？访问返回值还是引用？修改后引用和迭代器是否失效？</div>
+
+    <h2>板块导航</h2>
+    <div class="chapter-grid">
+        <a class="chapter-card chapter-card--featured" href="stl-value-semantics.html"><span class="chapter-card__number">STL 01</span><span class="chapter-card__title">对象语义、构造与传参</span><span class="chapter-card__desc">值语义、所有权、copy/move、引用、const 与返回值。</span></a>
+        <a class="chapter-card chapter-card--featured" href="stl-sequence-containers.html"><span class="chapter-card__number">STL 02</span><span class="chapter-card__title">序列容器的底层行为</span><span class="chapter-card__desc">array、vector、string、deque、list 的存储与失效规则。</span></a>
+        <a class="chapter-card chapter-card--featured" href="stl-associative-containers.html"><span class="chapter-card__number">STL 03</span><span class="chapter-card__title">树容器与哈希容器</span><span class="chapter-card__desc">map/set 与 unordered 系列的查找、插入和引用稳定性。</span></a>
+        <a class="chapter-card chapter-card--featured" href="stl-adapters-iterators.html"><span class="chapter-card__number">STL 04</span><span class="chapter-card__title">适配器、迭代器与算法</span><span class="chapter-card__desc">stack、queue、priority_queue、范围语义与算法修改行为。</span></a>
+    </div>
+
+<h2>常用写法速查</h2>
+<h3>容器</h3>
 <h3>vector - 动态数组</h3>
 <pre><code>vector&lt;int&gt; v;              // 空
 vector&lt;int&gt; v(n);           // n 个 0

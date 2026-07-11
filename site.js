@@ -2,7 +2,11 @@ const chapters = [
     { file: "00-cpp-project-setup.html", label: "基础 01", title: "单文件 g++ 与多文件 CMake", group: "基础" },
     { file: "io-handling.html", label: "基础 02", title: "输入输出与 CLI 工具", group: "基础" },
     { file: "exception-handling.html", label: "基础 03", title: "异常处理与错误边界", group: "基础" },
-    { file: "cpp-stl.html", label: "基础 04", title: "C++ STL 使用指南", group: "基础" },
+    { file: "cpp-stl.html", label: "STL 00", title: "STL 板块总览与速查", group: "STL" },
+    { file: "stl-value-semantics.html", label: "STL 01", title: "对象语义、构造与传参", group: "STL" },
+    { file: "stl-sequence-containers.html", label: "STL 02", title: "序列容器的底层行为", group: "STL" },
+    { file: "stl-associative-containers.html", label: "STL 03", title: "树容器与哈希容器", group: "STL" },
+    { file: "stl-adapters-iterators.html", label: "STL 04", title: "适配器、迭代器与算法", group: "STL" },
     { file: "01-simulation.html", label: "01", title: "模拟与枚举", group: "算法" },
     { file: "02-hash-and-counting.html", label: "02", title: "哈希表与计数", group: "算法" },
     { file: "03-two-pointers-sliding-window.html", label: "03", title: "双指针与滑动窗口", group: "算法" },
@@ -68,7 +72,7 @@ function createChapterSelect(current) {
     const select = document.createElement("select");
     select.className = "chapter-select";
     select.setAttribute("aria-label", "跳转到章节");
-    for (const groupName of ["基础", "算法", "附录"]) {
+    for (const groupName of ["基础", "STL", "算法", "附录"]) {
         const group = document.createElement("optgroup");
         group.label = groupName;
         for (const chapter of chapters.filter((item) => item.group === groupName)) {
