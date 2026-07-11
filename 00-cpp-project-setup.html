@@ -4,35 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>00 从零构建 C++ 项目</title>
-    <style>
-        :root { --bg:#fff; --text:#333; --muted:#666; --code-bg:#f5f5f5; --border:#ddd; --link:#06c; --heading-border:#333; --tip-bg:#f4f8ff; --warn-bg:#fff8e6; }
-        body.dark-mode { --bg:#1e1e1e; --text:#d4d4d4; --muted:#aaa; --code-bg:#2d2d2d; --border:#404040; --link:#4db8ff; --heading-border:#d4d4d4; --tip-bg:#202b3a; --warn-bg:#332d1e; }
-        body { max-width:900px; margin:40px auto; padding:0 20px; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; font-size:16px; line-height:1.7; background:var(--bg); color:var(--text); transition:background-color .3s,color .3s; }
-        h1 { font-size:32px; margin:40px 0 20px; border-bottom:2px solid var(--heading-border); padding-bottom:10px; }
-        h2 { font-size:24px; margin:36px 0 15px; }
-        h3 { font-size:20px; margin:24px 0 10px; }
-        p { margin:10px 0; }
-        pre { background:var(--code-bg); border:1px solid var(--border); border-radius:3px; padding:15px; overflow-x:auto; font-size:14px; line-height:1.5; margin:15px 0; }
-        code { background:var(--code-bg); padding:2px 5px; border-radius:3px; font-family:"SF Mono",Monaco,Consolas,monospace; font-size:14px; }
-        pre code { background:none; padding:0; }
-        table { width:100%; border-collapse:collapse; margin:20px 0; }
-        th,td { border:1px solid var(--border); padding:8px 12px; text-align:left; vertical-align:top; }
-        th { background:var(--code-bg); font-weight:600; }
-        ul,ol { margin:10px 0; padding-left:30px; }
-        li { margin:6px 0; }
-        a { color:var(--link); text-decoration:none; }
-        a:hover { text-decoration:underline; }
-        .nav { margin:40px 0; padding:15px 0; border-top:1px solid var(--border); border-bottom:1px solid var(--border); }
-        .tip,.warning { border-left:4px solid var(--link); padding:10px 14px; margin:16px 0; background:var(--tip-bg); }
-        .warning { border-left-color:#d18b00; background:var(--warn-bg); }
-        .muted { color:var(--muted); }
-        .theme-toggle { position:fixed; top:20px; right:20px; background:var(--code-bg); border:1px solid var(--border); border-radius:5px; width:40px; height:40px; cursor:pointer; font-size:20px; display:flex; align-items:center; justify-content:center; }
-        @media print { body{margin:0;padding:20px}.nav,.theme-toggle{display:none} }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <button class="theme-toggle" onclick="toggleTheme()" aria-label="切换深色模式"><span class="theme-icon">🌙</span></button>
-    <div class="nav"><a href="index.html">← 返回主页</a></div>
 
     <h1>00 从零构建 C++ 项目</h1>
     <p>这一节只解决两种最常见的构建场景：单文件程序直接用 <code>g++</code>，多文件项目用 CMake。</p>
@@ -253,14 +227,6 @@ cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
 cmake --build build
 ./build/程序名</code></pre>
     <p class="muted">掌握标准：能独立用 <code>g++</code> 构建单文件程序；能根据 <code>CMakeLists.txt</code> 构建多文件项目；看到编译或链接错误时知道从哪一层检查。</p>
-
-    <div class="nav"><a href="index.html">← 返回主页</a> · <a href="01-simulation.html">下一章：模拟与枚举 →</a></div>
-    <script>
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme === 'dark') document.body.classList.add('dark-mode');
-        function updateThemeIcon() { document.querySelector('.theme-icon').textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙'; }
-        function toggleTheme() { document.body.classList.toggle('dark-mode'); localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light'); updateThemeIcon(); }
-        updateThemeIcon();
-    </script>
+    <script defer src="site.js"></script>
 </body>
 </html>

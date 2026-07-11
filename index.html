@@ -3,237 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>主页 - C++算法竞赛</title>
-    <style>
-        :root {
-            --bg: #ffffff;
-            --text: #333333;
-            --code-bg: #f5f5f5;
-            --border: #dddddd;
-            --link: #0066cc;
-            --heading-border: #333333;
-        }
-
-        body.dark-mode {
-            --bg: #1e1e1e;
-            --text: #d4d4d4;
-            --code-bg: #2d2d2d;
-            --border: #404040;
-            --link: #4db8ff;
-            --heading-border: #d4d4d4;
-        }
-
-        body {
-            max-width: 900px;
-            margin: 40px auto;
-            padding: 0 20px;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-            font-size: 16px;
-            line-height: 1.6;
-            background: var(--bg);
-            color: var(--text);
-            transition: background-color 0.3s, color 0.3s;
-        }
-
-        h1 { font-size: 32px; margin: 40px 0 20px; border-bottom: 2px solid var(--heading-border); padding-bottom: 10px; }
-        h2 { font-size: 24px; margin: 30px 0 15px; }
-        h3 { font-size: 20px; margin: 20px 0 10px; }
-        h4 { font-size: 18px; margin: 20px 0 10px; }
-
-        p { margin: 10px 0; }
-
-        pre {
-            background: var(--code-bg);
-            border: 1px solid var(--border);
-            border-radius: 3px;
-            padding: 15px;
-            overflow-x: auto;
-            font-size: 14px;
-            line-height: 1.4;
-            margin: 15px 0;
-        }
-
-        code {
-            background: var(--code-bg);
-            padding: 2px 5px;
-            border-radius: 3px;
-            font-family: "SF Mono", Monaco, Consolas, monospace;
-            font-size: 14px;
-        }
-
-        pre code {
-            background: none;
-            padding: 0;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-        }
-
-        th, td {
-            border: 1px solid var(--border);
-            padding: 8px 12px;
-            text-align: left;
-        }
-
-        th {
-            background: var(--code-bg);
-            font-weight: 600;
-        }
-
-        ul, ol {
-            margin: 10px 0;
-            padding-left: 30px;
-        }
-
-        li {
-            margin: 5px 0;
-        }
-
-        a {
-            color: var(--link);
-            text-decoration: none;
-        }
-
-        a:hover {
-            text-decoration: underline;
-        }
-
-        strong {
-            font-weight: 600;
-        }
-
-        .nav {
-            margin: 40px 0;
-            padding: 15px 0;
-            border-top: 1px solid var(--border);
-            border-bottom: 1px solid var(--border);
-        }
-
-        .nav a {
-            margin-right: 20px;
-        }
-
-        .theme-toggle {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: var(--code-bg);
-            border: 1px solid var(--border);
-            border-radius: 5px;
-            width: 40px;
-            height: 40px;
-            cursor: pointer;
-            font-size: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background-color 0.3s, border-color 0.3s;
-        }
-
-        .theme-toggle:hover {
-            opacity: 0.8;
-        }
-
-        @media print {
-            body { margin: 0; padding: 20px; }
-            .nav { display: none; }
-            .theme-toggle { display: none; }
-        }
-    </style>
+    <title>C++ 夏令营机试学习手册</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <button class="theme-toggle" onclick="toggleTheme()" aria-label="切换深色模式">
-        <span class="theme-icon">🌙</span>
-    </button>
+    <section class="home-hero">
+        <p class="home-eyebrow">Summer Camp Coding Guide</p>
+        <h1>C++ 夏令营机试<br>学习手册</h1>
+        <p class="home-lead">从构建一个能运行的程序开始，逐步掌握输入输出、常用算法与数据结构。内容按真实项目流程组织，也适合考前快速复习。</p>
+    </section>
 
-    <div class="nav">
-        <a href="index.html">← 返回主页</a>
-    </div>
+    <section class="home-section" id="foundations">
+        <div class="home-section__head">
+            <h2>先写出能运行的程序</h2>
+            <p>在算法之前，先打通构建、输入输出、文件处理和 CLI 接口。</p>
+        </div>
+        <div class="chapter-grid">
+            <a class="chapter-card chapter-card--featured" href="00-cpp-project-setup.html">
+                <span class="chapter-card__number">基础 01</span>
+                <span class="chapter-card__title">单文件 g++ 与多文件 CMake</span>
+                <span class="chapter-card__desc">编译、链接、目录组织和标准 CMake 构建流程。</span>
+            </a>
+            <a class="chapter-card chapter-card--featured" href="io-handling.html">
+                <span class="chapter-card__number">基础 02</span>
+                <span class="chapter-card__title">输入输出、文件读写与 CLI</span>
+                <span class="chapter-card__desc">stdin、stdout、参数解析、退出码和完整 CLI 示例。</span>
+            </a>
+            <a class="chapter-card chapter-card--featured" href="cpp-stl.html">
+                <span class="chapter-card__number">基础 03</span>
+                <span class="chapter-card__title">C++ STL 使用指南</span>
+                <span class="chapter-card__desc">容器、迭代器、算法与竞赛中最常用的标准库能力。</span>
+            </a>
+        </div>
+    </section>
 
-    <h1>C++ 算法竞赛学习文档</h1>
+    <section class="home-section" id="algorithms">
+        <div class="home-section__head">
+            <h2>算法与数据结构</h2>
+            <p>建议按编号顺序学习；每一章都可以通过底部索引连续翻页。</p>
+        </div>
+        <div class="chapter-grid">
+            <a class="chapter-card" href="01-simulation.html"><span class="chapter-card__number">01</span><span class="chapter-card__title">模拟与枚举</span></a>
+            <a class="chapter-card" href="02-hash-and-counting.html"><span class="chapter-card__number">02</span><span class="chapter-card__title">哈希表与计数</span></a>
+            <a class="chapter-card" href="03-two-pointers-sliding-window.html"><span class="chapter-card__number">03</span><span class="chapter-card__title">双指针与滑动窗口</span></a>
+            <a class="chapter-card" href="04-prefix-sum-difference.html"><span class="chapter-card__number">04</span><span class="chapter-card__title">前缀和与差分</span></a>
+            <a class="chapter-card" href="05-binary-search.html"><span class="chapter-card__number">05</span><span class="chapter-card__title">二分查找与二分答案</span></a>
+            <a class="chapter-card" href="06-stack-queue-monotonic.html"><span class="chapter-card__number">06</span><span class="chapter-card__title">栈、队列与单调结构</span></a>
+            <a class="chapter-card" href="07-heap-greedy.html"><span class="chapter-card__number">07</span><span class="chapter-card__title">堆与贪心</span></a>
+            <a class="chapter-card" href="08-dfs-backtrack.html"><span class="chapter-card__number">08</span><span class="chapter-card__title">DFS 与回溯</span></a>
+            <a class="chapter-card" href="09-bfs-grid.html"><span class="chapter-card__number">09</span><span class="chapter-card__title">BFS 与网格问题</span></a>
+            <a class="chapter-card" href="10-union-find.html"><span class="chapter-card__number">10</span><span class="chapter-card__title">并查集</span></a>
+            <a class="chapter-card" href="11-graph-traversal.html"><span class="chapter-card__number">11</span><span class="chapter-card__title">图的遍历与连通性</span></a>
+            <a class="chapter-card" href="12-shortest-path.html"><span class="chapter-card__number">12</span><span class="chapter-card__title">最短路径</span></a>
+            <a class="chapter-card" href="13-topological-sort.html"><span class="chapter-card__number">13</span><span class="chapter-card__title">拓扑排序与 DAG</span></a>
+            <a class="chapter-card" href="14-dynamic-programming.html"><span class="chapter-card__number">14</span><span class="chapter-card__title">动态规划</span></a>
+            <a class="chapter-card" href="15-tree.html"><span class="chapter-card__number">15</span><span class="chapter-card__title">树</span></a>
+            <a class="chapter-card" href="16-advanced-data-structures.html"><span class="chapter-card__number">16</span><span class="chapter-card__title">高级数据结构</span></a>
+            <a class="chapter-card" href="17-math-number-theory.html"><span class="chapter-card__number">17</span><span class="chapter-card__title">数学与数论</span></a>
+            <a class="chapter-card" href="18-bit-manipulation.html"><span class="chapter-card__number">18</span><span class="chapter-card__title">位运算</span></a>
+        </div>
+    </section>
 
-    <p>面向研究生夏令营机试、保研机考的系统性学习材料。</p>
+    <section class="home-section" id="references">
+        <div class="home-section__head">
+            <h2>速查与复习</h2>
+            <p>写题和考前复习时，快速定位常用模板与标准写法。</p>
+        </div>
+        <div class="chapter-grid">
+            <a class="chapter-card" href="templates.html"><span class="chapter-card__number">附录 A</span><span class="chapter-card__title">C++ 算法模板库</span></a>
+        </div>
+    </section>
 
-    <h2>开始之前：写出一个能运行的 C++ 程序</h2>
-    <p>如果机试要求从零实现一个项目，应先掌握构建、输入输出和 CLI 程序接口，再开始学习具体算法。</p>
-    <ol>
-        <li><a href="00-cpp-project-setup.html"><strong>基础 01：单文件 g++ 与多文件 CMake</strong></a></li>
-        <li><a href="io-handling.html"><strong>基础 02：C++ 输入输出、文件读写与 CLI 工具</strong></a></li>
-    </ol>
-
-    <h2>核心章节</h2>
-    <ol>
-        <li><a href="01-simulation.html">01 模拟与枚举</a></li>
-        <li><a href="02-hash-and-counting.html">02 哈希表与计数</a></li>
-        <li><a href="03-two-pointers-sliding-window.html">03 双指针与滑动窗口</a></li>
-        <li><a href="04-prefix-sum-difference.html">04 前缀和与差分</a></li>
-        <li><a href="05-binary-search.html">05 二分查找与二分答案</a></li>
-        <li><a href="06-stack-queue-monotonic.html">06 栈、队列与单调结构</a></li>
-        <li><a href="07-heap-greedy.html">07 堆与贪心</a></li>
-        <li><a href="08-dfs-backtrack.html">08 DFS与回溯</a></li>
-        <li><a href="09-bfs-grid.html">09 BFS与网格问题</a></li>
-        <li><a href="10-union-find.html">10 并查集</a></li>
-        <li><a href="11-graph-traversal.html">11 图的遍历与连通性</a></li>
-        <li><a href="12-shortest-path.html">12 最短路径</a></li>
-        <li><a href="13-topological-sort.html">13 拓扑排序与DAG</a></li>
-        <li><a href="14-dynamic-programming.html">14 动态规划</a></li>
-        <li><a href="15-tree.html">15 树</a></li>
-        <li><a href="16-advanced-data-structures.html">16 高级数据结构</a></li>
-        <li><a href="17-math-number-theory.html">17 数学与数论</a></li>
-        <li><a href="18-bit-manipulation.html">18 位运算</a></li>
-    </ol>
-
-    <h2>附录</h2>
-    <ul>
-        <li><a href="cpp-stl.html">C++ STL使用</a></li>
-        <li><a href="templates.html">算法模板库</a></li>
-    </ul>
-
-    <h2>使用建议</h2>
-    <p><strong>学习路径：</strong></p>
-    <ol>
-        <li>先完成构建与 CLI 两个基础章节，确保能独立创建、编译和运行程序</li>
-        <li>再看 C++ STL 附录了解常用容器和算法</li>
-        <li>按章节顺序学习（01→18）</li>
-        <li>重点突破动态规划（第14章）</li>
-        <li>考前复习使用算法模板库</li>
-    </ol>
-
-    <p><strong>练习方法：</strong></p>
-    <ul>
-        <li>每个例题自己敲一遍代码</li>
-        <li>限时训练：2-3小时完成3-4题</li>
-        <li>总结每个题型的识别特征</li>
-        <li>反复练习不熟练的模板</li>
-    </ul>
+    <section class="home-section">
+        <div class="home-section__head">
+            <h2>推荐学习路径</h2>
+            <p>每一步都以“自己能从零写出来”为完成标准。</p>
+        </div>
+        <ol class="study-path">
+            <li>先完成构建与 CLI 两章，确保程序能够正确编译、运行和处理输入输出。</li>
+            <li>掌握 STL 常用容器与算法，减少重复造轮子和低级实现错误。</li>
+            <li>按 01—18 依次学习算法章节，每个例题都亲手实现并测试。</li>
+            <li>最后使用模板库复习，进行 2—3 小时的完整限时模拟。</li>
+        </ol>
+    </section>
 
 
-    <script>
-        // 加载保存的主题
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme === 'dark') {
-            document.body.classList.add('dark-mode');
-        }
-
-        // 更新按钮图标
-        function updateThemeIcon() {
-            const icon = document.querySelector('.theme-icon');
-            icon.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
-        }
-
-        // 切换主题
-        function toggleTheme() {
-            document.body.classList.toggle('dark-mode');
-            const theme = document.body.classList.contains('dark-mode') ? 'dark' : 'light';
-            localStorage.setItem('theme', theme);
-            updateThemeIcon();
-        }
-
-        // 初始化图标
-        updateThemeIcon();
-    </script>
+    <script defer src="site.js"></script>
 </body>
 </html>

@@ -4,154 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>11 图的遍历与连通性 - C++算法竞赛</title>
-    <style>
-        :root {
-            --bg: #ffffff;
-            --text: #333333;
-            --code-bg: #f5f5f5;
-            --border: #dddddd;
-            --link: #0066cc;
-            --heading-border: #333333;
-        }
-
-        body.dark-mode {
-            --bg: #1e1e1e;
-            --text: #d4d4d4;
-            --code-bg: #2d2d2d;
-            --border: #404040;
-            --link: #4db8ff;
-            --heading-border: #d4d4d4;
-        }
-
-        body {
-            max-width: 900px;
-            margin: 40px auto;
-            padding: 0 20px;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-            font-size: 16px;
-            line-height: 1.6;
-            background: var(--bg);
-            color: var(--text);
-            transition: background-color 0.3s, color 0.3s;
-        }
-
-        h1 { font-size: 32px; margin: 40px 0 20px; border-bottom: 2px solid var(--heading-border); padding-bottom: 10px; }
-        h2 { font-size: 24px; margin: 30px 0 15px; }
-        h3 { font-size: 20px; margin: 20px 0 10px; }
-        h4 { font-size: 18px; margin: 20px 0 10px; }
-
-        p { margin: 10px 0; }
-
-        pre {
-            background: var(--code-bg);
-            border: 1px solid var(--border);
-            border-radius: 3px;
-            padding: 15px;
-            overflow-x: auto;
-            font-size: 14px;
-            line-height: 1.4;
-            margin: 15px 0;
-        }
-
-        code {
-            background: var(--code-bg);
-            padding: 2px 5px;
-            border-radius: 3px;
-            font-family: "SF Mono", Monaco, Consolas, monospace;
-            font-size: 14px;
-        }
-
-        pre code {
-            background: none;
-            padding: 0;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-        }
-
-        th, td {
-            border: 1px solid var(--border);
-            padding: 8px 12px;
-            text-align: left;
-        }
-
-        th {
-            background: var(--code-bg);
-            font-weight: 600;
-        }
-
-        ul, ol {
-            margin: 10px 0;
-            padding-left: 30px;
-        }
-
-        li {
-            margin: 5px 0;
-        }
-
-        a {
-            color: var(--link);
-            text-decoration: none;
-        }
-
-        a:hover {
-            text-decoration: underline;
-        }
-
-        strong {
-            font-weight: 600;
-        }
-
-        .nav {
-            margin: 40px 0;
-            padding: 15px 0;
-            border-top: 1px solid var(--border);
-            border-bottom: 1px solid var(--border);
-        }
-
-        .nav a {
-            margin-right: 20px;
-        }
-
-        .theme-toggle {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: var(--code-bg);
-            border: 1px solid var(--border);
-            border-radius: 5px;
-            width: 40px;
-            height: 40px;
-            cursor: pointer;
-            font-size: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background-color 0.3s, border-color 0.3s;
-        }
-
-        .theme-toggle:hover {
-            opacity: 0.8;
-        }
-
-        @media print {
-            body { margin: 0; padding: 20px; }
-            .nav { display: none; }
-            .theme-toggle { display: none; }
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <button class="theme-toggle" onclick="toggleTheme()" aria-label="切换深色模式">
-        <span class="theme-icon">🌙</span>
-    </button>
-
-    <div class="nav">
-        <a href="index.html">← 返回主页</a>
-    </div>
 
     <h1>图的遍历与连通性</h1>
 <h2>什么时候用</h2>
@@ -791,9 +646,9 @@ int main() {
 <ol>
 <li><strong>图的表示</strong>：</li>
 </ol>
-<p>   - 邻接表：<code>vector<vector<int>></code>，适合稀疏图</p>
-<p>   - 邻接矩阵：<code>vector<vector<int>></code>，适合密集图</p>
-<p>   - 边列表：<code>vector<pair<int,int>></code>，建图前需要转换</p>
+<p>   - 邻接表：<code>vector&lt;vector&lt;int&gt;&gt;</code>，适合稀疏图</p>
+<p>   - 邻接矩阵：<code>vector&lt;vector&lt;int&gt;&gt;</code>，适合密集图</p>
+<p>   - 边列表：<code>vector&lt;pair&lt;int,int&gt;&gt;</code>，建图前需要转换</p>
 <ol>
 <li><strong>有向图 vs 无向图</strong>：</li>
 </ol>
@@ -876,33 +731,6 @@ int main() {
 <li>图可能不连通，要考虑多个起点</li>
 </ul>
 
-    <div class="nav">
-        <a href="10-union-find.html">← 10 并查集</a> | <a href="12-shortest-path.html">12 最短路径 →</a>
-    </div>
-
-    <script>
-        // 加载保存的主题
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme === 'dark') {
-            document.body.classList.add('dark-mode');
-        }
-
-        // 更新按钮图标
-        function updateThemeIcon() {
-            const icon = document.querySelector('.theme-icon');
-            icon.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
-        }
-
-        // 切换主题
-        function toggleTheme() {
-            document.body.classList.toggle('dark-mode');
-            const theme = document.body.classList.contains('dark-mode') ? 'dark' : 'light';
-            localStorage.setItem('theme', theme);
-            updateThemeIcon();
-        }
-
-        // 初始化图标
-        updateThemeIcon();
-    </script>
+    <script defer src="site.js"></script>
 </body>
 </html>
