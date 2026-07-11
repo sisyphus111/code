@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>基础 03：C++ 异常处理与错误边界</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>基础 03：C++ 异常处理与错误边界</h1>
+    <p>项目式机试不仅检查“正常输入能不能跑”，还会故意提供错误参数、非法状态和不存在的文件。一个可靠程序必须报告错误、保持状态一致，并在可恢复错误后继续处理下一条命令。</p>
+
+    <div class="tip"><strong>来自 25 年机试的直接要求：</strong>错误分为参数错误、状态错误和文件错误；错误信息以 <code>Error:</code> 开头；一条命令失败不应导致交互式程序终止。</div>
+
+    <h2>1. 先建立错误处理模型</h2>
+    <p>在一个交互式 CLI 中，错误处理可以分成三层：</p>
+    <table>
+        <thead><tr><th>层次</th><th>职责</th><th>例子</th></tr></thead>
+        <tbody>
+            <tr><td>命令解析层</td><td>检查参数数量、类型和值</td><td><code>new -1 abc</code></td></tr>
+            <tr><td>业务操作层</td><td>检查状态和文件，失败时提供具体原因</td><td>没有活动位图却执行 <code>save</code></td></tr>
+            <tr><td>命令循环边界</td><td>统一捕获异常、输出 <code>Error:</code>，然后继续下一轮</td><td>文件加载失败后仍能继续输入 <code>new</code></td></tr>
+        </tbody>
+    </table>
+    <p>异常适合把底层失败沿调用栈传递到统一边界。命令函数不必层层返回错误字符串，最外层也能集中保证输出格式一致。</p>
+
+    <h2>2. <code>throw</code>、<code>try</code> 和 <code>catch</code></h2>
+    <pre><code>#include &lt;iostream&gt;
+#include &lt;stdexcept&gt;
+
+double divide(double a, double b) {
+    if (b == 0.0) {
+        throw std::invalid_argument("divisor cannot be zero");
+    }
+    return a / b;
+}
+
+int main() {
+    try {
+        std::cout &lt;&lt; divide(10, 0) &lt;&lt; '\n';
+    } catch (const std::invalid_argument&amp; error) {
+        std::cerr &lt;&lt; "Error: " &lt;&lt; error.what() &lt;&lt; '\n';
+    }
+}</code></pre>
+    <ol>
+        <li><code>throw</code> 创建异常并立即停止当前正常流程。</li>
+        <li>运行时沿调用栈向外寻找匹配的 <code>catch</code>。</li>
+        <li>沿途已经构造完成的局部对象会自动析构，这个过程叫 <strong>stack unwinding</strong>。</li>
+        <li>找到处理器后执行 <code>catch</code>；如果始终没有匹配处理器，程序会终止。</li>
+    </ol>
+
+    <h2>3. 为什么要按 <code>const&amp;</code> 捕获</h2>
+    <pre><code>catch (const std::exception&amp; error) {
+    std::cerr &lt;&lt; error.what() &lt;&lt; '\n';
+}</code></pre>
+    <ul>
+        <li>引用避免复制异常对象。</li>
+        <li><code>const</code> 表示处理器只读取异常。</li>
+        <li>基类引用能保留虚函数分派，<code>what()</code> 会返回实际派生异常的信息，避免 object slicing。</li>
+    </ul>
+    <div class="warning"><strong>不要写 <code>catch (std::exception error)</code>。</strong>按值捕获会复制对象，并可能切掉派生类信息。</div>
+
+    <h2>4. 标准异常与自定义业务异常</h2>
+    <table>
+        <thead><tr><th>类型</th><th>适合场景</th></tr></thead>
+        <tbody>
+            <tr><td><code>std::invalid_argument</code></td><td>函数参数的值不合法</td></tr>
+            <tr><td><code>std::out_of_range</code></td><td>索引、坐标等超出允许范围</td></tr>
+            <tr><td><code>std::runtime_error</code></td><td>文件、外部资源或运行环境造成的失败</td></tr>
+            <tr><td>自定义异常</td><td>需要统一表示题目定义的“命令执行失败”</td></tr>
+        </tbody>
+    </table>
+    <p>针对机试中的统一错误格式，可以定义一个很薄的业务异常：</p>
+    <pre><code>#include &lt;stdexcept&gt;
+
+class CommandError : public std::runtime_error {
+public:
+    using std::runtime_error::runtime_error;
+};</code></pre>
+    <p>命令函数只保存不带前缀的原因：</p>
+    <pre><code>throw CommandError("No active bitmap.");</code></pre>
+    <p>最外层统一添加一次 <code>Error:</code>，避免某些函数加前缀、某些函数忘记加：</p>
+    <pre><code>catch (const CommandError&amp; error) {
+    std::cout &lt;&lt; "Error: " &lt;&lt; error.what() &lt;&lt; '\n';
+}</code></pre>
+
+    <h2>5. 捕获位置决定程序能否继续</h2>
+    <p>交互式工具必须把 <code>try/catch</code> 放在命令循环<strong>内部</strong>。这样一轮失败只会结束当前命令：</p>
+    <pre><code>std::string line;
+while (std::cout &lt;&lt; "&gt; " &lt;&lt; std::flush,
+       std::getline(std::cin, line)) {
+    try {
+        execute_command(line);
+    } catch (const CommandError&amp; error) {
+        std::cout &lt;&lt; "Error: " &lt;&lt; error.what() &lt;&lt; '\n';
+    }
+}</code></pre>
+    <p>如果把 <code>try/catch</code> 放在整个 <code>while</code> 外面，第一次异常会直接跳出循环；即使随后捕获，程序也不会再读取下一条命令。这正好违反 25 年机试的要求。</p>
+
+    <h2>6. 三类错误如何抛出</h2>
+    <h3>参数错误</h3>
+    <pre><code>void do_new(std::istringstream&amp; args) {
+    int width, height;
+    std::string extra;
+    if (!(args &gt;&gt; width &gt;&gt; height) ||
+        (args &gt;&gt; extra) ||
+        width &lt;= 0 || height &lt;= 0 ||
+        width &gt; 2000 || height &gt; 2000) {
+        throw CommandError("Invalid arguments.");
+    }
+    // 参数完全有效后再创建位图。
+}</code></pre>
+
+    <h3>状态错误</h3>
+    <pre><code>void require_active_bitmap(const std::optional&lt;Bitmap&gt;&amp; active) {
+    if (!active) {
+        throw CommandError("No active bitmap.");
+    }
+}</code></pre>
+
+    <h3>文件错误</h3>
+    <pre><code>std::ifstream input(path);
+if (!input) {
+    throw CommandError("Cannot open file '" + path + "'.");
+}</code></pre>
+    <p>错误消息应该告诉用户失败对象和原因，但不要把“打不开文件”一律误报成“格式错误”。打开失败与内容校验失败是两个不同阶段。</p>
+
+    <h2>7. 失败时不能破坏已有状态</h2>
+    <p>假设已经有一张活动位图，用户又执行 <code>load broken.txt</code>。正确行为是报告错误，并继续保留原位图。不要一开始就清空 <code>active</code>。</p>
+    <pre><code>void do_load(std::optional&lt;Bitmap&gt;&amp; active,
+             const std::string&amp; path) {
+    Bitmap next = load_and_validate(path); // 可能抛异常
+    active = std::move(next);               // 全部成功后才提交
+    std::cout &lt;&lt; "Bitmap '" &lt;&lt; path &lt;&lt; "' loaded.\n";
+}</code></pre>
+    <p>这里遵循“先在临时对象中完成读取与校验，最后一次性替换状态”的原则。失败发生在赋值之前，因此原状态不变。这是项目题里非常重要的 <strong>strong exception guarantee</strong>。</p>
+
+    <h2>8. RAII：异常发生后资源为什么不会泄漏</h2>
+    <p>C++ 的资源安全依赖 RAII：资源由对象拥有，对象析构时释放资源。异常展开调用栈时，局部对象仍会正常析构。</p>
+    <pre><code>Bitmap load_and_validate(const std::string&amp; path) {
+    std::ifstream input(path); // 析构时自动关闭文件
+    if (!input) {
+        throw CommandError("Cannot open file '" + path + "'.");
+    }
+
+    std::vector&lt;std::string&gt; rows; // 自动管理内存
+    // 读取或校验失败时直接 throw；不需要手动 close/free。
+    return Bitmap{std::move(rows)};
+}</code></pre>
+    <div class="tip"><strong>实践原则：</strong>优先使用 <code>std::vector</code>、<code>std::string</code>、文件流和智能指针；不要在拥有裸资源后依赖手写清理代码。</div>
+
+    <h2>9. 哪些情况不应该使用异常</h2>
+    <ul>
+        <li>正常控制流不要用异常，例如循环结束、用户输入 <code>exit</code>。</li>
+        <li>题目明确规定“非法绘制范围安全忽略”时，这是一条业务规则，不应该抛异常。</li>
+        <li>高频内层循环中的普通判断不要改成异常，例如像素裁剪和 BFS 邻居越界。</li>
+        <li><code>assert</code> 用于程序员不变量，不用于可预期的用户输入错误。</li>
+    </ul>
+    <p>异常适合“当前操作无法按契约完成，正常路径必须立刻中断”的情况；普通分支适合预期内、频繁发生的业务选择。</p>
+
+    <h2>10. 异常、错误消息与退出码的关系</h2>
+    <table>
+        <thead><tr><th>机制</th><th>边界</th><th>作用</th></tr></thead>
+        <tbody>
+            <tr><td>异常</td><td>程序内部</td><td>把失败从业务函数传到统一处理位置</td></tr>
+            <tr><td><code>Error:</code> 消息</td><td>程序与用户</td><td>解释当前命令为什么失败</td></tr>
+            <tr><td>退出码</td><td>程序与调用者/脚本</td><td>说明整个进程最终是否成功</td></tr>
+        </tbody>
+    </table>
+    <p>25 年机试是交互式工具：某条命令失败不等于整个进程失败，因此捕获异常后继续循环；真正无法启动或发生不可恢复的顶层错误时，才结束程序并返回非零退出码。</p>
+
+    <h2>11. 完整示例：不会因错误退出的命令循环</h2>
+    <pre><code>#include &lt;fstream&gt;
+#include &lt;iostream&gt;
+#include &lt;optional&gt;
+#include &lt;sstream&gt;
+#include &lt;stdexcept&gt;
+#include &lt;string&gt;
+#include &lt;utility&gt;
+#include &lt;vector&gt;
+
+class CommandError : public std::runtime_error {
+public:
+    using std::runtime_error::runtime_error;
+};
+
+struct Bitmap {
+    std::vector&lt;std::string&gt; rows;
+};
+
+Bitmap load_and_validate(const std::string&amp; path) {
+    std::ifstream input(path);
+    if (!input) {
+        throw CommandError("Cannot open file '" + path + "'.");
+    }
+
+    std::vector&lt;std::string&gt; rows;
+    std::string row;
+    while (std::getline(input, row)) {
+        rows.push_back(row);
+    }
+    while (!rows.empty() &amp;&amp; rows.back().empty()) {
+        rows.pop_back();
+    }
+    if (rows.empty()) {
+        throw CommandError("Invalid file format.");
+    }
+
+    const std::size_t width = rows.front().size();
+    for (const std::string&amp; current : rows) {
+        if (current.size() != width ||
+            current.find_first_not_of(".#") != std::string::npos) {
+            throw CommandError("Invalid file format.");
+        }
+    }
+    return Bitmap{std::move(rows)};
+}
+
+void require_no_extra(std::istringstream&amp; args) {
+    std::string extra;
+    if (args &gt;&gt; extra) {
+        throw CommandError("Invalid arguments.");
+    }
+}
+
+int main() {
+    std::optional&lt;Bitmap&gt; active;
+    std::string line;
+
+    while (std::cout &lt;&lt; "&gt; " &lt;&lt; std::flush,
+           std::getline(std::cin, line)) {
+        std::istringstream args(line);
+        std::string command;
+        if (!(args &gt;&gt; command)) {
+            continue;
+        }
+
+        try {
+            if (command == "load") {
+                std::string path;
+                if (!(args &gt;&gt; path)) {
+                    throw CommandError("Invalid arguments.");
+                }
+                require_no_extra(args);
+                Bitmap next = load_and_validate(path);
+                active = std::move(next);
+                std::cout &lt;&lt; "Bitmap '" &lt;&lt; path &lt;&lt; "' loaded.\n";
+            } else if (command == "info") {
+                require_no_extra(args);
+                if (!active) {
+                    throw CommandError("No active bitmap.");
+                }
+                std::cout &lt;&lt; "Width: " &lt;&lt; active-&gt;rows.front().size()
+                          &lt;&lt; "\nHeight: " &lt;&lt; active-&gt;rows.size() &lt;&lt; '\n';
+            } else if (command == "exit") {
+                require_no_extra(args);
+                break;
+            } else {
+                throw CommandError("Unknown command.");
+            }
+        } catch (const CommandError&amp; error) {
+            std::cout &lt;&lt; "Error: " &lt;&lt; error.what() &lt;&lt; '\n';
+        } catch (const std::exception&amp; error) {
+            std::cout &lt;&lt; "Error: Internal failure: "
+                      &lt;&lt; error.what() &lt;&lt; '\n';
+        }
+    }
+    return 0;
+}</code></pre>
+
+    <h3>验证恢复能力</h3>
+    <pre><code>g++ -std=c++17 -Wall -Wextra -Werror exception_cli.cpp -o exception_cli
+
+printf 'info\nload missing.txt\nbad\nexit\n' | ./exception_cli</code></pre>
+    <p>期望看到三条 <code>Error:</code>，而不是第一条错误后程序直接退出。随后还应测试：有效文件、空文件、行宽不一致、非法字符、额外参数和加载失败后旧状态是否保留。</p>
+
+    <h2>12. 常见错误</h2>
+    <ol>
+        <li>把 <code>try/catch</code> 放在命令循环外，导致第一次错误就结束交互。</li>
+        <li>使用 <code>catch (...)</code> 后什么都不输出，悄悄吞掉未知错误。</li>
+        <li>按值捕获异常，造成复制和 object slicing。</li>
+        <li>先修改活动状态，再进行可能失败的文件读取或校验。</li>
+        <li>在析构函数中抛异常；栈展开期间再次抛出可能直接触发 <code>std::terminate</code>。</li>
+        <li>把用户输入错误写成 <code>assert</code>，Release 构建中断言可能被关闭。</li>
+        <li>所有异常都只输出 <code>Invalid arguments</code>，丢失文件路径和具体失败原因。</li>
+    </ol>
+
+    <h2>13. 机试实现顺序</h2>
+    <ol>
+        <li>先确定统一错误类型和 <code>Error:</code> 输出边界。</li>
+        <li>先写命令循环，并验证异常后可以继续读取下一条命令。</li>
+        <li>把参数校验、状态校验和文件校验分别放在最接近数据的位置。</li>
+        <li>修改共享状态前，先在临时对象中完成所有可能失败的工作。</li>
+        <li>最后补错误路径测试；不要只测试成功样例。</li>
+    </ol>
+
+    <div class="tip"><strong>掌握标准：</strong>能让业务函数用异常报告失败；能在命令循环内部统一捕获；能保证一条命令失败后程序继续运行，且原有活动状态不被破坏。</div>
+
+    <script defer src="site.js"></script>
+</body>
+</html>

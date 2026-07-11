@@ -1,7 +1,8 @@
 const chapters = [
     { file: "00-cpp-project-setup.html", label: "基础 01", title: "单文件 g++ 与多文件 CMake", group: "基础" },
     { file: "io-handling.html", label: "基础 02", title: "输入输出与 CLI 工具", group: "基础" },
-    { file: "cpp-stl.html", label: "基础 03", title: "C++ STL 使用指南", group: "基础" },
+    { file: "exception-handling.html", label: "基础 03", title: "异常处理与错误边界", group: "基础" },
+    { file: "cpp-stl.html", label: "基础 04", title: "C++ STL 使用指南", group: "基础" },
     { file: "01-simulation.html", label: "01", title: "模拟与枚举", group: "算法" },
     { file: "02-hash-and-counting.html", label: "02", title: "哈希表与计数", group: "算法" },
     { file: "03-two-pointers-sliding-window.html", label: "03", title: "双指针与滑动窗口", group: "算法" },
