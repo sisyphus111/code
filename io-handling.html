@@ -60,22 +60,120 @@ for (int&amp; value : values) {
 }</code></pre>
     <div class="tip"><strong>不要只写 <code>std::cin &gt;&gt; n;</code> 就假设成功。</strong>项目式机试里，输入可能缺失或格式错误；读取表达式本身可以转为布尔值，因此可以直接检查。</div>
 
-    <h2>4. 用 <code>getline</code> 读取整行</h2>
+    <h2>4. 空白符号与输入缓冲区的真相</h2>
+    <p>机考中最容易出错的地方不是算法，而是 <code>cin &gt;&gt;</code> 和 <code>getline</code> 的组合以及各种隐藏的空白符。</p>
+
+    <h3>4.1 空白符号的本质</h3>
+    <table>
+        <thead><tr><th>符号</th><th>名称</th><th>ASCII 码</th><th>出现场景</th></tr></thead>
+        <tbody>
+            <tr><td><code>'\n'</code></td><td>LF (Line Feed)</td><td>10</td><td>Unix/Linux/macOS 行尾</td></tr>
+            <tr><td><code>'\r'</code></td><td>CR (Carriage Return)</td><td>13</td><td>老式 Mac 行尾</td></tr>
+            <tr><td><code>'\r\n'</code></td><td>CRLF</td><td>13 + 10</td><td>Windows 行尾（两个字符）</td></tr>
+            <tr><td><code>' '</code></td><td>空格</td><td>32</td><td>普通空格</td></tr>
+            <tr><td><code>'\t'</code></td><td>Tab</td><td>9</td><td>制表符</td></tr>
+        </tbody>
+    </table>
+    <div class="tip"><strong>关键：</strong>Windows 文本文件的每行结尾是 <code>\r\n</code> 两个字符，Unix/Linux 只有 <code>\n</code> 一个字符。如果在 Linux 上读 Windows 文件，或者提交代码到评测机，可能会遇到 <code>\r</code> 残留问题。</div>
+
+    <h3>4.2 <code>cin &gt;&gt;</code> 的行为</h3>
+    <pre><code>int n;
+std::string s;
+std::cin &gt;&gt; n &gt;&gt; s;</code></pre>
+    <p><code>cin &gt;&gt;</code> 的特点：</p>
+    <ul>
+        <li><strong>自动跳过所有空白</strong>（空格、<code>\n</code>、<code>\r</code>、<code>\t</code>）</li>
+        <li>读到第一个非空白字符开始，读到下一个空白字符停止</li>
+        <li><strong>不会读取空白符本身</strong>，空白符留在缓冲区</li>
+    </ul>
+    <pre><code>// 输入：42\n（42 后面跟换行符）
+int n;
+std::cin &gt;&gt; n;  // 读取 42，\n 留在缓冲区</code></pre>
+
+    <h3>4.3 <code>getline</code> 的行为</h3>
     <pre><code>std::string line;
-while (std::getline(std::cin, line)) {
-    std::cout &lt;&lt; "read: " &lt;&lt; line &lt;&lt; '\n';
-}</code></pre>
-    <p>如果先用 <code>&gt;&gt;</code> 读数字，再用 <code>getline</code>，输入缓冲区里通常还留着换行符。可以这样丢弃到本行结尾：</p>
+std::getline(std::cin, line);</code></pre>
+    <p><code>getline</code> 的特点：</p>
+    <ul>
+        <li><strong>不会跳过任何字符</strong></li>
+        <li>从当前位置读到 <code>\n</code> 停止</li>
+        <li><code>\n</code> 被读取并丢弃，但不包含在 <code>line</code> 中</li>
+        <li>空行会被读取为空字符串</li>
+    </ul>
+
+    <h3>4.4 混用的陷阱（重点！）</h3>
+    <pre><code>// 输入：42\napple banana\n
+int n;
+std::cin &gt;&gt; n;              // 读 42，\n 留在缓冲区
+std::string line;
+std::getline(std::cin, line); // 立即读到 \n，返回空字符串！</code></pre>
+    <p><strong>问题：</strong><code>cin &gt;&gt; n</code> 读了 42，但 <code>\n</code> 还留在缓冲区，<code>getline</code> 立即读到它并返回空字符串。</p>
+
+    <p><strong>解决方案 1：</strong>用 <code>cin.ignore()</code> 丢弃换行符</p>
     <pre><code>#include &lt;limits&gt;
 
 int n;
 std::cin &gt;&gt; n;
 std::cin.ignore(std::numeric_limits&lt;std::streamsize&gt;::max(), '\n');
-
 std::string line;
-std::getline(std::cin, line);</code></pre>
+std::getline(std::cin, line);  // 现在正常读取</code></pre>
 
-    <h2>5. 读取和写入文件</h2>
+    <p><strong>解决方案 2：</strong>全部用 <code>getline</code> + 手动解析</p>
+    <pre><code>std::string line;
+std::getline(std::cin, line);
+int n = std::stoi(line);
+std::getline(std::cin, line);  // 正常读取下一行</code></pre>
+
+    <h3>4.5 实战场景对比</h3>
+    <p><strong>场景 1：读取若干整数</strong></p>
+    <pre><code>// 输入：3\n10 20 30\n
+int n;
+std::cin &gt;&gt; n;  // 读 3，留下 \n
+for (int i = 0; i &lt; n; ++i) {
+    int x;
+    std::cin &gt;&gt; x;  // cin &gt;&gt; 会自动跳过 \n，正常读取
+}</code></pre>
+    <p>✅ 没问题，因为 <code>cin &gt;&gt;</code> 会跳过空白。</p>
+
+    <p><strong>场景 2：读整数后读字符串</strong></p>
+    <pre><code>// 输入：3\napple banana cherry\n
+int n;
+std::cin &gt;&gt; n;              // 读 3，留下 \n
+std::string line;
+std::getline(std::cin, line); // 读到 \n，返回空字符串！</code></pre>
+    <p>❌ 有问题，必须用 <code>cin.ignore()</code> 或改用全部 <code>getline</code>。</p>
+
+    <p><strong>场景 3：Windows 文件在 Linux 上读取</strong></p>
+    <pre><code>// Windows 文件内容：hello\r\n
+std::string line;
+std::getline(std::cin, line);  // line = "hello\r"，包含 \r！</code></pre>
+    <p>❌ 有问题，<code>\r</code> 会留在字符串里，可能导致比较失败或输出异常。</p>
+
+    <p><strong>解决：</strong>手动去除 <code>\r</code></p>
+    <pre><code>std::getline(std::cin, line);
+if (!line.empty() &amp;&amp; line.back() == '\r') {
+    line.pop_back();
+}</code></pre>
+
+    <h3>4.6 常见错误模式总结</h3>
+    <table>
+        <thead><tr><th>错误代码</th><th>问题</th><th>修正</th></tr></thead>
+        <tbody>
+            <tr><td><code>cin &gt;&gt; n; getline(cin, s);</code></td><td><code>\n</code> 残留导致读空行</td><td>加 <code>cin.ignore()</code></td></tr>
+            <tr><td>Windows 文件 <code>getline</code></td><td><code>\r</code> 残留在字符串末尾</td><td>手动 <code>pop_back()</code></td></tr>
+            <tr><td>循环混用 <code>&gt;&gt;</code> 和 <code>getline</code></td><td>缓冲区状态混乱</td><td>统一用一种方式</td></tr>
+        </tbody>
+    </table>
+    <div class="tip"><strong>机考建议：</strong>要么全部用 <code>cin &gt;&gt;</code>（适合结构化数据），要么全部用 <code>getline</code> + <code>stoi/stod</code>（适合行输入）。混用时必须在每次 <code>&gt;&gt;</code> 后用 <code>ignore()</code> 清理缓冲区。</div>
+
+    <h2>5. 用 <code>getline</code> 读取整行（基础用法）</h2>
+    <pre><code>std::string line;
+while (std::getline(std::cin, line)) {
+    std::cout &lt;&lt; "read: " &lt;&lt; line &lt;&lt; '\n';
+}</code></pre>
+    <p>更多关于 <code>getline</code> 与空白符的详细行为，见上一节。</p>
+
+    <h2>6. 读取和写入文件</h2>
     <p><code>std::ifstream</code> 用于读取文件，<code>std::ofstream</code> 用于写入文件。对象离开作用域后会自动关闭，不必手动调用 <code>close()</code>。</p>
     <pre><code>#include &lt;fstream&gt;
 #include &lt;iostream&gt;
@@ -108,7 +206,7 @@ int main() {
         </tbody>
     </table>
 
-    <h2>6. 读取命令行参数：<code>argc</code> 与 <code>argv</code></h2>
+    <h2>7. 读取命令行参数：<code>argc</code> 与 <code>argv</code></h2>
     <pre><code>int main(int argc, char* argv[]) {
     std::cout &lt;&lt; "argument count: " &lt;&lt; argc &lt;&lt; '\n';
     for (int i = 0; i &lt; argc; ++i) {
@@ -124,7 +222,7 @@ argv[1] = "--input"
 argv[2] = "article.txt"</code></pre>
     <p><code>argv[0]</code> 是程序自身的调用名称；真正的用户参数从 <code>argv[1]</code> 开始。读取 <code>--input</code> 后必须检查后面是否还有值，不能直接访问不存在的 <code>argv[i + 1]</code>。</p>
 
-    <h2>7. 手动解析常见 CLI 选项</h2>
+    <h2>8. 手动解析常见 CLI 选项</h2>
     <p>小型机试项目不一定允许引入参数解析库，下面的写法足以处理 <code>--help</code>、输入文件和输出文件：</p>
     <pre><code>struct Options {
     std::string input_path;
@@ -157,7 +255,7 @@ bool parse_options(int argc, char* argv[], Options&amp; options) {
     return true;
 }</code></pre>
 
-    <h2>8. 退出码也是程序接口</h2>
+    <h2>9. 退出码也是程序接口</h2>
     <ul>
         <li><code>return 0;</code>：执行成功。</li>
         <li>非零值：执行失败。常用 <code>return 1;</code> 表示一般错误，保持简单即可。</li>
@@ -166,7 +264,7 @@ bool parse_options(int argc, char* argv[], Options&amp; options) {
 echo $?</code></pre>
     <p>调用程序、测试脚本和评测系统不会阅读你在终端上打印的中文解释来判断成功，而是检查退出码。因此“向 <code>cerr</code> 写清楚原因 + 返回非零退出码”应该同时完成。</p>
 
-    <h2>9. 完整示例：文本统计 CLI</h2>
+    <h2>10. 完整示例：文本统计 CLI</h2>
     <p>这个程序支持四种使用方式：</p>
     <pre><code>./textstats &lt; article.txt
 ./textstats --input article.txt
@@ -279,7 +377,7 @@ echo "hello C++ world" | ./textstats
 echo $?</code></pre>
     <p>至少要验证：标准输入、输入文件、输出文件、<code>--help</code>、未知选项、参数缺值和文件打不开这几条路径。</p>
 
-    <h2>10. 项目式机试的 I/O 检查清单</h2>
+    <h2>11. 项目式机试的 I/O 检查清单</h2>
     <ol>
         <li>先写清楚程序接受哪些参数，以及输入数据来自 stdin 还是文件。</li>
         <li>正常结果只写 stdout 或指定输出文件，诊断信息只写 stderr。</li>
