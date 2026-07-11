@@ -162,6 +162,20 @@ cmake --build build
 ./build/calculator</code></pre>
     <p><code>-S .</code> 指源码根目录，<code>-B build</code> 指构建产物目录。把产物放进独立的 <code>build/</code> 叫作 <strong>out-of-source build</strong>，可以避免目标文件和临时文件污染源码目录。</p>
 
+    <h3>问：<code>cmake --build build</code> 后，可执行文件在 <code>build/</code> 里吗？</h3>
+    <p><strong>通常是。</strong>如果目标定义为 <code>add_executable(calculator ...)</code>，使用 Unix Makefiles 或 Ninja 等单配置生成器时，常见路径是：</p>
+    <pre><code>build/calculator</code></pre>
+    <p>因此可以直接运行：</p>
+    <pre><code>./build/calculator</code></pre>
+    <p>但“在 <code>build/</code> 里”不一定表示“紧挨着 <code>build/</code> 根目录”，还有两种常见情况：</p>
+    <ul>
+        <li>Visual Studio、Xcode 等多配置生成器通常增加配置子目录，例如 <code>build/Debug/calculator</code> 或 <code>build/Release/calculator</code>。</li>
+        <li>项目设置了 <code>RUNTIME_OUTPUT_DIRECTORY</code> 时，可执行文件会生成到项目指定的位置。</li>
+    </ul>
+    <p>不确定具体位置时，可以让 CMake 显示详细构建命令，或在构建目录中查找：</p>
+    <pre><code>cmake --build build --verbose
+find build -type f -perm -111</code></pre>
+
     <h3>修改代码后需要执行哪一步</h3>
     <ul>
         <li>只修改了 <code>.cpp</code> 或 <code>.h</code>：通常重新执行 <code>cmake --build build</code>。</li>
