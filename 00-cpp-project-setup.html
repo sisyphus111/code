@@ -151,6 +151,29 @@ target_compile_options(calculator PRIVATE -Wall -Wextra)</code></pre>
         </tbody>
     </table>
 
+    <h3>问：为什么 <code>add_executable</code> 里没有列出 <code>.h</code>？</h3>
+    <p>因为 <code>.cpp</code> 和 <code>.h</code> 在构建中的角色不同：</p>
+    <ul>
+        <li><code>.cpp</code> 是<strong>编译单元</strong>。每个 <code>.cpp</code> 都会被单独编译成目标文件，最后再链接，因此必须让构建系统知道哪些 <code>.cpp</code> 属于这个目标。</li>
+        <li><code>.h</code> 通常不是单独编译的。某个 <code>.cpp</code> 写下 <code>#include "calculator.h"</code> 后，预处理器会把头文件内容纳入这个 <code>.cpp</code> 的编译过程。</li>
+    </ul>
+    <p>头文件的位置由下面这行标明：</p>
+    <pre><code>target_include_directories(calculator PRIVATE include)</code></pre>
+    <p>它告诉编译器：编译目标 <code>calculator</code> 时，把项目的 <code>include/</code> 加入头文件搜索路径。因此源码中的：</p>
+    <pre><code>#include "calculator.h"</code></pre>
+    <p>可以找到 <code>include/calculator.h</code>。这大致等价于直接使用 <code>g++</code> 时添加：</p>
+    <pre><code>-Iinclude</code></pre>
+    <div class="tip"><strong>关系总结：</strong><code>add_executable</code> 回答“编译并链接哪些实现文件”，<code>target_include_directories</code> 回答“去哪些目录查找头文件”，而源码中的 <code>#include</code> 回答“当前编译单元实际需要哪个头文件”。</div>
+
+    <h3>可以把头文件也写进 <code>add_executable</code> 吗？</h3>
+    <p>可以，例如：</p>
+    <pre><code>add_executable(calculator
+    src/main.cpp
+    src/calculator.cpp
+    include/calculator.h
+)</code></pre>
+    <p>这样做主要是让 IDE 更完整地展示目标包含的文件，并不意味着头文件会被单独编译。对于这个简单项目，不列出头文件也能正确构建。</p>
+
     <h3>标准的三步工作流</h3>
     <pre><code># 1. 配置：读取当前目录，生成构建规则到 build/
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
