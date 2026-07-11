@@ -3,526 +3,326 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>输入输出处理 - C++算法竞赛</title>
+    <title>基础 02：C++ 输入输出与 CLI 工具</title>
     <style>
-        :root {
-            --bg: #ffffff;
-            --text: #333333;
-            --code-bg: #f5f5f5;
-            --border: #dddddd;
-            --link: #0066cc;
-            --heading-border: #333333;
-        }
-
-        body.dark-mode {
-            --bg: #1e1e1e;
-            --text: #d4d4d4;
-            --code-bg: #2d2d2d;
-            --border: #404040;
-            --link: #4db8ff;
-            --heading-border: #d4d4d4;
-        }
-
-        body {
-            max-width: 900px;
-            margin: 40px auto;
-            padding: 0 20px;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-            font-size: 16px;
-            line-height: 1.6;
-            background: var(--bg);
-            color: var(--text);
-            transition: background-color 0.3s, color 0.3s;
-        }
-
-        h1 { font-size: 32px; margin: 40px 0 20px; border-bottom: 2px solid var(--heading-border); padding-bottom: 10px; }
-        h2 { font-size: 24px; margin: 30px 0 15px; }
-        h3 { font-size: 20px; margin: 20px 0 10px; }
-        h4 { font-size: 18px; margin: 20px 0 10px; }
-
-        p { margin: 10px 0; }
-
-        pre {
-            background: var(--code-bg);
-            border: 1px solid var(--border);
-            border-radius: 3px;
-            padding: 15px;
-            overflow-x: auto;
-            font-size: 14px;
-            line-height: 1.4;
-            margin: 15px 0;
-        }
-
-        code {
-            background: var(--code-bg);
-            padding: 2px 5px;
-            border-radius: 3px;
-            font-family: "SF Mono", Monaco, Consolas, monospace;
-            font-size: 14px;
-        }
-
-        pre code {
-            background: none;
-            padding: 0;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-        }
-
-        th, td {
-            border: 1px solid var(--border);
-            padding: 8px 12px;
-            text-align: left;
-        }
-
-        th {
-            background: var(--code-bg);
-            font-weight: 600;
-        }
-
-        ul, ol {
-            margin: 10px 0;
-            padding-left: 30px;
-        }
-
-        li {
-            margin: 5px 0;
-        }
-
-        a {
-            color: var(--link);
-            text-decoration: none;
-        }
-
-        a:hover {
-            text-decoration: underline;
-        }
-
-        strong {
-            font-weight: 600;
-        }
-
-        .nav {
-            margin: 40px 0;
-            padding: 15px 0;
-            border-top: 1px solid var(--border);
-            border-bottom: 1px solid var(--border);
-        }
-
-        .nav a {
-            margin-right: 20px;
-        }
-
-        .theme-toggle {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: var(--code-bg);
-            border: 1px solid var(--border);
-            border-radius: 5px;
-            width: 40px;
-            height: 40px;
-            cursor: pointer;
-            font-size: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background-color 0.3s, border-color 0.3s;
-        }
-
-        .theme-toggle:hover {
-            opacity: 0.8;
-        }
-
-        @media print {
-            body { margin: 0; padding: 20px; }
-            .nav { display: none; }
-            .theme-toggle { display: none; }
-        }
+        :root { --bg:#fff; --text:#333; --muted:#666; --code-bg:#f5f5f5; --border:#ddd; --link:#06c; --heading-border:#333; --tip-bg:#f4f8ff; --warn-bg:#fff8e6; }
+        body.dark-mode { --bg:#1e1e1e; --text:#d4d4d4; --muted:#aaa; --code-bg:#2d2d2d; --border:#404040; --link:#4db8ff; --heading-border:#d4d4d4; --tip-bg:#202b3a; --warn-bg:#332d1e; }
+        body { max-width:900px; margin:40px auto; padding:0 20px; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; font-size:16px; line-height:1.7; background:var(--bg); color:var(--text); transition:background-color .3s,color .3s; }
+        h1 { font-size:32px; margin:40px 0 20px; border-bottom:2px solid var(--heading-border); padding-bottom:10px; }
+        h2 { font-size:24px; margin:36px 0 15px; }
+        h3 { font-size:20px; margin:24px 0 10px; }
+        p { margin:10px 0; }
+        pre { background:var(--code-bg); border:1px solid var(--border); border-radius:3px; padding:15px; overflow-x:auto; font-size:14px; line-height:1.5; margin:15px 0; }
+        code { background:var(--code-bg); padding:2px 5px; border-radius:3px; font-family:"SF Mono",Monaco,Consolas,monospace; font-size:14px; }
+        pre code { background:none; padding:0; }
+        table { width:100%; border-collapse:collapse; margin:20px 0; }
+        th,td { border:1px solid var(--border); padding:8px 12px; text-align:left; vertical-align:top; }
+        th { background:var(--code-bg); font-weight:600; }
+        ul,ol { margin:10px 0; padding-left:30px; }
+        li { margin:6px 0; }
+        a { color:var(--link); text-decoration:none; }
+        a:hover { text-decoration:underline; }
+        .nav { margin:40px 0; padding:15px 0; border-top:1px solid var(--border); border-bottom:1px solid var(--border); }
+        .tip,.warning { border-left:4px solid var(--link); padding:10px 14px; margin:16px 0; background:var(--tip-bg); }
+        .warning { border-left-color:#d18b00; background:var(--warn-bg); }
+        .muted { color:var(--muted); }
+        .theme-toggle { position:fixed; top:20px; right:20px; background:var(--code-bg); border:1px solid var(--border); border-radius:5px; width:40px; height:40px; cursor:pointer; font-size:20px; display:flex; align-items:center; justify-content:center; }
+        @media print { body{margin:0;padding:20px}.nav,.theme-toggle{display:none} }
     </style>
 </head>
 <body>
-    <button class="theme-toggle" onclick="toggleTheme()" aria-label="切换深色模式">
-        <span class="theme-icon">🌙</span>
-    </button>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="切换深色模式"><span class="theme-icon">🌙</span></button>
+    <div class="nav"><a href="index.html">← 返回主页</a> · <a href="00-cpp-project-setup.html">上一章：构建 C++ 项目</a></div>
 
-    <div class="nav">
-        <a href="index.html">← 返回主页</a>
-    </div>
+    <h1>基础 02：C++ 输入输出与 CLI 工具</h1>
+    <p>会构建项目以后，下一步是让程序真正与外界交互：接收标准输入或命令行参数、读取文件、输出结果、报告错误，并用退出码告诉调用者执行是否成功。</p>
+    <div class="tip"><strong>整体模型：</strong>一个 CLI 程序有三类输入——命令行参数、标准输入、文件；有三类输出——标准输出、标准错误、文件；最后还会返回一个整数退出码。</div>
 
-    <h1>输入输出处理</h1>
-<h2>OJ 模式分类</h2>
-<h3>LeetCode 函数模式</h3>
-<p><strong>特点</strong>：给定函数签名，直接写逻辑，不需要处理输入输出。</p>
-<pre><code>class Solution {
-public:
-    int twoSum(vector&lt;int&gt;&amp; nums, int target) {
-        // 直接写逻辑
+    <h2>1. 先分清参数和输入数据</h2>
+    <pre><code>./textstats --input article.txt --output result.txt</code></pre>
+    <ul>
+        <li><code>--input article.txt --output result.txt</code> 是<strong>命令行参数</strong>，用于控制程序怎样运行。</li>
+        <li><code>article.txt</code> 中的正文是<strong>输入数据</strong>，是程序真正需要处理的内容。</li>
+    </ul>
+    <p>参数适合表达少量配置，例如输入路径、输出路径、模式和开关；大量数据应通过标准输入或文件传入。</p>
+
+    <h2>2. 标准输入、标准输出和标准错误</h2>
+    <table>
+        <thead><tr><th>C++ 流</th><th>含义</th><th>应该放什么</th></tr></thead>
+        <tbody>
+            <tr><td><code>std::cin</code></td><td>标准输入 stdin</td><td>程序需要处理的数据</td></tr>
+            <tr><td><code>std::cout</code></td><td>标准输出 stdout</td><td>正常结果，便于重定向或交给下一个程序</td></tr>
+            <tr><td><code>std::cerr</code></td><td>标准错误 stderr</td><td>错误、警告和诊断信息</td></tr>
+        </tbody>
+    </table>
+    <pre><code>#include &lt;iostream&gt;
+#include &lt;string&gt;
+
+int main() {
+    std::string name;
+    if (!(std::cin &gt;&gt; name)) {
+        std::cerr &lt;&lt; "error: expected a name\n";
+        return 1;
+    }
+    std::cout &lt;&lt; "hello, " &lt;&lt; name &lt;&lt; '\n';
+    return 0;
+}</code></pre>
+    <p>正常结果必须写入 <code>cout</code>，错误必须写入 <code>cerr</code>。这样用户执行 <code>./program &gt; result.txt</code> 时，结果进入文件，而错误仍显示在终端。</p>
+
+    <h2>3. 用 <code>&gt;&gt;</code> 读取单词和数字</h2>
+    <p><code>operator&gt;&gt;</code> 会自动跳过空白，适合按 token 读取结构化数据：</p>
+    <pre><code>int n;
+if (!(std::cin &gt;&gt; n)) {
+    std::cerr &lt;&lt; "error: invalid count\n";
+    return 1;
+}
+
+std::vector&lt;int&gt; values(n);
+for (int&amp; value : values) {
+    if (!(std::cin &gt;&gt; value)) {
+        std::cerr &lt;&lt; "error: not enough integers\n";
+        return 1;
+    }
+}</code></pre>
+    <div class="tip"><strong>不要只写 <code>std::cin &gt;&gt; n;</code> 就假设成功。</strong>项目式机试里，输入可能缺失或格式错误；读取表达式本身可以转为布尔值，因此可以直接检查。</div>
+
+    <h2>4. 用 <code>getline</code> 读取整行</h2>
+    <pre><code>std::string line;
+while (std::getline(std::cin, line)) {
+    std::cout &lt;&lt; "read: " &lt;&lt; line &lt;&lt; '\n';
+}</code></pre>
+    <p>如果先用 <code>&gt;&gt;</code> 读数字，再用 <code>getline</code>，输入缓冲区里通常还留着换行符。可以这样丢弃到本行结尾：</p>
+    <pre><code>#include &lt;limits&gt;
+
+int n;
+std::cin &gt;&gt; n;
+std::cin.ignore(std::numeric_limits&lt;std::streamsize&gt;::max(), '\n');
+
+std::string line;
+std::getline(std::cin, line);</code></pre>
+
+    <h2>5. 读取和写入文件</h2>
+    <p><code>std::ifstream</code> 用于读取文件，<code>std::ofstream</code> 用于写入文件。对象离开作用域后会自动关闭，不必手动调用 <code>close()</code>。</p>
+    <pre><code>#include &lt;fstream&gt;
+#include &lt;iostream&gt;
+#include &lt;string&gt;
+
+int main() {
+    std::ifstream input("input.txt");
+    if (!input) {
+        std::cerr &lt;&lt; "error: cannot open input.txt\n";
+        return 1;
+    }
+
+    std::ofstream output("output.txt");
+    if (!output) {
+        std::cerr &lt;&lt; "error: cannot open output.txt\n";
+        return 1;
+    }
+
+    std::string line;
+    while (std::getline(input, line)) {
+        output &lt;&lt; line &lt;&lt; '\n';
+    }
+}</code></pre>
+    <table>
+        <thead><tr><th>写入方式</th><th>效果</th></tr></thead>
+        <tbody>
+            <tr><td><code>std::ofstream output(path);</code></td><td>默认覆盖已有文件</td></tr>
+            <tr><td><code>std::ofstream output(path, std::ios::app);</code></td><td>追加到文件末尾</td></tr>
+            <tr><td><code>std::ifstream input(path, std::ios::binary);</code></td><td>以二进制模式读取</td></tr>
+        </tbody>
+    </table>
+
+    <h2>6. 读取命令行参数：<code>argc</code> 与 <code>argv</code></h2>
+    <pre><code>int main(int argc, char* argv[]) {
+    std::cout &lt;&lt; "argument count: " &lt;&lt; argc &lt;&lt; '\n';
+    for (int i = 0; i &lt; argc; ++i) {
+        std::cout &lt;&lt; "argv[" &lt;&lt; i &lt;&lt; "] = " &lt;&lt; argv[i] &lt;&lt; '\n';
+    }
+}</code></pre>
+    <p>执行：</p>
+    <pre><code>./program --input article.txt</code></pre>
+    <p>得到的参数关系是：</p>
+    <pre><code>argc    = 3
+argv[0] = "./program"
+argv[1] = "--input"
+argv[2] = "article.txt"</code></pre>
+    <p><code>argv[0]</code> 是程序自身的调用名称；真正的用户参数从 <code>argv[1]</code> 开始。读取 <code>--input</code> 后必须检查后面是否还有值，不能直接访问不存在的 <code>argv[i + 1]</code>。</p>
+
+    <h2>7. 手动解析常见 CLI 选项</h2>
+    <p>小型机试项目不一定允许引入参数解析库，下面的写法足以处理 <code>--help</code>、输入文件和输出文件：</p>
+    <pre><code>struct Options {
+    std::string input_path;
+    std::string output_path;
+    bool help = false;
+};
+
+bool parse_options(int argc, char* argv[], Options&amp; options) {
+    for (int i = 1; i &lt; argc; ++i) {
+        std::string arg = argv[i];
+        if (arg == "-h" || arg == "--help") {
+            options.help = true;
+        } else if (arg == "-i" || arg == "--input") {
+            if (i + 1 == argc) {
+                std::cerr &lt;&lt; "error: " &lt;&lt; arg &lt;&lt; " needs a path\n";
+                return false;
+            }
+            options.input_path = argv[++i];
+        } else if (arg == "-o" || arg == "--output") {
+            if (i + 1 == argc) {
+                std::cerr &lt;&lt; "error: " &lt;&lt; arg &lt;&lt; " needs a path\n";
+                return false;
+            }
+            options.output_path = argv[++i];
+        } else {
+            std::cerr &lt;&lt; "error: unknown option: " &lt;&lt; arg &lt;&lt; '\n';
+            return false;
+        }
+    }
+    return true;
+}</code></pre>
+
+    <h2>8. 退出码也是程序接口</h2>
+    <ul>
+        <li><code>return 0;</code>：执行成功。</li>
+        <li>非零值：执行失败。常用 <code>return 1;</code> 表示一般错误，保持简单即可。</li>
+    </ul>
+    <pre><code>./program --input missing.txt
+echo $?</code></pre>
+    <p>调用程序、测试脚本和评测系统不会阅读你在终端上打印的中文解释来判断成功，而是检查退出码。因此“向 <code>cerr</code> 写清楚原因 + 返回非零退出码”应该同时完成。</p>
+
+    <h2>9. 完整示例：文本统计 CLI</h2>
+    <p>这个程序支持四种使用方式：</p>
+    <pre><code>./textstats &lt; article.txt
+./textstats --input article.txt
+./textstats --input article.txt --output result.txt
+./textstats --help</code></pre>
+    <p>未指定输入文件时读取 <code>stdin</code>，未指定输出文件时写入 <code>stdout</code>。这是 CLI 工具很实用的设计：既能独立操作文件，也能参与管道。</p>
+    <pre><code>#include &lt;algorithm&gt;
+#include &lt;cctype&gt;
+#include &lt;fstream&gt;
+#include &lt;iostream&gt;
+#include &lt;iterator&gt;
+#include &lt;string&gt;
+
+struct Options {
+    std::string input_path;
+    std::string output_path;
+    bool help = false;
+};
+
+bool parse_options(int argc, char* argv[], Options&amp; options) {
+    for (int i = 1; i &lt; argc; ++i) {
+        std::string arg = argv[i];
+        if (arg == "-h" || arg == "--help") {
+            options.help = true;
+        } else if (arg == "-i" || arg == "--input" ||
+                   arg == "-o" || arg == "--output") {
+            if (i + 1 == argc) {
+                std::cerr &lt;&lt; "error: " &lt;&lt; arg &lt;&lt; " needs a path\n";
+                return false;
+            }
+            std::string path = argv[++i];
+            if (arg == "-i" || arg == "--input") {
+                options.input_path = path;
+            } else {
+                options.output_path = path;
+            }
+        } else {
+            std::cerr &lt;&lt; "error: unknown option: " &lt;&lt; arg &lt;&lt; '\n';
+            return false;
+        }
+    }
+    return true;
+}
+
+int main(int argc, char* argv[]) {
+    Options options;
+    if (!parse_options(argc, argv, options)) {
+        return 1;
+    }
+    if (options.help) {
+        std::cout &lt;&lt; "Usage: textstats [-i FILE] [-o FILE]\n";
         return 0;
     }
-};</code></pre>
-<p>---</p>
-<h3>ACM/ICPC 模式</h3>
-<p><strong>特点</strong>：需要自己处理输入输出，完整的 <code>main</code> 函数。</p>
-<h4>单组输入</h4>
-<pre><code>#include &lt;bits/stdc++.h&gt;
-using namespace std;
 
-int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-    
-    int n;
-    cin &gt;&gt; n;
-    vector&lt;int&gt; a(n);
-    for (int i = 0; i &lt; n; ++i) {
-        cin &gt;&gt; a[i];
+    std::ifstream input_file;
+    std::istream* input = &amp;std::cin;
+    if (!options.input_path.empty()) {
+        input_file.open(options.input_path);
+        if (!input_file) {
+            std::cerr &lt;&lt; "error: cannot open input file: "
+                      &lt;&lt; options.input_path &lt;&lt; '\n';
+            return 1;
+        }
+        input = &amp;input_file;
     }
-    
-    // 处理
-    
-    cout &lt;&lt; result &lt;&lt; &quot;\n&quot;;
-    
-    return 0;
-}</code></pre>
-<h4>多组输入（给定组数）</h4>
-<pre><code>int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-    
-    int T;
-    cin &gt;&gt; T;
-    while (T--) {
-        int n;
-        cin &gt;&gt; n;
-        // 处理每组
+
+    std::ofstream output_file;
+    std::ostream* output = &amp;std::cout;
+    if (!options.output_path.empty()) {
+        output_file.open(options.output_path);
+        if (!output_file) {
+            std::cerr &lt;&lt; "error: cannot open output file: "
+                      &lt;&lt; options.output_path &lt;&lt; '\n';
+            return 1;
+        }
+        output = &amp;output_file;
     }
-    
-    return 0;
-}</code></pre>
-<h4>多组输入（读到 EOF）</h4>
-<pre><code>int main() {
-    int n;
-    while (cin &gt;&gt; n) {
-        // 处理
+
+    std::string text((std::istreambuf_iterator&lt;char&gt;(*input)),
+                     std::istreambuf_iterator&lt;char&gt;());
+
+    std::size_t lines = std::count(text.begin(), text.end(), '\n');
+    if (!text.empty() &amp;&amp; text.back() != '\n') {
+        ++lines;
     }
-    return 0;
-}
 
-// 或者
-int main() {
-    string line;
-    while (getline(cin, line)) {
-        // 处理
+    std::size_t words = 0;
+    bool inside_word = false;
+    for (unsigned char ch : text) {
+        if (std::isspace(ch)) {
+            inside_word = false;
+        } else if (!inside_word) {
+            ++words;
+            inside_word = true;
+        }
     }
-    return 0;
-}</code></pre>
-<p>---</p>
-<h2>常见输入格式</h2>
-<h3>读取数组</h3>
-<pre><code>// 一行 n 个数
-int n;
-cin &gt;&gt; n;
-vector&lt;int&gt; a(n);
-for (int i = 0; i &lt; n; ++i) {
-    cin &gt;&gt; a[i];
-}
 
-// 不指定 n，读一行所有数
-string line;
-getline(cin, line);
-stringstream ss(line);
-vector&lt;int&gt; a;
-int x;
-while (ss &gt;&gt; x) {
-    a.push_back(x);
-}</code></pre>
-<p>---</p>
-<h3>读取矩阵</h3>
-<pre><code>int n, m;
-cin &gt;&gt; n &gt;&gt; m;
-vector&lt;vector&lt;int&gt;&gt; mat(n, vector&lt;int&gt;(m));
-
-for (int i = 0; i &lt; n; ++i) {
-    for (int j = 0; j &lt; m; ++j) {
-        cin &gt;&gt; mat[i][j];
-    }
-}
-
-// 字符矩阵
-vector&lt;string&gt; grid(n);
-for (int i = 0; i &lt; n; ++i) {
-    cin &gt;&gt; grid[i];
-}</code></pre>
-<p>---</p>
-<h3>读取整行</h3>
-<pre><code>string line;
-getline(cin, line);
-
-// 按空白分割
-stringstream ss(line);
-string word;
-while (ss &gt;&gt; word) {
-    // 处理每个单词
-}
-
-// 按特定分隔符分割
-stringstream ss(line);
-string part;
-while (getline(ss, part, ',')) {
-    // 按逗号分割
-}</code></pre>
-<p>---</p>
-<h3>混合输入（数字 + 整行）</h3>
-<p><strong>问题</strong>：<code>cin >> x</code> 后用 <code>getline</code> 会读到残留换行符。</p>
-<p><strong>解决</strong>：</p>
-<pre><code>int n;
-cin &gt;&gt; n;
-cin.ignore();  // 忽略换行符
-
-string line;
-getline(cin, line);</code></pre>
-<p>---</p>
-<h3>读到特定标记</h3>
-<pre><code>int n;
-while (cin &gt;&gt; n &amp;&amp; n != 0) {  // 读到 0 结束
-    // 处理
-}
-
-string s;
-while (cin &gt;&gt; s &amp;&amp; s != &quot;#&quot;) {  // 读到 # 结束
-    // 处理
-}</code></pre>
-<p>---</p>
-<h2>常见输出格式</h2>
-<h3>基本输出</h3>
-<pre><code>cout &lt;&lt; x &lt;&lt; &quot;\n&quot;;              // 输出 + 换行
-cout &lt;&lt; x &lt;&lt; &quot; &quot; &lt;&lt; y &lt;&lt; &quot;\n&quot;;  // 多个值
-
-// 行末无空格
-for (int i = 0; i &lt; n; ++i) {
-    cout &lt;&lt; a[i];
-    if (i &lt; n - 1) cout &lt;&lt; &quot; &quot;;
-}
-cout &lt;&lt; &quot;\n&quot;;
-
-// 更简洁的写法
-for (int i = 0; i &lt; n; ++i) {
-    cout &lt;&lt; a[i] &lt;&lt; &quot; \n&quot;[i == n - 1];
-}</code></pre>
-<p>---</p>
-<h3>格式化输出</h3>
-<pre><code>#include &lt;iomanip&gt;
-
-// 保留小数
-cout &lt;&lt; fixed &lt;&lt; setprecision(2) &lt;&lt; x &lt;&lt; &quot;\n&quot;;
-
-// 宽度和填充
-cout &lt;&lt; setw(5) &lt;&lt; setfill('0') &lt;&lt; x &lt;&lt; &quot;\n&quot;;  // 00123
-
-// 科学计数法
-cout &lt;&lt; scientific &lt;&lt; x &lt;&lt; &quot;\n&quot;;</code></pre>
-<p>---</p>
-<h3>布尔值</h3>
-<pre><code>bool flag = true;
-
-// 输出 1 或 0
-cout &lt;&lt; flag &lt;&lt; &quot;\n&quot;;
-
-// 输出 true 或 false
-cout &lt;&lt; boolalpha &lt;&lt; flag &lt;&lt; &quot;\n&quot;;
-
-// 输出 YES 或 NO
-cout &lt;&lt; (flag ? &quot;YES&quot; : &quot;NO&quot;) &lt;&lt; &quot;\n&quot;;</code></pre>
-<p>---</p>
-<h2>输入输出优化</h2>
-<h3>关闭同步（C++ 常用）</h3>
-<pre><code>ios::sync_with_stdio(false);
-cin.tie(nullptr);</code></pre>
-<p><strong>效果</strong>：加速 <code>cin/cout</code>，但不能混用 <code>scanf/printf</code>。</p>
-<p>---</p>
-<h3>使用 scanf/printf（C 风格）</h3>
-<pre><code>int n;
-scanf(&quot;%d&quot;, &amp;n);
-
-double x;
-scanf(&quot;%lf&quot;, &amp;x);
-
-long long ll;
-scanf(&quot;%lld&quot;, &amp;ll);
-
-printf(&quot;%d\n&quot;, n);
-printf(&quot;%.2lf\n&quot;, x);
-printf(&quot;%lld\n&quot;, ll);</code></pre>
-<p><strong>优点</strong>：比 <code>cin/cout</code> 快（不开优化时）  </p>
-<p><strong>缺点</strong>：容易写错格式串</p>
-<p>---</p>
-<h3>读入整个文件</h3>
-<pre><code>string content((istreambuf_iterator&lt;char&gt;(cin)),
-               istreambuf_iterator&lt;char&gt;());</code></pre>
-<p>---</p>
-<h2>特殊情况处理</h2>
-<h3>空行处理</h3>
-<pre><code>string line;
-while (getline(cin, line)) {
-    if (line.empty()) {
-        // 空行
-        continue;
-    }
-    // 处理非空行
-}</code></pre>
-<p>---</p>
-<h3>前导/后缀空格</h3>
-<pre><code>// 去掉前导空格
-line.erase(line.begin(), find_if(line.begin(), line.end(), [](char c) {
-    return !isspace(c);
-}));
-
-// 去掉后缀空格
-line.erase(find_if(line.rbegin(), line.rend(), [](char c) {
-    return !isspace(c);
-}).base(), line.end());
-
-// 使用 stringstream 自动忽略空格
-stringstream ss(line);
-string word;
-while (ss &gt;&gt; word) { }  // 自动跳过前后空格</code></pre>
-<p>---</p>
-<h3>不定长数组</h3>
-<pre><code>// 方法 1：读一行再解析
-string line;
-getline(cin, line);
-stringstream ss(line);
-vector&lt;int&gt; a;
-int x;
-while (ss &gt;&gt; x) {
-    a.push_back(x);
-}
-
-// 方法 2：读到换行符
-vector&lt;int&gt; a;
-int x;
-while (cin &gt;&gt; x) {
-    a.push_back(x);
-    if (cin.peek() == '\n') break;
-}</code></pre>
-<p>---</p>
-<h2>文件输入输出</h2>
-<h3>从文件读取</h3>
-<pre><code>freopen(&quot;input.txt&quot;, &quot;r&quot;, stdin);
-freopen(&quot;output.txt&quot;, &quot;w&quot;, stdout);
-
-// 之后用 cin/cout 正常读写即可
-int n;
-cin &gt;&gt; n;
-cout &lt;&lt; n &lt;&lt; &quot;\n&quot;;</code></pre>
-<h3>使用 fstream</h3>
-<pre><code>#include &lt;fstream&gt;
-
-ifstream fin(&quot;input.txt&quot;);
-ofstream fout(&quot;output.txt&quot;);
-
-int n;
-fin &gt;&gt; n;
-fout &lt;&lt; n &lt;&lt; &quot;\n&quot;;
-
-fin.close();
-fout.close();</code></pre>
-<p>---</p>
-<h2>调试输出</h2>
-<h3>标准错误流</h3>
-<pre><code>cerr &lt;&lt; &quot;Debug: x = &quot; &lt;&lt; x &lt;&lt; &quot;\n&quot;;  // 不影响标准输出</code></pre>
-<h3>条件编译</h3>
-<pre><code>#ifdef LOCAL
-    freopen(&quot;input.txt&quot;, &quot;r&quot;, stdin);
-    #define debug(x) cerr &lt;&lt; #x &lt;&lt; &quot; = &quot; &lt;&lt; x &lt;&lt; &quot;\n&quot;
-#else
-    #define debug(x)
-#endif
-
-debug(n);  // 本地运行时输出，提交时自动忽略</code></pre>
-<p>---</p>
-<h2>常见陷阱</h2>
-<ol>
-<li><strong>混用 cin 和 getline</strong>：<code>cin >> x</code> 后用 <code>getline</code> 要先 <code>cin.ignore()</code></li>
-<li><strong>行末空格</strong>：题目要求行末无空格时注意处理</li>
-<li><strong>多组数据不清空</strong>：<code>vector</code>、<code>map</code>、全局数组要清空</li>
-<li><strong>EOF 判断</strong>：<code>while (cin >> n)</code> 自动处理 EOF</li>
-<li><strong>精度问题</strong>：浮点输出注意 <code>fixed</code> 和 <code>setprecision</code></li>
-<li><strong>换行符</strong>：<code>\n</code> 比 <code>endl</code> 快（<code>endl</code> 会刷新缓冲区）</li>
-</ol>
-<h2>输入输出速度对比</h2>
-<table>
-<thead><tr>
-<th>方法</th>
-<th>速度</th>
-<th>使用场景</th>
-</tr></thead>
-<tbody>
-<tr>
-<td><code>scanf/printf</code></td>
-<td>快</td>
-<td>简单格式，需要速度</td>
-</tr>
-<tr>
-<td><code>cin/cout</code> + 优化</td>
-<td>中等</td>
-<td>C++ 风格，推荐</td>
-</tr>
-<tr>
-<td><code>cin/cout</code> 不优化</td>
-<td>慢</td>
-<td>数据量小</td>
-</tr>
-<tr>
-<td><code>getline</code></td>
-<td>中等</td>
-<td>需要读整行</td>
-</tr>
-</tbody>
-</table>
-<h2>推荐做法</h2>
-<pre><code>#include &lt;bits/stdc++.h&gt;
-using namespace std;
-
-int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-    
-    // 使用 cin/cout 即可
-    
+    *output &lt;&lt; "lines " &lt;&lt; lines &lt;&lt; '\n'
+            &lt;&lt; "words " &lt;&lt; words &lt;&lt; '\n'
+            &lt;&lt; "bytes " &lt;&lt; text.size() &lt;&lt; '\n';
     return 0;
 }</code></pre>
 
-    <div class="nav">
-        <a href="18-bit-manipulation.html">← 18 位运算</a> | <a href="cpp-stl.html">C++ STL使用 →</a>
-    </div>
+    <h3>编译与验证</h3>
+    <pre><code>g++ -std=c++17 -Wall -Wextra -O2 textstats.cpp -o textstats
 
+echo "hello C++ world" | ./textstats
+./textstats --input article.txt --output result.txt
+./textstats --bad-option
+echo $?</code></pre>
+    <p>至少要验证：标准输入、输入文件、输出文件、<code>--help</code>、未知选项、参数缺值和文件打不开这几条路径。</p>
+
+    <h2>10. 项目式机试的 I/O 检查清单</h2>
+    <ol>
+        <li>先写清楚程序接受哪些参数，以及输入数据来自 stdin 还是文件。</li>
+        <li>正常结果只写 stdout 或指定输出文件，诊断信息只写 stderr。</li>
+        <li>每次打开文件和读取关键字段后都检查状态。</li>
+        <li>参数缺值和未知参数必须报错，不能越界读取 <code>argv</code>。</li>
+        <li>成功返回 0，失败返回非零值。</li>
+        <li>给出简短准确的 <code>--help</code>，让评测者知道程序如何运行。</li>
+        <li>将核心处理逻辑与 I/O 分开，避免所有代码都堆在 <code>main</code> 中。</li>
+    </ol>
+    <div class="tip"><strong>掌握标准：</strong>能写出一个同时支持 stdin/stdout 和输入输出文件的 CLI；能解析基本选项；遇到错误时能输出诊断并返回非零退出码。</div>
+
+    <div class="nav"><a href="00-cpp-project-setup.html">← 上一章：构建 C++ 项目</a> · <a href="01-simulation.html">下一章：模拟与枚举 →</a></div>
     <script>
-        // 加载保存的主题
         const savedTheme = localStorage.getItem('theme');
-        if (savedTheme === 'dark') {
-            document.body.classList.add('dark-mode');
-        }
-
-        // 更新按钮图标
-        function updateThemeIcon() {
-            const icon = document.querySelector('.theme-icon');
-            icon.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
-        }
-
-        // 切换主题
-        function toggleTheme() {
-            document.body.classList.toggle('dark-mode');
-            const theme = document.body.classList.contains('dark-mode') ? 'dark' : 'light';
-            localStorage.setItem('theme', theme);
-            updateThemeIcon();
-        }
-
-        // 初始化图标
+        if (savedTheme === 'dark') document.body.classList.add('dark-mode');
+        function updateThemeIcon() { document.querySelector('.theme-icon').textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙'; }
+        function toggleTheme() { document.body.classList.toggle('dark-mode'); localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light'); updateThemeIcon(); }
         updateThemeIcon();
     </script>
 </body>

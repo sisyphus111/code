@@ -157,10 +157,11 @@
 
     <p>面向研究生夏令营机试、保研机考的系统性学习材料。</p>
 
-    <h2>开始之前：从零构建 C++ 项目</h2>
-    <p>如果机试要求从空目录开始完成一个项目，第一步不是写算法，而是先建立目录、编译程序并知道如何运行和排错。</p>
-    <ol start="0">
-        <li><a href="00-cpp-project-setup.html"><strong>单文件 g++ 与多文件 CMake</strong></a></li>
+    <h2>开始之前：写出一个能运行的 C++ 程序</h2>
+    <p>如果机试要求从零实现一个项目，应先掌握构建、输入输出和 CLI 程序接口，再开始学习具体算法。</p>
+    <ol>
+        <li><a href="00-cpp-project-setup.html"><strong>基础 01：单文件 g++ 与多文件 CMake</strong></a></li>
+        <li><a href="io-handling.html"><strong>基础 02：C++ 输入输出、文件读写与 CLI 工具</strong></a></li>
     </ol>
 
     <h2>核心章节</h2>
@@ -187,7 +188,6 @@
 
     <h2>附录</h2>
     <ul>
-        <li><a href="io-handling.html">输入输出处理</a></li>
         <li><a href="cpp-stl.html">C++ STL使用</a></li>
         <li><a href="templates.html">算法模板库</a></li>
     </ul>
@@ -195,8 +195,8 @@
     <h2>使用建议</h2>
     <p><strong>学习路径：</strong></p>
     <ol>
-        <li>先完成“从零构建 C++ 项目”，确保能独立创建、编译和运行项目</li>
-        <li>再看附录（输入输出、STL）了解基础</li>
+        <li>先完成构建与 CLI 两个基础章节，确保能独立创建、编译和运行程序</li>
+        <li>再看 C++ STL 附录了解常用容器和算法</li>
         <li>按章节顺序学习（01→18）</li>
         <li>重点突破动态规划（第14章）</li>
         <li>考前复习使用算法模板库</li>
