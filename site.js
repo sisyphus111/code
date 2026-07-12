@@ -27,6 +27,7 @@ const chapters = [
     { file: "18-bit-manipulation.html", label: "18", title: "位运算", group: "算法" },
     { file: "qt-basics.html", label: "Qt 01", title: "Qt 基础与常用控件", group: "Qt" },
     { file: "templates.html", label: "附录 A", title: "C++ 算法模板库", group: "附录" },
+    { file: "reference-constants.html", label: "附录 B", title: "常用常量与速查", group: "附录" },
 ];
 
 const currentFile = window.location.pathname.split("/").pop() || "index.html";

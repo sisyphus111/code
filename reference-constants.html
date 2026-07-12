@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>附录 B：常用常量与速查</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <h1>附录 B：常用常量与速查</h1>
+    <p>机考中经常需要的数值范围、常量和标准库工具的快速参考。</p>
+
+    <h2>1. 整数类型的范围</h2>
+    <h3>1.1 基本整数类型</h3>
+    <table>
+        <thead><tr><th>类型</th><th>字节数</th><th>最小值</th><th>最大值</th><th>用途</th></tr></thead>
+        <tbody>
+            <tr><td><code>int</code></td><td>4</td><td>-2,147,483,648</td><td>2,147,483,647</td><td>普通整数（约 ±21 亿）</td></tr>
+            <tr><td><code>long long</code></td><td>8</td><td>-9,223,372,036,854,775,808</td><td>9,223,372,036,854,775,807</td><td>大整数（约 ±9×10¹⁸）</td></tr>
+            <tr><td><code>unsigned int</code></td><td>4</td><td>0</td><td>4,294,967,295</td><td>非负整数（约 43 亿）</td></tr>
+            <tr><td><code>unsigned long long</code></td><td>8</td><td>0</td><td>18,446,744,073,709,551,615</td><td>非负大整数（约 1.8×10¹⁹）</td></tr>
+        </tbody>
+    </table>
+
+    <h3>1.2 如何获取范围（C++ 方式）</h3>
+    <pre><code>#include &lt;limits&gt;
+#include &lt;iostream&gt;
+
+int main() {
+    std::cout &lt;&lt; "int 最小值: " &lt;&lt; std::numeric_limits&lt;int&gt;::min() &lt;&lt; '\n';
+    std::cout &lt;&lt; "int 最大值: " &lt;&lt; std::numeric_limits&lt;int&gt;::max() &lt;&lt; '\n';
+    std::cout &lt;&lt; "long long 最大值: " &lt;&lt; std::numeric_limits&lt;long long&gt;::max() &lt;&lt; '\n';
+    std::cout &lt;&lt; "double 最大值: " &lt;&lt; std::numeric_limits&lt;double&gt;::max() &lt;&lt; '\n';
+}</code></pre>
+
+    <h3>1.3 常用的整数常量表示</h3>
+    <pre><code>const int INF = 0x3f3f3f3f;           // 约 10⁹，常用无穷大
+const long long INF_LL = 0x3f3f3f3f3f3f3f3fLL;  // long long 版本
+const int MAX_INT = 2147483647;        // int 最大值
+const int MIN_INT = -2147483648;       // int 最小值
+const long long MAX_LL = 9223372036854775807LL;  // long long 最大值</code></pre>
+
+    <h2>2. 浮点数精度与特殊值</h2>
+    <table>
+        <thead><tr><th>类型</th><th>字节数</th><th>有效位数</th><th>用途</th></tr></thead>
+        <tbody>
+            <tr><td><code>float</code></td><td>4</td><td>约 6-7 位</td><td>单精度浮点，机考较少用</td></tr>
+            <tr><td><code>double</code></td><td>8</td><td>约 15-16 位</td><td>双精度浮点，常用</td></tr>
+        </tbody>
+    </table>
+
+    <h3>2.1 浮点数特殊值</h3>
+    <pre><code>#include &lt;cmath&gt;
+#include &lt;limits&gt;
+
+double inf = std::numeric_limits&lt;double&gt;::infinity();  // 正无穷
+double neg_inf = -std::numeric_limits&lt;double&gt;::infinity();  // 负无穷
+double nan = std::numeric_limits&lt;double&gt;::quiet_NaN();  // NaN（非数字）
+
+// 判断
+bool is_inf = std::isinf(x);
+bool is_nan = std::isnan(x);</code></pre>
+
+    <h3>2.2 浮点数比较</h3>
+    <pre><code>const double EPS = 1e-9;
+
+bool equals(double a, double b) {
+    return std::abs(a - b) &lt; EPS;
+}
+
+bool less_than(double a, double b) {
+    return a &lt; b - EPS;
+}</code></pre>
+
+    <h2>3. 数学常量</h2>
+    <h3>3.1 C++ 标准常量（C++20）</h3>
+    <pre><code>#include &lt;numbers&gt;
+
+double pi = std::numbers::pi;        // π ≈ 3.14159
+double e = std::numbers::e;          // e ≈ 2.71828
+double sqrt2 = std::numbers::sqrt2;  // √2 ≈ 1.41421</code></pre>
+
+    <h3>3.2 兼容老版本的定义</h3>
+    <pre><code>#include &lt;cmath&gt;
+
+const double PI = acos(-1.0);         // π
+const double E = exp(1.0);            // e
+const double SQRT2 = sqrt(2.0);       // √2</code></pre>
+
+    <h2>4. 常用容器的容量限制</h2>
+    <table>
+        <thead><tr><th>容器</th><th>理论最大容量</th><th>实际建议上限</th></tr></thead>
+        <tbody>
+            <tr><td><code>vector&lt;int&gt;</code></td><td>约 10⁹ 个元素</td><td>10⁷ 以内（~40MB）</td></tr>
+            <tr><td><code>string</code></td><td>约 10⁹ 个字符</td><td>10⁷ 以内</td></tr>
+            <tr><td><code>unordered_map</code></td><td>取决于内存</td><td>10⁶ 以内</td></tr>
+            <tr><td><code>set/map</code></td><td>取决于内存</td><td>10⁶ 以内</td></tr>
+        </tbody>
+    </table>
+    <div class="tip"><strong>内存估算：</strong><code>vector&lt;int&gt;</code> 每个元素 4 字节，10⁷ 个元素约 40MB。机考通常限制 256MB 内存。</div>
+
+    <h2>5. 字符与 ASCII 码</h2>
+    <h3>5.1 常用 ASCII 码</h3>
+    <table>
+        <thead><tr><th>字符</th><th>ASCII 码</th><th>字符</th><th>ASCII 码</th></tr></thead>
+        <tbody>
+            <tr><td><code>'0'</code></td><td>48</td><td><code>'A'</code></td><td>65</td></tr>
+            <tr><td><code>'9'</code></td><td>57</td><td><code>'Z'</code></td><td>90</td></tr>
+            <tr><td><code>' '</code>（空格）</td><td>32</td><td><code>'a'</code></td><td>97</td></tr>
+            <tr><td><code>'\n'</code></td><td>10</td><td><code>'z'</code></td><td>122</td></tr>
+        </tbody>
+    </table>
+
+    <h3>5.2 字符判断与转换</h3>
+    <pre><code>#include &lt;cctype&gt;
+
+// 判断
+bool is_digit = std::isdigit(ch);      // 是否数字 0-9
+bool is_alpha = std::isalpha(ch);      // 是否字母 a-z A-Z
+bool is_alnum = std::isalnum(ch);      // 是否字母或数字
+bool is_space = std::isspace(ch);      // 是否空白字符
+bool is_upper = std::isupper(ch);      // 是否大写字母
+bool is_lower = std::islower(ch);      // 是否小写字母
+
+// 转换
+char upper = std::toupper(ch);         // 转大写
+char lower = std::tolower(ch);         // 转小写
+
+// 数字字符与整数互转
+int digit = ch - '0';                  // '5' -> 5
+char ch = digit + '0';                 // 5 -> '5'</code></pre>
+
+    <h2>6. 时间复杂度参考</h2>
+    <table>
+        <thead><tr><th>数据规模 n</th><th>允许的复杂度</th><th>典型算法</th></tr></thead>
+        <tbody>
+            <tr><td>n ≤ 10</td><td>O(n!), O(2ⁿ)</td><td>全排列、子集枚举</td></tr>
+            <tr><td>n ≤ 20</td><td>O(2ⁿ), O(n²×2ⁿ)</td><td>状态压缩 DP</td></tr>
+            <tr><td>n ≤ 100</td><td>O(n³)</td><td>Floyd、三重循环</td></tr>
+            <tr><td>n ≤ 1,000</td><td>O(n²)</td><td>二重循环、朴素 DP</td></tr>
+            <tr><td>n ≤ 10,000</td><td>O(n²)</td><td>仍可接受</td></tr>
+            <tr><td>n ≤ 100,000</td><td>O(n log n)</td><td>排序、堆、线段树</td></tr>
+            <tr><td>n ≤ 1,000,000</td><td>O(n), O(n log n)</td><td>哈希表、单调栈、排序</td></tr>
+            <tr><td>n ≤ 10,000,000</td><td>O(n)</td><td>线性扫描、前缀和</td></tr>
+        </tbody>
+    </table>
+    <div class="tip"><strong>经验：</strong>C++ 程序每秒约执行 10⁸-10⁹ 次基本操作。时限 1 秒时，O(n²) 通常在 n ≤ 10⁴ 时安全。</div>
+
+    <h2>7. 常用数学公式</h2>
+    <h3>7.1 组合数与排列数</h3>
+    <pre><code>// 阶乘
+long long factorial(int n) {
+    long long result = 1;
+    for (int i = 2; i &lt;= n; ++i) {
+        result *= i;
+    }
+    return result;
+}
+
+// 组合数 C(n, k) = n! / (k! * (n-k)!)
+long long combination(int n, int k) {
+    if (k &gt; n - k) k = n - k;  // 优化
+    long long result = 1;
+    for (int i = 0; i &lt; k; ++i) {
+        result = result * (n - i) / (i + 1);
+    }
+    return result;
+}
+
+// 排列数 P(n, k) = n! / (n-k)!
+long long permutation(int n, int k) {
+    long long result = 1;
+    for (int i = 0; i &lt; k; ++i) {
+        result *= (n - i);
+    }
+    return result;
+}</code></pre>
+
+    <h3>7.2 最大公约数与最小公倍数</h3>
+    <pre><code>#include &lt;numeric&gt;  // C++17
+
+int g = std::gcd(a, b);       // 最大公约数
+int l = std::lcm(a, b);       // 最小公倍数（C++17）
+
+// 手写版本
+int gcd(int a, int b) {
+    return b == 0 ? a : gcd(b, a % b);
+}
+
+long long lcm(long long a, long long b) {
+    return a / gcd(a, b) * b;  // 注意先除后乘，避免溢出
+}</code></pre>
+
+    <h3>7.3 快速幂</h3>
+    <pre><code>// 计算 a^b mod m
+long long power_mod(long long a, long long b, long long m) {
+    long long result = 1;
+    a %= m;
+    while (b &gt; 0) {
+        if (b &amp; 1) result = result * a % m;
+        a = a * a % m;
+        b &gt;&gt;= 1;
+    }
+    return result;
+}</code></pre>
+
+    <h2>8. 常用位运算技巧</h2>
+    <pre><code>// 检查第 k 位是否为 1
+bool bit_set = (n &amp; (1 &lt;&lt; k)) != 0;
+
+// 设置第 k 位为 1
+n |= (1 &lt;&lt; k);
+
+// 清除第 k 位（设为 0）
+n &amp;= ~(1 &lt;&lt; k);
+
+// 翻转第 k 位
+n ^= (1 &lt;&lt; k);
+
+// 获取最低位的 1
+int lowest_bit = n &amp; (-n);
+
+// 清除最低位的 1
+n &amp;= (n - 1);
+
+// 统计 1 的个数
+int count = __builtin_popcount(n);      // unsigned int
+int count_ll = __builtin_popcountll(n); // unsigned long long
+
+// 前导 0 的个数
+int leading_zeros = __builtin_clz(n);   // n 必须 &gt; 0</code></pre>
+
+    <h2>9. 常用初始化值</h2>
+    <pre><code>// 数组初始化为 0
+int arr[1000] = {};
+std::vector&lt;int&gt; vec(n, 0);
+
+// 初始化为最大值（用于求最小值）
+int min_val = std::numeric_limits&lt;int&gt;::max();
+int min_val = INT_MAX;  // 需要 #include &lt;climits&gt;
+
+// 初始化为最小值（用于求最大值）
+int max_val = std::numeric_limits&lt;int&gt;::min();
+int max_val = INT_MIN;
+
+// 无穷大（图算法、DP）
+const int INF = 0x3f3f3f3f;  // 约 10⁹
+
+// 二维数组初始化
+std::vector&lt;std::vector&lt;int&gt;&gt; grid(n, std::vector&lt;int&gt;(m, 0));
+
+// 填充容器
+std::vector&lt;int&gt; vec(n);
+std::fill(vec.begin(), vec.end(), -1);</code></pre>
+
+    <h2>10. 方向数组（网格问题）</h2>
+    <pre><code>// 四方向（上下左右）
+const int dx4[] = {-1, 1, 0, 0};
+const int dy4[] = {0, 0, -1, 1};
+
+// 八方向（包括对角线）
+const int dx8[] = {-1, -1, -1, 0, 0, 1, 1, 1};
+const int dy8[] = {-1, 0, 1, -1, 1, -1, 0, 1};
+
+// 使用
+for (int i = 0; i &lt; 4; ++i) {
+    int nx = x + dx4[i];
+    int ny = y + dy4[i];
+    if (nx &gt;= 0 &amp;&amp; nx &lt; n &amp;&amp; ny &gt;= 0 &amp;&amp; ny &lt; m) {
+        // 合法位置
+    }
+}</code></pre>
+
+    <h2>11. 字符串处理</h2>
+    <h3>11.1 字符串分割</h3>
+    <pre><code>#include &lt;sstream&gt;
+
+// 按空白分割
+std::string line = "hello world test";
+std::istringstream iss(line);
+std::string word;
+while (iss &gt;&gt; word) {
+    std::cout &lt;&lt; word &lt;&lt; '\n';
+}
+
+// 按特定字符分割
+std::string s = "a,b,c,d";
+std::string token;
+std::istringstream tokenStream(s);
+while (std::getline(tokenStream, token, ',')) {
+    std::cout &lt;&lt; token &lt;&lt; '\n';
+}</code></pre>
+
+    <h3>11.2 字符串与数字互转</h3>
+    <pre><code>#include &lt;string&gt;
+
+// 数字 -> 字符串
+std::string s = std::to_string(42);
+
+// 字符串 -> 数字
+int n = std::stoi("123");
+long long ll = std::stoll("1234567890");
+double d = std::stod("3.14");</code></pre>
+
+    <div class="tip"><strong>使用建议：</strong>机考时可以把这些常量和函数放在模板代码的开头，需要时直接复制粘贴。</div>
+
+    <script defer src="site.js"></script>
+</body>
+</html>
