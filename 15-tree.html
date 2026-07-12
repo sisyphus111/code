@@ -19,6 +19,7 @@
 <li>树的直径、重心、最近公共祖先</li>
 </ul>
 <p>核心思路：<strong>递归思维 + DFS/BFS 遍历 + 分治思想</strong>。</p>
+
 <h2>核心要点</h2>
 <ol>
 <li><strong>树的定义</strong>：n 个节点，n-1 条边，连通无环</li>
@@ -27,76 +28,133 @@
 <li><strong>DFS vs BFS</strong>：深度优先用递归/栈，广度优先用队列</li>
 <li><strong>树形 DP</strong>：从子树信息推导当前节点信息</li>
 </ol>
+
 <h2>树的表示</h2>
 <h3>邻接表（常用）</h3>
 <pre><code>vector&lt;vector&lt;int&gt;&gt; tree(n + 1);
 tree[u].push_back(v);
 tree[v].push_back(u);</code></pre>
+
 <h3>结构体（二叉树）</h3>
 <pre><code>struct TreeNode {
     int val;
     TreeNode *left, *right;
     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
 };</code></pre>
-<h2>例题演示</h2>
-<h3>例题 1：二叉树的前序/中序/后序遍历</h3>
-<p><strong>题目</strong>：给定二叉树，输出前序、中序、后序遍历结果。</p>
-<p><strong>思路</strong>：</p>
+
+<h2>二叉树的遍历详解</h2>
+<h3>遍历顺序的本质</h3>
+<p>遍历顺序取决于<strong>"什么时候处理当前节点"</strong>。以下面这棵树为例：</p>
+<pre><code>    2
+   / \
+  1   3</code></pre>
+
+<table>
+    <thead><tr><th>遍历方式</th><th>顺序</th><th>结果</th><th>典型应用</th></tr></thead>
+    <tbody>
+        <tr><td>前序（Pre-order）</td><td>根 → 左 → 右</td><td>2, 1, 3</td><td>复制树、前缀表达式</td></tr>
+        <tr><td>中序（In-order）</td><td>左 → 根 → 右</td><td>1, 2, 3</td><td>BST 排序、验证</td></tr>
+        <tr><td>后序（Post-order）</td><td>左 → 右 → 根</td><td>1, 3, 2</td><td>删除树、树形 DP</td></tr>
+        <tr><td>层序（Level-order）</td><td>逐层从左到右</td><td>2, 1, 3</td><td>BFS、最短路径</td></tr>
+    </tbody>
+</table>
+
+<h3>记忆技巧</h3>
+<p><strong>看"处理根节点"的位置：</strong></p>
 <ul>
-<li>前序：根 → 左 → 右</li>
-<li>中序：左 → 根 → 右</li>
-<li>后序：左 → 右 → 根</li>
+    <li><strong>前</strong>序：处理在<strong>前面</strong>（先处理根，再递归）</li>
+    <li><strong>中</strong>序：处理在<strong>中间</strong>（先递归左，处理根，再递归右）</li>
+    <li><strong>后</strong>序：处理在<strong>后面</strong>（先递归完，最后处理根）</li>
 </ul>
-<pre><code>#include &lt;bits/stdc++.h&gt;
-using namespace std;
 
-struct TreeNode {
-    int val;
-    TreeNode *left, *right;
-    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
-};
-
-// 前序遍历
-void preorder(TreeNode* root, vector&lt;int&gt;&amp; res) {
+<h3>代码模板对比</h3>
+<pre><code>// 前序遍历：根 → 左 → 右
+void preorder(TreeNode* root) {
     if (!root) return;
-    res.push_back(root-&gt;val);
-    preorder(root-&gt;left, res);
-    preorder(root-&gt;right, res);
+    访问(root);              // ← 先处理根
+    preorder(root->left);    // 再递归左子树
+    preorder(root->right);   // 最后递归右子树
 }
 
-// 中序遍历
-void inorder(TreeNode* root, vector&lt;int&gt;&amp; res) {
+// 中序遍历：左 → 根 → 右
+void inorder(TreeNode* root) {
     if (!root) return;
-    inorder(root-&gt;left, res);
-    res.push_back(root-&gt;val);
-    inorder(root-&gt;right, res);
+    inorder(root->left);     // 先递归左子树
+    访问(root);              // ← 中间处理根
+    inorder(root->right);    // 最后递归右子树
 }
 
-// 后序遍历
-void postorder(TreeNode* root, vector&lt;int&gt;&amp; res) {
+// 后序遍历：左 → 右 → 根
+void postorder(TreeNode* root) {
     if (!root) return;
-    postorder(root-&gt;left, res);
-    postorder(root-&gt;right, res);
-    res.push_back(root-&gt;val);
+    postorder(root->left);   // 先递归左子树
+    postorder(root->right);  // 再递归右子树
+    访问(root);              // ← 最后处理根
+}</code></pre>
+
+<div class="tip"><strong>核心理解：</strong>三种遍历的递归结构完全一样，唯一区别是"<code>访问(root)</code>"这一行的位置！</div>
+
+<h3>什么时候用哪种遍历？</h3>
+<p><strong>判断标准：我需要先知道子树的信息，还是先处理当前节点？</strong></p>
+
+<h4>前序遍历 - 先处理父节点</h4>
+<ul>
+    <li>复制树结构</li>
+    <li>序列化树</li>
+    <li>打印树的结构</li>
+    <li>前缀表达式求值</li>
+</ul>
+<pre><code>// 例：复制树
+TreeNode* copyTree(TreeNode* root) {
+    if (!root) return nullptr;
+    TreeNode* newNode = new TreeNode(root->val);  // 先复制当前节点
+    newNode->left = copyTree(root->left);         // 再递归左右
+    newNode->right = copyTree(root->right);
+    return newNode;
+}</code></pre>
+
+<h4>中序遍历 - 利用递增性质</h4>
+<ul>
+    <li><strong>二叉搜索树（BST）相关</strong>：中序遍历 BST 得到递增序列</li>
+    <li>验证 BST</li>
+    <li>BST 中第 k 小的元素</li>
+    <li>中缀表达式求值</li>
+</ul>
+<pre><code>// 例：验证 BST
+bool isValidBST(TreeNode* root, long long minVal, long long maxVal) {
+    if (!root) return true;
+    if (root->val <= minVal || root->val >= maxVal) return false;
+    // 中序遍历的变体：检查每个节点是否在合法范围内
+    return isValidBST(root->left, minVal, root->val) &&
+           isValidBST(root->right, root->val, maxVal);
+}</code></pre>
+
+<h4>后序遍历 - 需要子树信息</h4>
+<ul>
+    <li>计算树高</li>
+    <li>删除树</li>
+    <li><strong>树形 DP</strong>（需要先知道子树的信息）</li>
+    <li>最大路径和</li>
+    <li>判断平衡树</li>
+</ul>
+<pre><code>// 例：计算树高
+int height(TreeNode* root) {
+    if (!root) return 0;
+    int leftHeight = height(root->left);    // 先计算左子树高度
+    int rightHeight = height(root->right);  // 再计算右子树高度
+    return max(leftHeight, rightHeight) + 1; // 最后处理当前节点
 }
 
-// 迭代版本 - 前序遍历
-vector&lt;int&gt; preorder_iterative(TreeNode* root) {
-    vector&lt;int&gt; res;
-    if (!root) return res;
-    
-    stack&lt;TreeNode*&gt; st;
-    st.push(root);
-    
-    while (!st.empty()) {
-        TreeNode* node = st.top();
-        st.pop();
-        res.push_back(node-&gt;val);
-        
-        // 先右后左，因为栈是后进先出
-        if (node-&gt;right) st.push(node-&gt;right);
-        if (node-&gt;left) st.push(node-&gt;left);
-    }
+// 例：最大路径和（需要子树信息）
+int maxPathSum(TreeNode* root, int& globalMax) {
+    if (!root) return 0;
+    int left = max(0, maxPathSum(root->left, globalMax));   // 先得到左子树信息
+    int right = max(0, maxPathSum(root->right, globalMax)); // 再得到右子树信息
+    globalMax = max(globalMax, root->val + left + right);   // 最后更新答案
+    return root->val + max(left, right);                    // 返回单边最大值
+}</code></pre>
+
+<div class="warning"><strong>常见错误：</strong>需要子树信息时用前序遍历。例如计算树高，如果先访问根节点，此时还不知道子树高度，无法计算。必须用后序遍历先得到子树信息。</div>
     
     return res;
 }
