@@ -25,6 +25,7 @@ const chapters = [
     { file: "16-advanced-data-structures.html", label: "16", title: "高级数据结构", group: "算法" },
     { file: "17-math-number-theory.html", label: "17", title: "数学与数论", group: "算法" },
     { file: "18-bit-manipulation.html", label: "18", title: "位运算", group: "算法" },
+    { file: "qt-basics.html", label: "Qt 01", title: "Qt 基础与常用控件", group: "Qt" },
     { file: "templates.html", label: "附录 A", title: "C++ 算法模板库", group: "附录" },
 ];
 
@@ -61,6 +62,7 @@ function createHeader() {
             <nav class="site-nav" aria-label="主导航">
                 <a href="index.html#foundations">基础</a>
                 <a href="index.html#algorithms">算法</a>
+                <a href="index.html#qt">Qt</a>
                 <a href="index.html#references">速查</a>
                 <button class="theme-button" type="button" onclick="toggleTheme()"></button>
             </nav>
@@ -72,7 +74,7 @@ function createChapterSelect(current) {
     const select = document.createElement("select");
     select.className = "chapter-select";
     select.setAttribute("aria-label", "跳转到章节");
-    for (const groupName of ["基础", "STL", "算法", "附录"]) {
+    for (const groupName of ["基础", "STL", "算法", "Qt", "附录"]) {
         const group = document.createElement("optgroup");
         group.label = groupName;
         for (const chapter of chapters.filter((item) => item.group === groupName)) {
