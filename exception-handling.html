@@ -60,43 +60,160 @@ int main() {
     </ul>
     <div class="warning"><strong>不要写 <code>catch (std::exception error)</code>。</strong>按值捕获会复制对象，并可能切掉派生类信息。</div>
 
-    <h2>4. 标准异常与自定义业务异常</h2>
-    <h3>4.1 机考中最简单的方案</h3>
-    <p>对于机考，<strong>你不需要为每种错误定义不同的异常类型</strong>。最实用的做法是定义一个统一的业务异常类：</p>
+    <h2>4. 异常的底层机制与自定义方法</h2>
+    <h3>4.1 异常类就是普通的类</h3>
+    <p>异常对象和普通对象没有本质区别，只是用 <code>throw</code> 抛出。你可以在异常类中携带任何信息：</p>
+    <pre><code>class MyError {
+public:
+    std::string message;
+    int code;
+    std::vector&lt;int&gt; line_numbers;  // 可以携带任何数据
+
+    MyError(std::string msg, int c) : message(msg), code(c) {}
+};
+
+// 抛出
+throw MyError(“something wrong”, 42);
+
+// 捕获后可以访问所有字段
+try {
+    // ...
+} catch (const MyError&amp; e) {
+    std::cout &lt;&lt; e.message &lt;&lt; “ (code: “ &lt;&lt; e.code &lt;&lt; “)\n”;
+}</code></pre>
+
+    <h3>4.2 标准异常类的继承体系</h3>
+    <p>C++ 标准库的异常都继承自 <code>std::exception</code>：</p>
+    <pre><code>std::exception (基类，有 what() 方法)
+├── std::logic_error (程序逻辑问题)
+│   ├── std::invalid_argument (参数非法)
+│   ├── std::out_of_range (越界)
+│   └── std::length_error (长度错误)
+├── std::runtime_error (运行时环境问题)
+│   ├── std::range_error (范围错误)
+│   ├── std::overflow_error (溢出)
+│   └── std::underflow_error (下溢)
+└── std::bad_alloc (内存分配失败)</code></pre>
+
+    <h3>4.3 为什么要继承 <code>std::exception</code>？</h3>
+    <p>继承的好处是<strong>统一接口</strong>。所有异常都有 <code>what()</code> 方法，可以用基类捕获：</p>
+    <pre><code>class MyError : public std::exception {
+private:
+    std::string msg;
+
+public:
+    MyError(const std::string&amp; message) : msg(message) {}
+
+    // 必须实现这个方法
+    const char* what() const noexcept override {
+        return msg.c_str();
+    }
+};
+
+// 可以用基类捕获所有异常
+catch (const std::exception&amp; e) {
+    std::cerr &lt;&lt; e.what() &lt;&lt; “\n”;  // 无论什么异常，都能调用 what()
+}</code></pre>
+
+    <h3>4.4 最实用的方式：继承 <code>std::runtime_error</code></h3>
+    <p><code>std::runtime_error</code> 已经帮你处理了字符串存储和 <code>what()</code> 实现，你只需要添加自己的字段：</p>
     <pre><code>#include &lt;stdexcept&gt;
 
 class CommandError : public std::runtime_error {
 public:
-    using std::runtime_error::runtime_error;
-};</code></pre>
-    <p>然后所有错误都用这个类型，通过消息内容区分：</p>
-    <pre><code>throw CommandError(“Invalid arguments.”);
-throw CommandError(“No active bitmap.”);
-throw CommandError(“Cannot open file '” + path + “'.”);</code></pre>
-    <div class=”tip”><strong>为什么用自定义类型？</strong>可以和标准库内部抛出的异常（如 <code>std::bad_alloc</code>）区分开。如果直接用 <code>std::runtime_error</code>，可能会和 STL 内部异常混淆。</div>
+    int error_code;  // 自定义字段
 
-    <h3>4.2 标准异常类型（了解即可）</h3>
-    <p>如果你想更细分，可以使用标准库提供的异常类型：</p>
-    <table>
-        <thead><tr><th>类型</th><th>适合场景</th></tr></thead>
-        <tbody>
-            <tr><td><code>std::invalid_argument</code></td><td>函数参数的值不合法</td></tr>
-            <tr><td><code>std::out_of_range</code></td><td>索引、坐标等超出允许范围</td></tr>
-            <tr><td><code>std::runtime_error</code></td><td>文件、外部资源或运行环境造成的失败</td></tr>
-            <tr><td>自定义异常</td><td>需要统一表示题目定义的”命令执行失败”</td></tr>
-        </tbody>
-    </table>
-    <p>但在机考中，<strong>用一个自定义类型就够了</strong>，不需要记这么多标准类型。</p>
+    CommandError(const std::string&amp; msg, int code = 0)
+        : std::runtime_error(msg), error_code(code) {}
+};
 
-    <h3>4.3 统一错误格式的好处</h3>
-    <p>命令函数只保存不带前缀的原因：</p>
-    <pre><code>throw CommandError(“No active bitmap.”);</code></pre>
-    <p>最外层统一添加一次 <code>Error:</code>，避免某些函数加前缀、某些函数忘记加：</p>
-    <pre><code>catch (const CommandError&amp; error) {
-    std::cout &lt;&lt; “Error: “ &lt;&lt; error.what() &lt;&lt; '\n';
+// 使用
+throw CommandError(“Invalid arguments”, 1);
+
+// 捕获
+catch (const CommandError&amp; e) {
+    std::cerr &lt;&lt; e.what() &lt;&lt; “\n”;       // 自动有 what()
+    std::cerr &lt;&lt; e.error_code &lt;&lt; “\n”;  // 访问自定义字段
 }</code></pre>
 
-    <h2>5. 捕获位置决定程序能否继续</h2>
+    <h3>4.5 机考最简方案（推荐）</h3>
+    <p>如果不需要额外字段，只需要区分异常类型，可以这样写：</p>
+    <pre><code>class CommandError : public std::runtime_error {
+public:
+    using std::runtime_error::runtime_error;  // 继承构造函数
+};
+
+// 这一行等价于手写：
+// CommandError(const std::string&amp; msg) : std::runtime_error(msg) {}</code></pre>
+    <p><strong>为什么这样做？</strong></p>
+    <ul>
+        <li>不需要写构造函数</li>
+        <li>自动有 <code>what()</code> 方法</li>
+        <li>可以通过消息内容区分错误</li>
+        <li>和 STL 内部异常（如 <code>std::bad_alloc</code>）区分开</li>
+    </ul>
+
+    <h3>4.6 完整的自定义异常示例</h3>
+    <p>如果需要携带更多信息（如文件路径、坐标、错误类型枚举），可以这样写：</p>
+    <pre><code>#include &lt;stdexcept&gt;
+#include &lt;string&gt;
+
+class BitmapError : public std::runtime_error {
+public:
+    enum class Type {
+        NO_ACTIVE,
+        INVALID_SIZE,
+        FILE_ERROR
+    };
+
+    Type type;
+    std::string filepath;  // 可选字段
+    int width, height;     // 可选字段
+
+    // 构造函数 1：一般错误
+    BitmapError(Type t, const std::string&amp; msg)
+        : std::runtime_error(msg), type(t), width(0), height(0) {}
+
+    // 构造函数 2：文件错误
+    BitmapError(const std::string&amp; msg, const std::string&amp; path)
+        : std::runtime_error(msg), type(Type::FILE_ERROR),
+          filepath(path), width(0), height(0) {}
+
+    // 构造函数 3：尺寸错误
+    BitmapError(const std::string&amp; msg, int w, int h)
+        : std::runtime_error(msg), type(Type::INVALID_SIZE),
+          width(w), height(h) {}
+};
+
+// 使用
+throw BitmapError(BitmapError::Type::NO_ACTIVE, “No active bitmap”);
+throw BitmapError(“Cannot open file”, “/tmp/img.txt”);
+throw BitmapError(“Size too large”, 5000, 3000);
+
+// 捕获后可以根据类型做不同处理
+catch (const BitmapError&amp; e) {
+    std::cerr &lt;&lt; “Error: “ &lt;&lt; e.what() &lt;&lt; “\n”;
+    if (e.type == BitmapError::Type::FILE_ERROR) {
+        std::cerr &lt;&lt; “Affected file: “ &lt;&lt; e.filepath &lt;&lt; “\n”;
+    } else if (e.type == BitmapError::Type::INVALID_SIZE) {
+        std::cerr &lt;&lt; “Invalid size: “ &lt;&lt; e.width &lt;&lt; “x” &lt;&lt; e.height &lt;&lt; “\n”;
+    }
+}</code></pre>
+    <div class=”tip”><strong>机考建议：</strong>对于大部分题目，用最简方案（只继承 <code>std::runtime_error</code>，不添加字段）就够了。只有当需要根据错误类型做不同处理时，才需要添加枚举或额外字段。</div>
+
+    <h2>5. 标准异常类型速查（了解即可）</h2>
+    <p>如果你想使用标准库提供的异常类型，这里是常用的几种：</p>
+    <table>
+        <thead><tr><th>类型</th><th>适合场景</th><th>示例</th></tr></thead>
+        <tbody>
+            <tr><td><code>std::invalid_argument</code></td><td>函数参数值不合法</td><td><code>throw std::invalid_argument(“width must be positive”);</code></td></tr>
+            <tr><td><code>std::out_of_range</code></td><td>索引、坐标超出范围</td><td><code>throw std::out_of_range(“index out of bounds”);</code></td></tr>
+            <tr><td><code>std::runtime_error</code></td><td>运行时环境问题</td><td><code>throw std::runtime_error(“file not found”);</code></td></tr>
+        </tbody>
+    </table>
+    <p>但在机考中，<strong>用一个自定义类型通常更简单</strong>，不需要记住这些标准类型的区别。</p>
+
+    <h2>6. 捕获位置决定程序能否继续</h2>
     <p>交互式工具必须把 <code>try/catch</code> 放在命令循环<strong>内部</strong>。这样一轮失败只会结束当前命令：</p>
     <pre><code>std::string line;
 while (std::cout &lt;&lt; "&gt; " &lt;&lt; std::flush,
