@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>附录 C：输出格式控制与常用库</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <h1>附录 C：输出格式控制与常用库</h1>
+    <p>机考中常用的输出格式控制、数学函数和头文件速查。</p>
+
+    <h2>1. 输出格式控制</h2>
+    <h3>1.1 浮点数精度控制</h3>
+    <pre><code>#include &lt;iostream&gt;
+#include &lt;iomanip&gt;  // 必须包含这个头文件
+using namespace std;
+
+int main() {
+    double pi = 3.14159265358979;
+
+    // 设置小数点后位数（默认模式）
+    cout &lt;&lt; setprecision(2) &lt;&lt; pi &lt;&lt; '\n';  // 输出：3.1
+    cout &lt;&lt; setprecision(4) &lt;&lt; pi &lt;&lt; '\n';  // 输出：3.142
+
+    // fixed：固定小数点后 n 位
+    cout &lt;&lt; fixed &lt;&lt; setprecision(2) &lt;&lt; pi &lt;&lt; '\n';  // 输出：3.14
+    cout &lt;&lt; fixed &lt;&lt; setprecision(6) &lt;&lt; pi &lt;&lt; '\n';  // 输出：3.141593
+
+    // scientific：科学计数法
+    cout &lt;&lt; scientific &lt;&lt; setprecision(3) &lt;&lt; pi &lt;&lt; '\n';  // 输出：3.142e+00
+
+    return 0;
+}</code></pre>
+
+    <h3>1.2 常用组合</h3>
+    <table>
+        <thead><tr><th>用法</th><th>效果</th><th>示例输入</th><th>输出</th></tr></thead>
+        <tbody>
+            <tr><td><code>setprecision(2)</code></td><td>总共 2 位有效数字</td><td>3.14159</td><td>3.1</td></tr>
+            <tr><td><code>fixed &lt;&lt; setprecision(2)</code></td><td>小数点后 2 位</td><td>3.14159</td><td>3.14</td></tr>
+            <tr><td><code>scientific &lt;&lt; setprecision(3)</code></td><td>科学计数法 3 位</td><td>1234.5</td><td>1.235e+03</td></tr>
+        </tbody>
+    </table>
+
+    <div class="tip"><strong>机考常用：</strong><code>cout &lt;&lt; fixed &lt;&lt; setprecision(2)</code> 保留小数点后 2 位，这是最常见的要求。</div>
+
+    <h3>1.3 整数进制与填充</h3>
+    <pre><code>#include &lt;iostream&gt;
+#include &lt;iomanip&gt;
+using namespace std;
+
+int main() {
+    int num = 255;
+
+    // 进制控制
+    cout &lt;&lt; dec &lt;&lt; num &lt;&lt; '\n';  // 十进制：255
+    cout &lt;&lt; hex &lt;&lt; num &lt;&lt; '\n';  // 十六进制：ff
+    cout &lt;&lt; oct &lt;&lt; num &lt;&lt; '\n';  // 八进制：377
+
+    // 显示进制前缀
+    cout &lt;&lt; showbase &lt;&lt; hex &lt;&lt; num &lt;&lt; '\n';  // 0xff
+
+    // 宽度与填充
+    cout &lt;&lt; dec;  // 切回十进制
+    cout &lt;&lt; setw(5) &lt;&lt; 42 &lt;&lt; '\n';         // "   42"（右对齐，宽度 5）
+    cout &lt;&lt; setw(5) &lt;&lt; setfill('0') &lt;&lt; 42 &lt;&lt; '\n';  // "00042"
+
+    // 左对齐
+    cout &lt;&lt; left &lt;&lt; setw(5) &lt;&lt; setfill(' ') &lt;&lt; 42 &lt;&lt; '\n';  // "42   "
+
+    return 0;
+}</code></pre>
+
+    <h3>1.4 布尔值控制</h3>
+    <pre><code>bool flag = true;
+
+cout &lt;&lt; flag &lt;&lt; '\n';           // 输出：1
+cout &lt;&lt; boolalpha &lt;&lt; flag &lt;&lt; '\n';  // 输出：true
+cout &lt;&lt; noboolalpha &lt;&lt; flag &lt;&lt; '\n'; // 输出：1（恢复默认）</code></pre>
+
+    <h2>2. 输出格式控制符速查表</h2>
+    <table>
+        <thead><tr><th>控制符</th><th>头文件</th><th>作用</th><th>示例</th></tr></thead>
+        <tbody>
+            <tr><td><code>fixed</code></td><td><code>&lt;iostream&gt;</code></td><td>固定小数点格式</td><td><code>cout &lt;&lt; fixed;</code></td></tr>
+            <tr><td><code>scientific</code></td><td><code>&lt;iostream&gt;</code></td><td>科学计数法</td><td><code>cout &lt;&lt; scientific;</code></td></tr>
+            <tr><td><code>setprecision(n)</code></td><td><code>&lt;iomanip&gt;</code></td><td>设置精度</td><td><code>cout &lt;&lt; setprecision(3);</code></td></tr>
+            <tr><td><code>setw(n)</code></td><td><code>&lt;iomanip&gt;</code></td><td>设置字段宽度</td><td><code>cout &lt;&lt; setw(5);</code></td></tr>
+            <tr><td><code>setfill(c)</code></td><td><code>&lt;iomanip&gt;</code></td><td>设置填充字符</td><td><code>cout &lt;&lt; setfill('0');</code></td></tr>
+            <tr><td><code>left</code></td><td><code>&lt;iostream&gt;</code></td><td>左对齐</td><td><code>cout &lt;&lt; left;</code></td></tr>
+            <tr><td><code>right</code></td><td><code>&lt;iostream&gt;</code></td><td>右对齐（默认）</td><td><code>cout &lt;&lt; right;</code></td></tr>
+            <tr><td><code>dec</code></td><td><code>&lt;iostream&gt;</code></td><td>十进制（默认）</td><td><code>cout &lt;&lt; dec;</code></td></tr>
+            <tr><td><code>hex</code></td><td><code>&lt;iostream&gt;</code></td><td>十六进制</td><td><code>cout &lt;&lt; hex;</code></td></tr>
+            <tr><td><code>oct</code></td><td><code>&lt;iostream&gt;</code></td><td>八进制</td><td><code>cout &lt;&lt; oct;</code></td></tr>
+            <tr><td><code>showbase</code></td><td><code>&lt;iostream&gt;</code></td><td>显示进制前缀</td><td><code>cout &lt;&lt; showbase;</code></td></tr>
+            <tr><td><code>boolalpha</code></td><td><code>&lt;iostream&gt;</code></td><td>布尔值显示为 true/false</td><td><code>cout &lt;&lt; boolalpha;</code></td></tr>
+        </tbody>
+    </table>
+
+    <h2>3. cmath 数学函数库</h2>
+    <h3>3.1 基本数学函数</h3>
+    <pre><code>#include &lt;cmath&gt;
+using namespace std;
+
+// 幂与根
+double p = pow(2, 10);        // 2^10 = 1024
+double s = sqrt(16);          // √16 = 4
+double c = cbrt(27);          // ∛27 = 3
+
+// 绝对值
+int a = abs(-5);              // 5（整数）
+double b = fabs(-3.14);       // 3.14（浮点数）
+
+// 上下取整
+double x = 3.7;
+double up = ceil(x);          // 4（向上取整）
+double down = floor(x);       // 3（向下取整）
+double nearest = round(x);    // 4（四舍五入）
+
+// 取余
+double r = fmod(5.5, 2.0);    // 1.5（浮点数取余）</code></pre>
+
+    <h3>3.2 三角函数</h3>
+    <pre><code>#include &lt;cmath&gt;
+
+// 三角函数（参数是弧度）
+double s = sin(PI / 2);       // sin(90°) = 1
+double c = cos(0);            // cos(0°) = 1
+double t = tan(PI / 4);       // tan(45°) = 1
+
+// 反三角函数（返回弧度）
+double angle = asin(1);       // 返回 π/2
+double angle2 = acos(0);      // 返回 π/2
+double angle3 = atan(1);      // 返回 π/4
+
+// 角度与弧度转换
+const double PI = acos(-1.0);
+double radians = degrees * PI / 180.0;  // 角度转弧度
+double degrees = radians * 180.0 / PI;  // 弧度转角度</code></pre>
+
+    <h3>3.3 指数与对数</h3>
+    <pre><code>#include &lt;cmath&gt;
+
+// 指数函数
+double e_x = exp(1);          // e^1 ≈ 2.71828
+double e_2 = exp(2);          // e^2 ≈ 7.38906
+
+// 对数函数
+double ln = log(2.71828);     // ln(e) ≈ 1（自然对数）
+double lg = log10(100);       // log₁₀(100) = 2（常用对数）
+double lb = log2(8);          // log₂(8) = 3（以 2 为底）</code></pre>
+
+    <h3>3.4 其他有用函数</h3>
+    <pre><code>#include &lt;cmath&gt;
+
+// 最大最小值（C++11）
+double maxVal = fmax(3.5, 2.8);   // 3.5
+double minVal = fmin(3.5, 2.8);   // 2.8
+
+// 符号函数
+double sign = copysign(1.0, -3.0);  // -1.0（取第二个参数的符号）
+
+// 浮点数比较
+bool equal = fabs(a - b) &lt; 1e-9;  // 判断相等
+
+// 检查特殊值
+bool is_nan = isnan(x);           // 是否是 NaN
+bool is_inf = isinf(x);           // 是否是无穷大
+bool is_finite = isfinite(x);     // 是否是有限值</code></pre>
+
+    <h2>4. cmath 函数速查表</h2>
+    <table>
+        <thead><tr><th>函数</th><th>作用</th><th>示例</th><th>结果</th></tr></thead>
+        <tbody>
+            <tr><td><code>pow(x, y)</code></td><td>x 的 y 次方</td><td><code>pow(2, 10)</code></td><td>1024</td></tr>
+            <tr><td><code>sqrt(x)</code></td><td>平方根</td><td><code>sqrt(16)</code></td><td>4</td></tr>
+            <tr><td><code>cbrt(x)</code></td><td>立方根</td><td><code>cbrt(27)</code></td><td>3</td></tr>
+            <tr><td><code>abs(x)</code></td><td>整数绝对值</td><td><code>abs(-5)</code></td><td>5</td></tr>
+            <tr><td><code>fabs(x)</code></td><td>浮点绝对值</td><td><code>fabs(-3.14)</code></td><td>3.14</td></tr>
+            <tr><td><code>ceil(x)</code></td><td>向上取整</td><td><code>ceil(3.2)</code></td><td>4</td></tr>
+            <tr><td><code>floor(x)</code></td><td>向下取整</td><td><code>floor(3.9)</code></td><td>3</td></tr>
+            <tr><td><code>round(x)</code></td><td>四舍五入</td><td><code>round(3.5)</code></td><td>4</td></tr>
+            <tr><td><code>fmod(x, y)</code></td><td>浮点取余</td><td><code>fmod(5.5, 2.0)</code></td><td>1.5</td></tr>
+            <tr><td><code>sin(x)</code></td><td>正弦（弧度）</td><td><code>sin(PI/2)</code></td><td>1</td></tr>
+            <tr><td><code>cos(x)</code></td><td>余弦（弧度）</td><td><code>cos(0)</code></td><td>1</td></tr>
+            <tr><td><code>tan(x)</code></td><td>正切（弧度）</td><td><code>tan(PI/4)</code></td><td>1</td></tr>
+            <tr><td><code>exp(x)</code></td><td>e^x</td><td><code>exp(1)</code></td><td>2.71828</td></tr>
+            <tr><td><code>log(x)</code></td><td>自然对数 ln(x)</td><td><code>log(2.71828)</code></td><td>1</td></tr>
+            <tr><td><code>log10(x)</code></td><td>常用对数 log₁₀(x)</td><td><code>log10(100)</code></td><td>2</td></tr>
+            <tr><td><code>log2(x)</code></td><td>以 2 为底 log₂(x)</td><td><code>log2(8)</code></td><td>3</td></tr>
+        </tbody>
+    </table>
+
+    <h2>5. bits/stdc++.h 万能头文件</h2>
+    <h3>5.1 什么是 bits/stdc++.h？</h3>
+    <p><code>bits/stdc++.h</code> 是 GCC 编译器提供的一个<strong>非标准头文件</strong>，包含了几乎所有 C++ 标准库。</p>
+    <pre><code>#include &lt;bits/stdc++.h&gt;
+using namespace std;
+
+int main() {
+    // 可以直接使用所有 STL 容器、算法、数学函数等
+    vector&lt;int&gt; vec;
+    map&lt;string, int&gt; mp;
+    priority_queue&lt;int&gt; pq;
+    cout &lt;&lt; sqrt(16) &lt;&lt; '\n';
+    return 0;
+}</code></pre>
+
+    <h3>5.2 优缺点</h3>
+    <table>
+        <thead><tr><th>优点</th><th>缺点</th></tr></thead>
+        <tbody>
+            <tr><td>不用记忆每个库的头文件</td><td>编译速度慢（包含了所有库）</td></tr>
+            <tr><td>竞赛和机考中方便快捷</td><td>不是标准 C++，不跨平台</td></tr>
+            <tr><td>减少代码量</td><td>工程项目中不推荐使用</td></tr>
+        </tbody>
+    </table>
+    <div class="tip"><strong>机考建议：</strong>机考中可以放心使用 <code>bits/stdc++.h</code>，因为评测系统通常使用 GCC。但在实际项目中应该使用具体的头文件。</div>
+
+    <h3>5.3 常用的具体头文件（如果不用 bits/stdc++.h）</h3>
+    <pre><code>// 输入输出
+#include &lt;iostream&gt;    // cin, cout, cerr
+#include &lt;iomanip&gt;     // setprecision, setw, setfill
+#include &lt;fstream&gt;     // ifstream, ofstream
+
+// 容器
+#include &lt;vector&gt;      // vector
+#include &lt;string&gt;      // string
+#include &lt;map&gt;         // map, multimap
+#include &lt;set&gt;         // set, multiset
+#include &lt;unordered_map&gt;  // unordered_map
+#include &lt;unordered_set&gt;  // unordered_set
+#include &lt;queue&gt;       // queue, priority_queue
+#include &lt;stack&gt;       // stack
+#include &lt;deque&gt;       // deque
+#include &lt;list&gt;        // list
+
+// 算法
+#include &lt;algorithm&gt;   // sort, binary_search, max, min, swap, reverse
+#include &lt;numeric&gt;     // accumulate, gcd, lcm (C++17)
+#include &lt;cmath&gt;       // sqrt, pow, sin, cos, abs, ceil, floor
+
+// 其他
+#include &lt;utility&gt;     // pair, make_pair
+#include &lt;climits&gt;     // INT_MAX, INT_MIN
+#include &lt;limits&gt;      // numeric_limits
+#include &lt;cstring&gt;     // memset, strlen, strcmp
+#include &lt;cstdio&gt;      // printf, scanf (C 风格 I/O)</code></pre>
+
+    <h2>6. 完整示例：格式化输出</h2>
+    <pre><code>#include &lt;iostream&gt;
+#include &lt;iomanip&gt;
+#include &lt;cmath&gt;
+using namespace std;
+
+int main() {
+    // 保留 2 位小数
+    double pi = 3.14159265358979;
+    cout &lt;&lt; fixed &lt;&lt; setprecision(2) &lt;&lt; pi &lt;&lt; '\n';  // 3.14
+
+    // 对齐输出表格
+    cout &lt;&lt; left;
+    cout &lt;&lt; setw(10) &lt;&lt; "Name" &lt;&lt; setw(10) &lt;&lt; "Score" &lt;&lt; '\n';
+    cout &lt;&lt; setw(10) &lt;&lt; "Alice" &lt;&lt; setw(10) &lt;&lt; 95 &lt;&lt; '\n';
+    cout &lt;&lt; setw(10) &lt;&lt; "Bob" &lt;&lt; setw(10) &lt;&lt; 87 &lt;&lt; '\n';
+
+    // 输出：
+    // Name      Score
+    // Alice     95
+    // Bob       87
+
+    // 填充 0
+    cout &lt;&lt; setw(5) &lt;&lt; setfill('0') &lt;&lt; 42 &lt;&lt; '\n';  // 00042
+
+    // 科学计数法
+    double large = 1234567.89;
+    cout &lt;&lt; scientific &lt;&lt; setprecision(3) &lt;&lt; large &lt;&lt; '\n';  // 1.235e+06
+
+    return 0;
+}</code></pre>
+
+    <h2>7. 常见输出格式要求</h2>
+    <table>
+        <thead><tr><th>题目要求</th><th>代码</th><th>示例</th></tr></thead>
+        <tbody>
+            <tr><td>保留 2 位小数</td><td><code>cout &lt;&lt; fixed &lt;&lt; setprecision(2)</code></td><td>3.14</td></tr>
+            <tr><td>不输出小数点后的 0</td><td>不加 <code>fixed</code>，只用 <code>setprecision</code></td><td>3.14（而非 3.140）</td></tr>
+            <tr><td>科学计数法</td><td><code>cout &lt;&lt; scientific &lt;&lt; setprecision(3)</code></td><td>1.235e+06</td></tr>
+            <tr><td>补齐到 5 位</td><td><code>cout &lt;&lt; setw(5) &lt;&lt; setfill('0')</code></td><td>00042</td></tr>
+            <tr><td>左对齐输出</td><td><code>cout &lt;&lt; left &lt;&lt; setw(10)</code></td><td>"Alice     "</td></tr>
+            <tr><td>输出百分比</td><td>手动乘 100 并加 %</td><td><code>cout &lt;&lt; val * 100 &lt;&lt; "%"</code></td></tr>
+        </tbody>
+    </table>
+
+    <div class="tip"><strong>机考技巧：</strong>如果题目要求"保留 n 位小数"，第一行就写 <code>cout &lt;&lt; fixed &lt;&lt; setprecision(n);</code>，后续所有 cout 都会生效。</div>
+
+    <script defer src="site.js"></script>
+</body>
+</html>
