@@ -29,6 +29,7 @@ const chapters = [
     { file: "templates.html", label: "附录 A", title: "C++ 算法模板库", group: "附录" },
     { file: "reference-constants.html", label: "附录 B", title: "常用常量与速查", group: "附录" },
     { file: "reference-io-math.html", label: "附录 C", title: "输出格式控制与常用库", group: "附录" },
+    { file: "reference-string.html", label: "附录 D", title: "字符串操作详解", group: "附录" },
 ];
 
 const currentFile = window.location.pathname.split("/").pop() || "index.html";
