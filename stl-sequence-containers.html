@@ -86,6 +86,182 @@ std::string_view view = a;  // 不拥有字符，只观察 a
     return local; // 错误：返回后 view 悬空
 }</code></pre>
 
+    <h2>7.1 字符串查找与统计</h2>
+    <h3>查找字符和子串</h3>
+    <pre><code>std::string s = "hello world";
+
+// find：从前往后找第一个
+size_t pos = s.find('o');           // 4（第一个 'o' 的位置）
+size_t pos2 = s.find('o', 5);       // 7（从位置 5 开始找）
+size_t not_found = s.find('x');     // string::npos（没找到）
+
+// rfind：从后往前找
+size_t last = s.rfind('o');         // 7（最后一个 'o'）
+
+// 查找子串
+size_t sub = s.find("world");       // 6
+
+// 判断是否存在某个字符
+if (s.find('o') != std::string::npos) {
+    // 找到了
+}</code></pre>
+
+    <h3>查找任意字符</h3>
+    <pre><code>std::string s = "hello world";
+
+// 查找第一个元音字母
+size_t vowel = s.find_first_of("aeiou");  // 1（'e' 的位置）
+
+// 查找第一个数字
+std::string text = "abc123def";
+size_t digit = text.find_first_of("0123456789");  // 3
+
+// 查找第一个不是元音的字符
+size_t consonant = s.find_first_not_of("aeiou");  // 0（'h'）</code></pre>
+
+    <h3>统计字符个数</h3>
+    <pre><code>#include &lt;algorithm&gt;
+
+std::string s = "hello world";
+
+// 方法 1：使用 count
+int cnt = std::count(s.begin(), s.end(), 'o');  // 2
+
+// 方法 2：手动遍历
+int cnt2 = 0;
+for (char c : s) {
+    if (c == 'o') cnt2++;
+}
+
+// 方法 3：查找所有出现位置
+int cnt3 = 0;
+size_t pos = 0;
+while ((pos = s.find('o', pos)) != std::string::npos) {
+    cnt3++;
+    pos++;
+}</code></pre>
+
+    <h3>find 函数族</h3>
+    <table>
+        <thead><tr><th>函数</th><th>作用</th></tr></thead>
+        <tbody>
+            <tr><td><code>find(c, pos=0)</code></td><td>从 pos 开始查找字符或子串</td></tr>
+            <tr><td><code>rfind(c)</code></td><td>反向查找</td></tr>
+            <tr><td><code>find_first_of(chars)</code></td><td>查找 chars 中任意字符第一次出现</td></tr>
+            <tr><td><code>find_last_of(chars)</code></td><td>反向查找 chars 中任意字符</td></tr>
+            <tr><td><code>find_first_not_of(chars)</code></td><td>查找第一个不在 chars 中的字符</td></tr>
+        </tbody>
+    </table>
+    <div class="warning"><strong>重要：</strong>所有 find 函数找不到时返回 <code>std::string::npos</code>，必须检查返回值！</div>
+
+    <h2>7.2 子串操作（substr）</h2>
+    <pre><code>std::string s = "hello world";
+
+// substr(pos) - 从 pos 到末尾
+std::string sub1 = s.substr(6);      // "world"
+
+// substr(pos, len) - 从 pos 开始取 len 个字符
+std::string sub2 = s.substr(0, 5);   // "hello"
+std::string sub3 = s.substr(6, 3);   // "wor"
+
+// 注意：pos 是整数下标（从 0 开始），不是迭代器
+std::string sub4 = s.substr(1);      // "ello world" ✓
+
+// 错误示范：
+// std::string sub5 = s.substr(s.begin() + 1);  // 编译错误！</code></pre>
+
+    <table>
+        <thead><tr><th>调用方式</th><th>含义</th><th>示例（s = "hello"）</th><th>结果</th></tr></thead>
+        <tbody>
+            <tr><td><code>substr()</code></td><td>整个字符串</td><td><code>s.substr()</code></td><td>"hello"</td></tr>
+            <tr><td><code>substr(pos)</code></td><td>从 pos 到末尾</td><td><code>s.substr(2)</code></td><td>"llo"</td></tr>
+            <tr><td><code>substr(pos, len)</code></td><td>从 pos 开始取 len 个</td><td><code>s.substr(1, 3)</code></td><td>"ell"</td></tr>
+        </tbody>
+    </table>
+    <div class="warning"><strong>常见错误：</strong><code>substr</code> 的参数是<strong>整数下标</strong>，不是迭代器！</div>
+
+    <h2>7.3 字符串修改</h2>
+    <pre><code>std::string s = "hello";
+
+// 追加
+s += " world";                 // "hello world"
+s.append("!");                 // "hello world!"
+s.push_back('?');              // "hello world!?"
+
+// 插入
+s.insert(5, ",");              // 在位置 5 插入 ","
+
+// 删除
+s.erase(0, 4);                 // 删除前 4 个字符
+s.erase(5);                    // 删除位置 5 及之后的所有
+
+// 替换
+s.replace(0, 5, "goodbye");    // 将 [0, 5) 替换为 "goodbye"
+
+// 清空
+s.clear();                     // s = ""</code></pre>
+
+    <h2>7.4 字符串转换</h2>
+    <h3>大小写转换</h3>
+    <pre><code>#include &lt;algorithm&gt;
+#include &lt;cctype&gt;
+
+std::string s = "Hello World";
+
+// 转大写
+std::transform(s.begin(), s.end(), s.begin(), ::toupper);  // "HELLO WORLD"
+
+// 转小写
+std::transform(s.begin(), s.end(), s.begin(), ::tolower);  // "hello world"</code></pre>
+
+    <h3>去除空白（trim）</h3>
+    <pre><code>std::string s = "  hello world  ";
+
+// 去除前导空白
+size_t start = s.find_first_not_of(" \t\n\r");
+if (start != std::string::npos) {
+    s = s.substr(start);
+}
+
+// 去除尾部空白
+size_t end = s.find_last_not_of(" \t\n\r");
+if (end != std::string::npos) {
+    s = s.substr(0, end + 1);
+}</code></pre>
+
+    <h3>字符串与数字互转</h3>
+    <pre><code>#include &lt;string&gt;
+
+// 数字 -> 字符串
+std::string s = std::to_string(42);
+
+// 字符串 -> 数字
+int n = std::stoi("123");
+long long ll = std::stoll("1234567890");
+double d = std::stod("3.14");</code></pre>
+
+    <h2>7.5 字符串分割</h2>
+    <pre><code>#include &lt;sstream&gt;
+#include &lt;vector&gt;
+
+// 按空白分割
+std::string s = "hello world test";
+std::vector&lt;std::string&gt; words;
+std::istringstream iss(s);
+std::string word;
+while (iss &gt;&gt; word) {
+    words.push_back(word);
+}
+
+// 按特定字符分割
+std::string csv = "apple,banana,cherry";
+std::vector&lt;std::string&gt; parts;
+std::istringstream iss2(csv);
+std::string part;
+while (std::getline(iss2, part, ',')) {
+    parts.push_back(part);
+}</code></pre>
+
     <h2>8. <code>deque</code> 为什么能高效操作两端</h2>
     <p>deque 通常用一组分段缓冲区，而不是一块连续内存。它支持 O(1) 随机访问和两端均摊 O(1) 插入删除，但：</p>
     <ul>
