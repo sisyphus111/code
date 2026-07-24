@@ -3,47 +3,340 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>算法模板库 - C++算法竞赛</title>
+    <title>C++ 机试代码模板库</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-    <h1>C++ 算法模板库</h1>
-<p>可直接复制使用的算法模板集合，考前快速复习用。</p>
-<h2>基础主函数</h2>
+    <h1>C++ 机试代码模板库</h1>
+<p>这里集中放置可以直接复制、再按题目修改的代码。算法片段默认粘贴到“程序骨架”中使用；模板使用 C++17，数组下标从 0 开始，图的顶点编号默认是 <code>0 ... n - 1</code>。</p>
+<div class="template-catalog" aria-label="模板分类">
+    <a href="#template-skeleton">程序骨架</a>
+    <a href="#template-infinity">INF 与 NEG_INF</a>
+    <a href="#template-io">输入输出场景</a>
+    <a href="#template-binary-prefix">二分、前缀和与差分</a>
+    <a href="#template-search">DFS、BFS 与回溯</a>
+    <a href="#template-graph-basic">并查集与拓扑排序</a>
+    <a href="#template-graph">最短路与最小生成树</a>
+    <a href="#template-dp-structures">动态规划与数据结构</a>
+    <a href="#template-math">数学与位运算</a>
+</div>
+<h2 id="template-skeleton">程序骨架</h2>
 <pre><code>#include &lt;bits/stdc++.h&gt;
 using namespace std;
 
 using ll = long long;
 using pii = pair&lt;int, int&gt;;
 
-const int INF = 0x3f3f3f3f;
-const ll LINF = 4e18;
-const int MOD = 1e9 + 7;
-
 void solve() {
     // 主逻辑
 }
 
 int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-    
     solve();
     return 0;
 }</code></pre>
 <p><strong>多组测试</strong>：</p>
 <pre><code>int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-    
     int T;
     cin &gt;&gt; T;
     while (T--) solve();
     return 0;
 }</code></pre>
 <p>---</p>
-<h2>二分查找</h2>
+<h2 id="template-infinity">不同类型的 INF 与 NEG_INF</h2>
+<p>这里的 <code>INF</code> 和 <code>NEG_INF</code> 分别表示该类型能够保存的最大值和最小值，而不是数学意义上的正负无穷。它们适合赋值、初始化和比较，不应参与加减乘除等算术运算。</p>
+<pre><code>#include &lt;limits&gt;
+
+constexpr short SHORT_INF =
+    std::numeric_limits&lt;short&gt;::max();
+constexpr short SHORT_NEG_INF =
+    std::numeric_limits&lt;short&gt;::lowest();
+
+constexpr int INT_INF =
+    std::numeric_limits&lt;int&gt;::max();
+constexpr int INT_NEG_INF =
+    std::numeric_limits&lt;int&gt;::lowest();
+
+constexpr long LONG_INF =
+    std::numeric_limits&lt;long&gt;::max();
+constexpr long LONG_NEG_INF =
+    std::numeric_limits&lt;long&gt;::lowest();
+
+constexpr long long LL_INF =
+    std::numeric_limits&lt;long long&gt;::max();
+constexpr long long LL_NEG_INF =
+    std::numeric_limits&lt;long long&gt;::lowest();
+
+constexpr float FLOAT_INF =
+    std::numeric_limits&lt;float&gt;::max();
+constexpr float FLOAT_NEG_INF =
+    std::numeric_limits&lt;float&gt;::lowest();
+
+constexpr double DOUBLE_INF =
+    std::numeric_limits&lt;double&gt;::max();
+constexpr double DOUBLE_NEG_INF =
+    std::numeric_limits&lt;double&gt;::lowest();</code></pre>
+<div class="tip">
+    <strong>注意：</strong>
+    整数的最小值通常比最大值的相反数小 1，所以 <code>NEG_INF</code> 必须使用 <code>lowest()</code>，不能写成 <code>-INF</code>。
+    对浮点类型也要使用 <code>lowest()</code>；它们的 <code>min()</code> 表示最小正数。
+</div>
+<table>
+    <thead>
+        <tr><th>类型</th><th>INF</th><th>NEG_INF</th><th>说明</th></tr>
+    </thead>
+    <tbody>
+        <tr><td><code>short</code></td><td><code>max()</code></td><td><code>lowest()</code></td><td>通常为 16 位</td></tr>
+        <tr><td><code>int</code></td><td><code>max()</code></td><td><code>lowest()</code></td><td>通常为 32 位</td></tr>
+        <tr><td><code>long</code></td><td><code>max()</code></td><td><code>lowest()</code></td><td>可能是 32 位或 64 位</td></tr>
+        <tr><td><code>long long</code></td><td><code>max()</code></td><td><code>lowest()</code></td><td>至少为 64 位</td></tr>
+        <tr><td><code>float</code></td><td><code>max()</code></td><td><code>lowest()</code></td><td>最大和最小有限值</td></tr>
+        <tr><td><code>double</code></td><td><code>max()</code></td><td><code>lowest()</code></td><td>最大和最小有限值</td></tr>
+    </tbody>
+</table>
+<div class="warning">
+    <strong>比较例外：</strong>
+    上述边界值可以正常使用 <code>&lt;</code>、<code>&gt;</code>、<code>&lt;=</code>、<code>&gt;=</code> 和 <code>==</code>。
+    但浮点数如果是 <code>NaN</code>，这些比较不会遵循普通大小关系。
+</div>
+<p>---</p>
+<h2 id="template-io">输入输出场景模板</h2>
+<p>每段代码对应一个完整使用场景。选择最接近题目要求的一段，再替换其中的数据结构和处理逻辑。</p>
+<h3>场景一：标准输入读取数组并输出结果</h3>
+<pre><code>#include &lt;bits/stdc++.h&gt;
+using namespace std;
+
+int main() {
+    int n;
+    cin &gt;&gt; n;
+
+    vector&lt;int&gt; a(n);
+    for (int&amp; x : a) {
+        cin &gt;&gt; x;
+    }
+
+    long long sum = 0;
+    for (int x : a) {
+        sum += x;
+    }
+
+    cout &lt;&lt; sum &lt;&lt; '\n';
+    return 0;
+}</code></pre>
+<h3>场景二：逐行读取命令并处理</h3>
+<p>示例支持 <code>add 数字</code>、<code>sum</code>、<code>print</code>、<code>clear</code> 和 <code>exit</code>。新增命令时，直接增加一个分支。</p>
+<pre><code>#include &lt;bits/stdc++.h&gt;
+using namespace std;
+
+int main() {
+    vector&lt;int&gt; values;
+    string line;
+
+    while (getline(cin, line)) {
+        stringstream ss(line);
+        string command;
+        ss &gt;&gt; command;
+
+        if (command.empty()) {
+            continue;
+        }
+
+        if (command == "add") {
+            int value;
+            if (!(ss &gt;&gt; value)) {
+                cout &lt;&lt; "Error: add needs an integer\n";
+                continue;
+            }
+            values.push_back(value);
+        } else if (command == "sum") {
+            long long sum = 0;
+            for (int value : values) {
+                sum += value;
+            }
+            cout &lt;&lt; sum &lt;&lt; '\n';
+        } else if (command == "print") {
+            for (int i = 0; i &lt; (int)values.size(); ++i) {
+                if (i &gt; 0) cout &lt;&lt; ' ';
+                cout &lt;&lt; values[i];
+            }
+            cout &lt;&lt; '\n';
+        } else if (command == "clear") {
+            values.clear();
+        } else if (command == "exit") {
+            break;
+        } else {
+            cout &lt;&lt; "Error: unknown command\n";
+        }
+    }
+
+    return 0;
+}</code></pre>
+<h3>场景三：逐字符读取并统计</h3>
+<pre><code>#include &lt;bits/stdc++.h&gt;
+using namespace std;
+
+int main() {
+    long long characters = 0;
+    long long digits = 0;
+    long long newlines = 0;
+
+    int ch;
+    while ((ch = getchar()) != EOF) {
+        ++characters;
+        if (ch &gt;= '0' &amp;&amp; ch &lt;= '9') ++digits;
+        if (ch == '\n') ++newlines;
+    }
+
+    cout &lt;&lt; "characters: " &lt;&lt; characters &lt;&lt; '\n';
+    cout &lt;&lt; "digits: " &lt;&lt; digits &lt;&lt; '\n';
+    cout &lt;&lt; "newlines: " &lt;&lt; newlines &lt;&lt; '\n';
+    return 0;
+}</code></pre>
+<h3>场景四：命令行选项、文件读写与交互命令</h3>
+<p>同一套程序既可以在终端中显示提示符并接收命令，也可以从文件批量读取命令、把结果写入另一个文件。</p>
+<table>
+    <thead>
+        <tr><th>选项</th><th>作用</th></tr>
+    </thead>
+    <tbody>
+        <tr><td><code>-i FILE</code> / <code>--input FILE</code></td><td>从文件读取命令；不提供时从键盘读取</td></tr>
+        <tr><td><code>-o FILE</code> / <code>--output FILE</code></td><td>把命令结果写入文件；不提供时输出到终端</td></tr>
+        <tr><td><code>--prompt TEXT</code></td><td>修改交互提示符，默认是 <code>$ </code></td></tr>
+        <tr><td><code>--no-prompt</code></td><td>不显示交互提示符，适合管道输入</td></tr>
+        <tr><td><code>-h</code> / <code>--help</code></td><td>显示帮助并退出</td></tr>
+    </tbody>
+</table>
+<p>运行示例：</p>
+<pre><code>./program
+./program --prompt "command&gt; "
+./program --no-prompt
+./program --input commands.txt
+./program -i commands.txt -o result.txt</code></pre>
+<p>命令仍然使用上一场景的处理方式：<code>add 数字</code> 添加数据，<code>sum</code> 求和，<code>print</code> 输出全部数据，<code>clear</code> 清空，<code>exit</code> 退出。</p>
+<pre><code>#include &lt;bits/stdc++.h&gt;
+using namespace std;
+
+int main(int argc, char* argv[]) {
+    string input_path;
+    string output_path;
+    string prompt = "$ ";
+    bool show_prompt = true;
+
+    for (int i = 1; i &lt; argc; ++i) {
+        string option = argv[i];
+
+        if (option == "-h" || option == "--help") {
+            cout &lt;&lt; "Usage: program [options]\n"
+                 &lt;&lt; "  -i, --input FILE    read commands from FILE\n"
+                 &lt;&lt; "  -o, --output FILE   write results to FILE\n"
+                 &lt;&lt; "      --prompt TEXT   set interactive prompt\n"
+                 &lt;&lt; "      --no-prompt     hide interactive prompt\n";
+            return 0;
+        } else if (option == "-i" || option == "--input") {
+            if (i + 1 == argc) {
+                cerr &lt;&lt; "Error: " &lt;&lt; option &lt;&lt; " needs a file\n";
+                return 1;
+            }
+            input_path = argv[++i];
+        } else if (option == "-o" || option == "--output") {
+            if (i + 1 == argc) {
+                cerr &lt;&lt; "Error: " &lt;&lt; option &lt;&lt; " needs a file\n";
+                return 1;
+            }
+            output_path = argv[++i];
+        } else if (option == "--prompt") {
+            if (i + 1 == argc) {
+                cerr &lt;&lt; "Error: --prompt needs text\n";
+                return 1;
+            }
+            prompt = argv[++i];
+        } else if (option == "--no-prompt") {
+            show_prompt = false;
+        } else {
+            cerr &lt;&lt; "Error: unknown option " &lt;&lt; option &lt;&lt; '\n';
+            return 1;
+        }
+    }
+
+    ifstream fin;
+    if (!input_path.empty()) {
+        fin.open(input_path);
+        if (!fin) {
+            cerr &lt;&lt; "Error: cannot open " &lt;&lt; input_path &lt;&lt; '\n';
+            return 1;
+        }
+        show_prompt = false;
+    }
+
+    ofstream fout;
+    if (!output_path.empty()) {
+        fout.open(output_path);
+        if (!fout) {
+            cerr &lt;&lt; "Error: cannot open " &lt;&lt; output_path &lt;&lt; '\n';
+            return 1;
+        }
+    }
+
+    istream&amp; input = input_path.empty() ? cin : fin;
+    ostream&amp; output = output_path.empty() ? cout : fout;
+
+    vector&lt;int&gt; values;
+    string line;
+
+    while (true) {
+        if (show_prompt) {
+            cerr &lt;&lt; prompt &lt;&lt; flush;
+        }
+        if (!getline(input, line)) {
+            break;
+        }
+
+        stringstream ss(line);
+        string command;
+        ss &gt;&gt; command;
+
+        if (command.empty()) {
+            continue;
+        }
+
+        if (command == "add") {
+            int value;
+            if (!(ss &gt;&gt; value)) {
+                cerr &lt;&lt; "Error: add needs an integer\n";
+                continue;
+            }
+            values.push_back(value);
+        } else if (command == "sum") {
+            long long sum = 0;
+            for (int value : values) {
+                sum += value;
+            }
+            output &lt;&lt; sum &lt;&lt; '\n';
+        } else if (command == "print") {
+            for (int i = 0; i &lt; (int)values.size(); ++i) {
+                if (i &gt; 0) output &lt;&lt; ' ';
+                output &lt;&lt; values[i];
+            }
+            output &lt;&lt; '\n';
+        } else if (command == "clear") {
+            values.clear();
+        } else if (command == "exit") {
+            break;
+        } else {
+            cerr &lt;&lt; "Error: unknown command\n";
+        }
+    }
+
+    return 0;
+}</code></pre>
+<div class="tip">
+    <strong>为什么提示符写到 <code>cerr</code>：</strong>
+    <code>cerr &lt;&lt; "$ " &lt;&lt; flush</code> 会在程序等待输入前立刻显示提示符，
+    同时不会把 <code>$</code> 混进标准输出或结果文件。真正的命令结果统一写到 <code>output</code>。
+</div>
+<p>---</p>
+<h2 id="template-binary-prefix">二分、前缀和与差分</h2>
 <h3>查找第一个 &gt;= x</h3>
 <pre><code>int lower_bound_manual(const vector&lt;int&gt;&amp; a, int x) {
     int l = 0, r = a.size();
@@ -77,7 +370,6 @@ long long binary_min(long long l, long long r) {
     return l;
 }</code></pre>
 <p>---</p>
-<h2>前缀和与差分</h2>
 <h3>一维前缀和</h3>
 <pre><code>vector&lt;ll&gt; pre(n + 1, 0);
 for (int i = 0; i &lt; n; ++i) {
@@ -136,7 +428,7 @@ for (int i = 0; i &lt; n; ++i) {
     if (i &gt;= k - 1) ans.push_back(a[dq.front()]);
 }</code></pre>
 <p>---</p>
-<h2>DFS 与 BFS</h2>
+<h2 id="template-search">DFS、BFS 与回溯</h2>
 <h3>DFS 网格</h3>
 <pre><code>int n, m;
 vector&lt;vector&lt;int&gt;&gt; vis;
@@ -174,8 +466,7 @@ while (!q.empty()) {
     }
 }</code></pre>
 <p>---</p>
-<h2>回溯</h2>
-<h3>组合</h3>
+<h3>回溯：组合</h3>
 <pre><code>vector&lt;int&gt; path;
 vector&lt;vector&lt;int&gt;&gt; ans;
 
@@ -190,7 +481,7 @@ void backtrack(int start, int n, int k) {
         path.pop_back();
     }
 }</code></pre>
-<h3>排列</h3>
+<h3>回溯：排列</h3>
 <pre><code>vector&lt;int&gt; path, used;
 vector&lt;vector&lt;int&gt;&gt; ans;
 
@@ -209,7 +500,8 @@ void permute(vector&lt;int&gt;&amp; nums) {
     }
 }</code></pre>
 <p>---</p>
-<h2>并查集</h2>
+<h2 id="template-graph-basic">并查集与拓扑排序</h2>
+<h3>并查集</h3>
 <pre><code>struct DSU {
     vector&lt;int&gt; p, sz;
     
@@ -235,7 +527,7 @@ void permute(vector&lt;int&gt;&amp; nums) {
     }
 };</code></pre>
 <p>---</p>
-<h2>拓扑排序</h2>
+<h3>拓扑排序</h3>
 <pre><code>vector&lt;int&gt; topo_sort(int n, vector&lt;vector&lt;int&gt;&gt;&amp; g) {
     vector&lt;int&gt; indeg(n, 0);
     for (int u = 0; u &lt; n; ++u) {
@@ -259,9 +551,11 @@ void permute(vector&lt;int&gt;&amp; nums) {
     return order; // size &lt; n 说明有环
 }</code></pre>
 <p>---</p>
-<h2>Dijkstra 最短路</h2>
+<h2 id="template-graph">最短路与最小生成树</h2>
+<h3>Dijkstra 单源最短路</h3>
+<p>用于边权非负的图；邻接表元素为 <code>{终点, 边权}</code>。</p>
 <pre><code>vector&lt;ll&gt; dijkstra(int n, int s, vector&lt;vector&lt;pii&gt;&gt;&amp; g) {
-    vector&lt;ll&gt; dist(n, LINF);
+    vector&lt;ll&gt; dist(n, LL_INF);
     priority_queue&lt;pair&lt;ll, int&gt;, vector&lt;pair&lt;ll, int&gt;&gt;, greater&lt;&gt;&gt; pq;
     
     dist[s] = 0;
@@ -282,8 +576,8 @@ void permute(vector&lt;int&gt;&amp; nums) {
     return dist;
 }</code></pre>
 <p>---</p>
-<h2>Floyd 全源最短路</h2>
-<pre><code>vector&lt;vector&lt;ll&gt;&gt; dist(n, vector&lt;ll&gt;(n, LINF));
+<h3>Floyd 全源最短路</h3>
+<pre><code>vector&lt;vector&lt;ll&gt;&gt; dist(n, vector&lt;ll&gt;(n, LL_INF));
 for (int i = 0; i &lt; n; ++i) dist[i][i] = 0;
 
 // 添加边
@@ -294,14 +588,80 @@ for (auto [u, v, w] : edges) {
 for (int k = 0; k &lt; n; ++k) {
     for (int i = 0; i &lt; n; ++i) {
         for (int j = 0; j &lt; n; ++j) {
-            if (dist[i][k] != LINF &amp;&amp; dist[k][j] != LINF) {
+            if (dist[i][k] != LL_INF &amp;&amp; dist[k][j] != LL_INF) {
                 dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j]);
             }
         }
     }
 }</code></pre>
+<h3>Prim 最小生成树</h3>
+<p>用于连通无向图；成功时返回总权重与生成树的边，图不连通时返回 <code>nullopt</code>。</p>
+<pre><code>optional&lt;pair&lt;ll, vector&lt;pair&lt;int, int&gt;&gt;&gt;&gt; prim(
+    int n, const vector&lt;vector&lt;pii&gt;&gt;&amp; g
+) {
+    if (n == 0) {
+        return make_pair(0LL, vector&lt;pair&lt;int, int&gt;&gt;{});
+    }
+
+    // {边权, 当前点, 父节点}
+    using State = tuple&lt;ll, int, int&gt;;
+    priority_queue&lt;State, vector&lt;State&gt;, greater&lt;State&gt;&gt; pq;
+    vector&lt;bool&gt; used(n, false);
+    vector&lt;pair&lt;int, int&gt;&gt; tree_edges;
+    ll total = 0;
+    int count = 0;
+
+    pq.push({0, 0, -1});
+    while (!pq.empty()) {
+        auto [weight, u, parent] = pq.top();
+        pq.pop();
+        if (used[u]) continue;
+
+        used[u] = true;
+        total += weight;
+        ++count;
+        if (parent != -1) tree_edges.push_back({parent, u});
+
+        for (auto [v, edge_weight] : g[u]) {
+            if (!used[v]) pq.push({edge_weight, v, u});
+        }
+    }
+
+    if (count != n) return nullopt;
+    return make_pair(total, tree_edges);
+}</code></pre>
+<h3>Kruskal 最小生成树</h3>
+<p>复用上面的 <code>DSU</code>；适合输入本身就是边列表的情况，图不连通时返回 <code>nullopt</code>。</p>
+<pre><code>struct Edge {
+    int u, v;
+    ll weight;
+};
+
+optional&lt;pair&lt;ll, vector&lt;Edge&gt;&gt;&gt; kruskal(
+    int n, vector&lt;Edge&gt; edges
+) {
+    if (n == 0) return make_pair(0LL, vector&lt;Edge&gt;{});
+
+    sort(edges.begin(), edges.end(), [](const Edge&amp; a, const Edge&amp; b) {
+        return a.weight &lt; b.weight;
+    });
+
+    DSU dsu(n);
+    ll total = 0;
+    vector&lt;Edge&gt; tree_edges;
+
+    for (const Edge&amp; edge : edges) {
+        if (!dsu.unite(edge.u, edge.v)) continue;
+        total += edge.weight;
+        tree_edges.push_back(edge);
+        if ((int)tree_edges.size() == n - 1) break;
+    }
+
+    if ((int)tree_edges.size() != n - 1) return nullopt;
+    return make_pair(total, tree_edges);
+}</code></pre>
 <p>---</p>
-<h2>动态规划</h2>
+<h2 id="template-dp-structures">动态规划与常用数据结构</h2>
 <h3>0/1 背包</h3>
 <pre><code>vector&lt;ll&gt; dp(W + 1, 0);
 
@@ -327,7 +687,7 @@ for (int x : a) {
 }
 int lis_len = tails.size();</code></pre>
 <p>---</p>
-<h2>树状数组</h2>
+<h3>树状数组</h3>
 <pre><code>struct Fenwick {
     int n;
     vector&lt;ll&gt; bit;
@@ -351,7 +711,7 @@ int lis_len = tails.size();</code></pre>
     }
 };</code></pre>
 <p>---</p>
-<h2>线段树</h2>
+<h3>线段树</h3>
 <pre><code>struct SegTree {
     int n;
     vector&lt;ll&gt; tr;
@@ -386,7 +746,7 @@ int lis_len = tails.size();</code></pre>
     }
 };</code></pre>
 <p>---</p>
-<h2>数学</h2>
+<h2 id="template-math">数学与位运算</h2>
 <h3>GCD 和 LCM</h3>
 <pre><code>ll gcd(ll a, ll b) {
     return b == 0 ? a : gcd(b, a % b);
@@ -422,7 +782,7 @@ for (int i = 2; i &lt;= n; ++i) {
     }
 }</code></pre>
 <p>---</p>
-<h2>位运算</h2>
+<h3>位运算</h3>
 <pre><code>// 基本操作
 x &amp; 1              // 判断奇偶
 x &amp; (x - 1)        // 清除最低位的 1
@@ -450,24 +810,6 @@ vals.erase(unique(vals.begin(), vals.end()), vals.end());
 for (int&amp; x : coords) {
     x = lower_bound(vals.begin(), vals.end(), x) - vals.begin();
 }</code></pre>
-<h3>读到 EOF</h3>
-<pre><code>int n;
-while (cin &gt;&gt; n) {
-    // 处理
-}
-
-string line;
-while (getline(cin, line)) {
-    // 处理
-}</code></pre>
-<h3>输出格式</h3>
-<pre><code>// 行末无空格
-for (int i = 0; i &lt; n; ++i) {
-    cout &lt;&lt; a[i] &lt;&lt; &quot; \n&quot;[i == n - 1];
-}
-
-// 固定精度
-cout &lt;&lt; fixed &lt;&lt; setprecision(2) &lt;&lt; x &lt;&lt; &quot;\n&quot;;</code></pre>
 
     <script defer src="site.js"></script>
 </body>

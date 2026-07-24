@@ -25,10 +25,9 @@ const chapters = [
     { file: "16-advanced-data-structures.html", label: "16", title: "高级数据结构", group: "算法" },
     { file: "17-math-number-theory.html", label: "17", title: "数学与数论", group: "算法" },
     { file: "18-bit-manipulation.html", label: "18", title: "位运算", group: "算法" },
-    { file: "qt-basics.html", label: "Qt 01", title: "Qt 基础与常用控件", group: "Qt" },
-    { file: "templates.html", label: "附录 A", title: "C++ 算法模板库", group: "附录" },
-    { file: "reference-constants.html", label: "附录 B", title: "常用常量与速查", group: "附录" },
-    { file: "reference-io-math.html", label: "附录 C", title: "输出格式控制与常用库", group: "附录" },
+    { file: "templates.html", label: "模板库", title: "可复制的 C++ 代码模板", group: "模板" },
+    { file: "reference-constants.html", label: "附录 A", title: "常用常量与速查", group: "附录" },
+    { file: "reference-io-math.html", label: "附录 B", title: "输出格式控制与常用库", group: "附录" },
 ];
 
 const currentFile = window.location.pathname.split("/").pop() || "index.html";
@@ -47,7 +46,7 @@ function updateThemeButton() {
     const button = document.querySelector(".theme-button");
     if (!button) return;
     const dark = document.documentElement.dataset.theme === "dark";
-    button.textContent = dark ? "☀️" : "🌙";
+    button.textContent = dark ? "浅色" : "深色";
     button.setAttribute("aria-label", dark ? "切换到浅色模式" : "切换到深色模式");
     button.title = dark ? "切换到浅色模式" : "切换到深色模式";
 }
@@ -62,9 +61,9 @@ function createHeader() {
                 <span class="brand__text">夏令营机试手册</span>
             </a>
             <nav class="site-nav" aria-label="主导航">
-                <a href="index.html#foundations">基础</a>
-                <a href="index.html#algorithms">算法</a>
-                <a href="index.html#qt">Qt</a>
+                <a href="index.html">首页</a>
+                <a href="index.html#foundations">学习材料</a>
+                <a href="templates.html">代码模板</a>
                 <a href="index.html#references">速查</a>
                 <button class="theme-button" type="button" onclick="toggleTheme()"></button>
             </nav>
@@ -76,7 +75,7 @@ function createChapterSelect(current) {
     const select = document.createElement("select");
     select.className = "chapter-select";
     select.setAttribute("aria-label", "跳转到章节");
-    for (const groupName of ["基础", "STL", "算法", "Qt", "附录"]) {
+    for (const groupName of ["模板", "基础", "STL", "算法", "附录"]) {
         const group = document.createElement("optgroup");
         group.label = groupName;
         for (const chapter of chapters.filter((item) => item.group === groupName)) {
@@ -219,6 +218,9 @@ function buildDocumentPage(contentNodes, current, currentIndex) {
     grid.className = "page-grid";
     const article = document.createElement("article");
     article.className = "article";
+    if (current?.file === "templates.html") {
+        article.classList.add("template-library");
+    }
     article.append(...contentNodes);
     decorateContent(article, current);
     grid.append(article, createSidebar(article, current, currentIndex));
@@ -269,7 +271,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const footer = document.createElement("footer");
     footer.className = "site-footer";
-    footer.textContent = "C++ 夏令营机试学习手册 · 持续整理与更新";
+    footer.textContent = "C++ 夏令营机试学习手册";
     document.body.append(footer);
     updateThemeButton();
     activateToc();

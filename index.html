@@ -8,9 +8,39 @@
 </head>
 <body>
     <section class="home-hero">
-        <p class="home-eyebrow">Summer Camp Coding Guide</p>
-        <h1>C++ 夏令营机试<br>学习手册</h1>
-        <p class="home-lead">从构建一个能运行的程序开始，逐步掌握输入输出、常用算法与数据结构。内容按真实项目流程组织，也适合考前快速复习。</p>
+        <p class="home-eyebrow">C++ Coding Test Handbook</p>
+        <h1>C++ 夏令营机试学习手册</h1>
+        <p class="home-lead">学习材料用于理解原理，代码模板用于考场快速起步。两部分分开整理，查找和复习都更直接。</p>
+    </section>
+
+    <section class="home-section template-home-section" id="templates">
+        <div class="home-section__head">
+            <h2>可直接使用的代码模板</h2>
+            <p>面向机试现场：复制、修改数据结构和边界条件，然后直接使用。</p>
+        </div>
+        <div class="chapter-grid template-entry-grid">
+            <a class="chapter-card" href="templates.html#template-skeleton">
+                <span class="chapter-card__number">模板 01</span>
+                <span class="chapter-card__title">程序骨架</span>
+                <span class="chapter-card__desc">单组、多组测试与常用类型。</span>
+            </a>
+            <a class="chapter-card" href="templates.html#template-io">
+                <span class="chapter-card__number">模板 02</span>
+                <span class="chapter-card__title">输入输出场景</span>
+                <span class="chapter-card__desc">标准评测、命令处理、逐字符统计与文件转换。</span>
+            </a>
+            <a class="chapter-card" href="templates.html#template-search">
+                <span class="chapter-card__number">模板 03</span>
+                <span class="chapter-card__title">DFS、BFS 与回溯</span>
+                <span class="chapter-card__desc">网格搜索、最短步数与状态恢复。</span>
+            </a>
+            <a class="chapter-card" href="templates.html#template-graph">
+                <span class="chapter-card__number">模板 04</span>
+                <span class="chapter-card__title">最短路与最小生成树</span>
+                <span class="chapter-card__desc">Dijkstra、Floyd、Prim 与 Kruskal。</span>
+            </a>
+        </div>
+        <p class="section-more"><a href="templates.html">查看完整模板库 →</a></p>
     </section>
 
     <section class="home-section" id="foundations">
@@ -69,29 +99,14 @@
         </div>
     </section>
 
-    <section class="home-section" id="qt">
-        <div class="home-section__head">
-            <h2>Qt 图形界面开发</h2>
-            <p>机考可能涉及 Qt 界面开发，掌握基本控件、信号槽和布局即可应对。</p>
-        </div>
-        <div class="chapter-grid">
-            <a class="chapter-card chapter-card--featured" href="qt-basics.html">
-                <span class="chapter-card__number">Qt 01</span>
-                <span class="chapter-card__title">Qt 基础与常用控件</span>
-                <span class="chapter-card__desc">控件、信号槽、布局管理器和完整示例。</span>
-            </a>
-        </div>
-    </section>
-
     <section class="home-section" id="references">
         <div class="home-section__head">
             <h2>速查与复习</h2>
-            <p>写题和考前复习时，快速定位常用模板与标准写法。</p>
+            <p>写题和考前复习时，快速定位常量、格式控制与标准库写法。</p>
         </div>
         <div class="chapter-grid">
-            <a class="chapter-card" href="templates.html"><span class="chapter-card__number">附录 A</span><span class="chapter-card__title">C++ 算法模板库</span></a>
-            <a class="chapter-card" href="reference-constants.html"><span class="chapter-card__number">附录 B</span><span class="chapter-card__title">常用常量与速查</span></a>
-            <a class="chapter-card" href="reference-io-math.html"><span class="chapter-card__number">附录 C</span><span class="chapter-card__title">输出格式控制与常用库</span></a>
+            <a class="chapter-card" href="reference-constants.html"><span class="chapter-card__number">附录 A</span><span class="chapter-card__title">常用常量与速查</span></a>
+            <a class="chapter-card" href="reference-io-math.html"><span class="chapter-card__number">附录 B</span><span class="chapter-card__title">输出格式控制与常用库</span></a>
         </div>
     </section>
 
@@ -104,7 +119,7 @@
             <li>先完成构建与 CLI 两章，确保程序能够正确编译、运行和处理输入输出。</li>
             <li>掌握 STL 常用容器与算法，减少重复造轮子和低级实现错误。</li>
             <li>按 01—18 依次学习算法章节，每个例题都亲手实现并测试。</li>
-            <li>最后使用模板库复习，进行 2—3 小时的完整限时模拟。</li>
+            <li>最后从模板库复制一份最小代码开始，进行 2—3 小时的完整限时模拟。</li>
         </ol>
     </section>
 
